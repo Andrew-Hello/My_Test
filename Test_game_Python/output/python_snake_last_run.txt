@@ -1,0 +1,5 @@
+game=Python Snake
+time=2026-09-03T20:15:47.884099
+score=5
+python=3.14.6
+platform=Windows-11-10.0.26200-SP0
