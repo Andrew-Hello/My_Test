@@ -31,6 +31,31 @@ npm run build
 npm run preview
 ```
 
+## GitHub Pages 在线预览
+
+网站通过仓库根目录下的 `.github/workflows/website-pages.yml` 自动构建和部署。
+
+开发流程：
+
+```text
+dev 分支更新 Test_website
+→ GitHub Actions
+→ npm ci
+→ npm run build
+→ Test_website/dist
+→ GitHub Pages
+```
+
+Vite 配置 `vite.config.js` 使用相对资源路径，因此构建结果可以部署在 GitHub Pages 的项目子路径下。
+
+首次启用时，请在 GitHub 仓库中进入：
+
+```text
+Settings → Pages → Build and deployment → Source → GitHub Actions
+```
+
+完成这一次设置后，后续 `dev` 分支中 `Test_website` 的修改会自动触发构建和部署。
+
 ## 目录结构
 
 - `index.html`：HTML5 页面主体。
@@ -38,6 +63,7 @@ npm run preview
 - `script.js`：滚动淡入和机制图谱切换交互。
 - `public/assets/hero-biomolecular-network.png`：首页科学视觉资产。
 - `docs/concept-apple-style-html5.png`：本次苹果式 HTML5 视觉概念参考图。
+- `vite.config.js`：Vite 构建及 GitHub Pages 路径配置。
 
 ## 依赖
 
