@@ -1,0 +1,12 @@
+node_modules
+dist
+output
+test-results
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+vite-dev*.log
+vite-dev.pid
