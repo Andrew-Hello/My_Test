@@ -1,0 +1,31 @@
+name: Build Test Games
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'Test_game_CSharp/**'
+      - '.github/workflows/build-games.yml'
+  workflow_dispatch:
+
+jobs:
+  build-csharp-game:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish Windows x64 single-file EXE
+        run: dotnet publish Test_game_CSharp/WhackAMole.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish/WhackAMole
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WhackAMole-win-x64
+          path: publish/WhackAMole/**
+          if-no-files-found: error
