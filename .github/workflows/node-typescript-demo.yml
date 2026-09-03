@@ -1,0 +1,53 @@
+name: Node and TypeScript Demo
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'Test_JS_Node/**'
+      - 'Test_TypeScript/**'
+      - '.github/workflows/node-typescript-demo.yml'
+  workflow_dispatch:
+
+jobs:
+  node-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - name: Show versions
+        run: |
+          node --version
+          npm --version
+      - name: Run Node.js demo
+        working-directory: Test_JS_Node
+        run: npm start
+      - name: Run Node.js diagnostic demo
+        working-directory: Test_JS_Node
+        run: npm run diagnose
+      - name: Upload Node diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-diagnostic
+          path: Test_JS_Node/output/node_diagnostic.json
+
+  typescript-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - name: Install TypeScript
+        working-directory: Test_TypeScript
+        run: npm install
+      - name: Compile and run TypeScript
+        working-directory: Test_TypeScript
+        run: npm run demo
+      - name: Upload compiled JavaScript
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-compiled-js
+          path: Test_TypeScript/dist/
