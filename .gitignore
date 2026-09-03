@@ -1,0 +1,21 @@
+# Node.js / TypeScript dependencies
+node_modules/
+
+# TypeScript build output
+Test_TypeScript/dist/
+
+# C# build output
+bin/
+obj/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE / OS clutter
+.vs/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Intentionally NOT ignoring output/ because this test repo uses it for diagnostics.
