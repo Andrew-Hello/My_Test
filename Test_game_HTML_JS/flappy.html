@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>疯狂小鸟 - HTML/JavaScript</title>
+<style>
+body{margin:0;background:#161a22;color:#fff;font-family:Segoe UI,Arial,sans-serif;display:grid;place-items:center;min-height:100vh}.wrap{text-align:center}.hint{margin:8px 0 14px;color:#cbd5e1}canvas{background:linear-gradient(#71c8f5,#d8f5ff);border:3px solid #fff;border-radius:12px;box-shadow:0 12px 40px #0007}
+</style>
+</head>
+<body>
+<div class="wrap"><h2>疯狂小鸟 · HTML + JavaScript</h2><div class="hint">空格 / 鼠标点击：飞一下　|　撞到管道后再按一次重新开始</div><canvas id="game" width="480" height="640"></canvas></div>
+<script>
+const c=document.getElementById('game'),x=c.getContext('2d');let bird,pipes,score,alive,lastSpawn;
+function reset(){bird={x:110,y:280,vy:0,r:15};pipes=[];score=0;alive=true;lastSpawn=0}
+function flap(){if(!alive){reset();return}bird.vy=-7.2}
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();flap()}});c.addEventListener('mousedown',flap);
+function spawn(){const gap=165,top=70+Math.random()*300;pipes.push({x:480,w:65,top,gap,passed:false})}
+function hit(p){return bird.x+bird.r>p.x&&bird.x-bird.r<p.x+p.w&&(bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap)}
+function loop(t){x.clearRect(0,0,c.width,c.height);if(alive){bird.vy+=.38;bird.y+=bird.vy;if(t-lastSpawn>1450){spawn();lastSpawn=t}for(const p of pipes){p.x-=2.7;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++}if(hit(p))alive=false}pipes=pipes.filter(p=>p.x>-90);if(bird.y+bird.r>c.height||bird.y-bird.r<0)alive=false}
+for(const p of pipes){x.fillStyle='#2eb82e';x.fillRect(p.x,0,p.w,p.top);x.fillRect(p.x,p.top+p.gap,p.w,c.height-(p.top+p.gap));x.fillStyle='#176b17';x.fillRect(p.x-5,p.top-18,p.w+10,18);x.fillRect(p.x-5,p.top+p.gap,p.w+10,18)}
+x.save();x.translate(bird.x,bird.y);x.rotate(Math.max(-.5,Math.min(.8,bird.vy*.06)));x.fillStyle='#ffd93d';x.beginPath();x.arc(0,0,bird.r,0,Math.PI*2);x.fill();x.fillStyle='#ff7b00';x.beginPath();x.moveTo(12,-2);x.lineTo(30,5);x.lineTo(12,9);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(5,-7,6,0,Math.PI*2);x.fill();x.fillStyle='#111';x.beginPath();x.arc(7,-7,2.5,0,Math.PI*2);x.fill();x.restore();x.fillStyle='#fff';x.font='bold 28px Segoe UI';x.fillText('Score: '+score,18,40);
+if(!alive){x.fillStyle='#000a';x.fillRect(55,235,370,150);x.fillStyle='#fff';x.textAlign='center';x.font='bold 32px Segoe UI';x.fillText('GAME OVER',240,285);x.font='18px Segoe UI';x.fillText('Score: '+score,240,325);x.fillText('空格或点击重新开始',240,355);x.textAlign='left'}requestAnimationFrame(loop)}
+reset();requestAnimationFrame(loop);
+</script></body></html>
