@@ -1,0 +1,10 @@
+{
+  "name": "test-js-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Node.js demo for learning npm and JavaScript outside the browser.",
+  "scripts": {
+    "start": "node index.js",
+    "diagnose": "node index.js --diagnose"
+  }
+}
