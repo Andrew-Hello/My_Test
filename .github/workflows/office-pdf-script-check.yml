@@ -1,0 +1,38 @@
+name: Office PDF Converter Script Check
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'Office_HQ_PDF_Converter/**'
+      - '.github/workflows/office-pdf-script-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  powershell-syntax-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse PowerShell script
+        shell: pwsh
+        run: |
+          $path = 'Office_HQ_PDF_Converter/Convert-OfficeToPDF.ps1'
+          $tokens = $null
+          $errors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          )
+
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
+          Write-Host 'PowerShell syntax check passed.'
