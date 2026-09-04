@@ -107,6 +107,91 @@ UseISO19005_1 = False
 
 `Print` 意图比 `Screen` 更适合高质量输出。
 
+## 自动诊断模式
+
+现在每次转换都会自动在：
+
+```text
+Office_HQ_PDF_Converter/diagnostics/
+```
+
+生成 JSON 诊断文件，不需要额外操作。
+
+单个文件诊断示例：
+
+```text
+20260904_112233_456_Report.json
+```
+
+批量转换还会生成：
+
+```text
+20260904_112240_123_batch_summary.json
+```
+
+诊断内容包括：
+
+- Windows / PowerShell / .NET 环境
+- Office 应用与版本
+- 实际调用的 PDF 导出接口
+- 源文件与 PDF 的大小和 SHA256
+- 转换耗时
+- Word：页数、InlineShape、浮动 Shape、表格数量
+- Excel：工作表、Shape、图片、图表、已保存打印区域统计
+- PowerPoint：幻灯片、Shape、图片、图表、幻灯片尺寸
+- PDF 页数启发式检测
+- 转换失败时的错误信息
+
+对 `.docx/.xlsx/.pptx` 还会直接读取 Office Open XML 压缩包内部的 `media` 目录，统计：
+
+- 嵌入媒体数量
+- 媒体未压缩总容量
+- PNG/JPG/EMF/SVG 等扩展名分布
+
+这对于判断“源文档明明包含大量高清图片，但生成 PDF 异常偏小”非常有帮助。
+
+### 隐私设计
+
+诊断 JSON 默认**不记录**：
+
+- Windows 用户名
+- 电脑名
+- 源文档完整本地路径
+- PDF 完整本地路径
+
+只记录文件名和技术环境，更适合提交到 GitHub 后供 GPT / Codex 分析。
+
+注意：文件名本身仍会记录，如果文件名敏感，请不要 Push 对应 JSON。
+
+## GPT 诊断闭环
+
+推荐工作流：
+
+```text
+Office 文件
+    ↓
+拖到 DragDrop_Office_to_PDF.cmd
+    ↓
+生成高质量 PDF
+    ↓
+自动生成 diagnostics/*.json
+    ↓
+GitHub Desktop
+Commit to dev
+    ↓
+Push origin
+    ↓
+ChatGPT 读取真实运行结果
+    ↓
+继续分析 / 修改脚本
+```
+
+转换完成后可以直接在 ChatGPT 中说：
+
+```text
+看看 Office PDF diagnostics
+```
+
 ## 为什么不用 PDF 打印机
 
 虚拟打印机通常会把 Office 页面经过打印管线重新生成，有时会带来：
@@ -161,9 +246,11 @@ AutomationSecurity = ForceDisable
 
 ```text
 Office_HQ_PDF_Converter/
-├─ DragDrop_Office_to_PDF.cmd   # 直接把文件拖到这里
-├─ Convert-OfficeToPDF.ps1      # 核心转换脚本
-└─ README.md                    # 本说明
+├─ DragDrop_Office_to_PDF.cmd
+├─ Convert-OfficeToPDF.ps1
+├─ diagnostics/
+│  └─ README.md
+└─ README.md
 ```
 
 ## 批量转换
@@ -185,13 +272,4 @@ Failed: N
 
 这个工具必须在安装了 Microsoft Office 的真实 Windows 电脑上测试，普通 GitHub Actions runner 并没有完整 Microsoft Office，因此不适合用云端 CI 验证最终 PDF 视觉效果。
 
-如果需要进一步做自动诊断，可以后续增加：
-
-- Office 版本检测
-- 输入 / 输出文件大小记录
-- PDF 页面数检查
-- 字体嵌入检查
-- 图片 DPI 分析
-- 转换日志 `diagnostics/*.json`
-
-这样本地运行后把诊断文件 Push 到 GitHub，GPT 就可以继续读取并分析。
+但现在本地测试后会自动生成 `diagnostics/*.json`，这些文件非常适合 Push 到 GitHub，让 GPT 基于真实 Office 环境继续诊断。
