@@ -26,13 +26,7 @@ def pil_from_bytes(data: bytes):
 
 
 def flatten_for_matching(im: Image.Image):
-    """Normalize transparency against white before perceptual comparison.
-
-    Office often flattens transparent PNGs onto a white page before putting them
-    into a PDF. Comparing raw RGBA -> RGB can therefore make the same image look
-    artificially different. Flattening both sides mirrors the rendered page more
-    closely without touching the source used for replacement.
-    """
+    """Normalize transparency against white before perceptual comparison."""
     if im.mode == 'RGBA':
         bg = Image.new('RGB', im.size, 'white')
         bg.paste(im, mask=im.getchannel('A'))
@@ -118,13 +112,15 @@ def collect_pdf_images(doc):
 
 def encode_png(im: Image.Image):
     buf = io.BytesIO()
-    # PNG is lossless; no JPEG recompression is introduced by this repair stage.
+    # Re-encoding the authoritative source pixels as PNG is lossless. This is
+    # deliberate even for a source JPEG: it prevents Word from introducing a
+    # second lossy JPEG generation into the PDF.
     im.save(buf, format='PNG', optimize=False)
     return buf.getvalue()
 
 
 def main():
-    ap = argparse.ArgumentParser(description='Replace downsampled PDF images with original DOCX media.')
+    ap = argparse.ArgumentParser(description='Replace Office PDF image streams with authoritative DOCX source media.')
     ap.add_argument('--source-docx', type=Path, required=True)
     ap.add_argument('--input-pdf', type=Path, required=True)
     ap.add_argument('--output-pdf', type=Path, required=True)
@@ -140,8 +136,6 @@ def main():
     pdf_images = [x for x in collect_pdf_images(doc) if x.get('image') is not None]
 
     # Build all candidate pairs, then greedy one-to-one assignment from best match to worst.
-    # In Office-produced PDFs this preserves the unique source<->PDF relationship even when
-    # cropping / transparency makes a few perceptual hashes imperfect.
     pairs = []
     for pi, p in enumerate(pdf_images):
         for si, s in enumerate(sources):
@@ -161,13 +155,20 @@ def main():
         used_src.add(si)
         area_ratio = (s['width'] * s['height']) / max(p['width'] * p['height'], 1)
         ar_delta = aspect_delta_log(p['image'], s['image'])
-        normal_replace = bool(score <= args.max_score and area_ratio > 1.05)
-        if area_ratio <= 1.05:
-            mode = 'same_resolution_no_gain'
-        elif normal_replace:
-            mode = 'confident_hash'
+
+        # A confident match is worth replacing even when dimensions are unchanged:
+        # Word may preserve pixel dimensions but re-JPEG the image at much lower quality.
+        # Replacing from the DOCX source avoids that second lossy generation.
+        confident_replace = bool(score <= args.max_score and area_ratio >= 0.95)
+        if confident_replace and area_ratio <= 1.05:
+            mode = 'same_resolution_source_preservation'
+        elif confident_replace:
+            mode = 'confident_hash_highres'
+        elif area_ratio < 0.95:
+            mode = 'source_smaller_than_pdf'
         else:
             mode = 'initially_rejected'
+
         matches.append({
             'score': round(score, 4),
             'pdf_index': pi,
@@ -178,17 +179,12 @@ def main():
             'source_px': [s['width'], s['height']],
             'pixel_area_ratio': round(area_ratio, 3),
             'aspect_delta_log': round(ar_delta, 5),
-            'replace': normal_replace,
+            'replace': confident_replace,
             'match_mode': mode,
         })
 
-    # Safe fallback for the exact pattern seen in Office exports:
-    # - the DOCX and PDF expose the same number of unique raster images;
-    # - the greedy assignment is one-to-one for every image;
-    # - only a very small number of high-resolution originals remain rejected;
-    # - those originals are much larger than the PDF image and have a plausible aspect ratio.
-    # This recovers images whose pixels were cropped, flattened or otherwise altered enough
-    # to confuse pHash, while avoiding broad fuzzy replacement on unrelated documents.
+    # Safe fallback for a few crop / transparency-altered images whose source is
+    # uniquely paired and substantially higher resolution.
     fallback_candidates = [
         m for m in matches
         if (not m['replace'])
