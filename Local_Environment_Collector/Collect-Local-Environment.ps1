@@ -23,9 +23,7 @@ function Sanitize-Text([object]$Value) {
     if ($UserProfile) { $s = $s.Replace($UserProfile, '%USERPROFILE%') }
     if ($UserName) { $s = $s.Replace($UserName, '%USERNAME%') }
     if ($MachineName) { $s = $s.Replace($MachineName, '%COMPUTERNAME%') }
-    # Remove URL userinfo such as https://user:token@example.com/.
     $s = [regex]::Replace($s, '(?i)(https?://)([^/@\s]+)@', '$1***@')
-    # Mask common secret-like key/value text without collecting arbitrary env vars.
     $s = [regex]::Replace($s, '(?i)(token|password|passwd|secret|api[_-]?key)\s*[=:]\s*[^\s;]+', '$1=***')
     return $s
 }
@@ -35,8 +33,6 @@ function Invoke-CapturedCommand([string]$Exe, [string[]]$Arguments) {
     if ($null -eq $cmd) {
         return [ordered]@{ found = $false; executable = $null; exit_code = $null; output = $null }
     }
-    $output = $null
-    $exitCode = $null
     try {
         $output = (& $cmd.Source @Arguments 2>&1 | Out-String).Trim()
         $exitCode = $LASTEXITCODE
@@ -49,6 +45,38 @@ function Invoke-CapturedCommand([string]$Exe, [string[]]$Arguments) {
         executable = Sanitize-Text $cmd.Source
         exit_code = $exitCode
         output = Sanitize-Text $output
+    }
+}
+
+function Invoke-PythonProbe([string]$PythonExe, [string[]]$Prefix, [string]$Code) {
+    $cmd = Get-Command $PythonExe -ErrorAction SilentlyContinue
+    if ($null -eq $cmd) {
+        return [ordered]@{ found = $false; executable = $null; exit_code = $null; output = $null }
+    }
+
+    $probePath = Join-Path $env:TEMP ("chatgpt_env_probe_{0}.py" -f [guid]::NewGuid().ToString('N'))
+    try {
+        [IO.File]::WriteAllText($probePath, $Code, (New-Object System.Text.UTF8Encoding($false)))
+        $args = @()
+        $args += $Prefix
+        $args += $probePath
+        $output = (& $cmd.Source @args 2>&1 | Out-String).Trim()
+        $exitCode = $LASTEXITCODE
+        return [ordered]@{
+            found = $true
+            executable = Sanitize-Text $cmd.Source
+            exit_code = $exitCode
+            output = Sanitize-Text $output
+        }
+    } catch {
+        return [ordered]@{
+            found = $true
+            executable = Sanitize-Text $cmd.Source
+            exit_code = -1
+            output = Sanitize-Text $_.Exception.Message
+        }
+    } finally {
+        if (Test-Path -LiteralPath $probePath) { try { Remove-Item -LiteralPath $probePath -Force } catch { } }
     }
 }
 
@@ -139,12 +167,27 @@ try {
 } catch { }
 
 $pythonLauncher = Invoke-CapturedCommand 'py.exe' @('-0p')
-$pythonDefault = Invoke-CapturedCommand 'py.exe' @('-3', '-c', 'import sys,platform,json; print(json.dumps({"version":sys.version,"executable":sys.executable,"architecture":platform.architecture()[0],"implementation":platform.python_implementation()}))')
-$pythonDirect = Invoke-CapturedCommand 'python.exe' @('-c', 'import sys,platform,json; print(json.dumps({"version":sys.version,"executable":sys.executable,"architecture":platform.architecture()[0],"implementation":platform.python_implementation()}))')
+$pythonVersion = Invoke-CapturedCommand 'py.exe' @('-3', '--version')
 $pipVersion = Invoke-CapturedCommand 'py.exe' @('-3', '-m', 'pip', '--version')
 $pipConfig = Invoke-CapturedCommand 'py.exe' @('-3', '-m', 'pip', 'config', 'list')
-$pipRelevant = Invoke-CapturedCommand 'py.exe' @('-3', '-m', 'pip', 'show', 'pymupdf', 'pillow', 'ImageHash')
-$pythonImports = Invoke-CapturedCommand 'py.exe' @('-3', '-c', 'import importlib.util,json; mods=["pymupdf","fitz","PIL","imagehash","numpy","scipy"]; print(json.dumps({m:(importlib.util.find_spec(m) is not None) for m in mods}))')
+$pipPyMuPDF = Invoke-CapturedCommand 'py.exe' @('-3', '-m', 'pip', 'show', 'pymupdf')
+$pipPillow = Invoke-CapturedCommand 'py.exe' @('-3', '-m', 'pip', 'show', 'pillow')
+
+$pythonProbeCode = @'
+import importlib.util
+import json
+import platform
+import sys
+mods = ['pymupdf', 'fitz', 'PIL', 'numpy', 'scipy']
+print(json.dumps({
+    'version': sys.version,
+    'executable': sys.executable,
+    'architecture': platform.architecture()[0],
+    'implementation': platform.python_implementation(),
+    'modules': {m: (importlib.util.find_spec(m) is not None) for m in mods},
+}, ensure_ascii=False))
+'@
+$pythonRuntimeProbe = Invoke-PythonProbe 'py.exe' @('-3') $pythonProbeCode
 
 $gitVersion = Invoke-CapturedCommand 'git.exe' @('--version')
 $gitBranch = Invoke-CapturedCommand 'git.exe' @('-C', $RepoRoot, 'branch', '--show-current')
@@ -155,8 +198,9 @@ $gitStatus = Invoke-CapturedCommand 'git.exe' @('-C', $RepoRoot, 'status', '--po
 $nodeVersion = Invoke-CapturedCommand 'node.exe' @('--version')
 $npmVersion = Invoke-CapturedCommand 'npm.cmd' @('--version')
 $npmRegistry = Invoke-CapturedCommand 'npm.cmd' @('config', 'get', 'registry')
-$dotnetVersion = Invoke-CapturedCommand 'dotnet.exe' @('--version')
+$dotnetInfo = Invoke-CapturedCommand 'dotnet.exe' @('--info')
 $dotnetSdks = Invoke-CapturedCommand 'dotnet.exe' @('--list-sdks')
+$dotnetRuntimes = Invoke-CapturedCommand 'dotnet.exe' @('--list-runtimes')
 $javaVersion = Invoke-CapturedCommand 'java.exe' @('-version')
 
 $office = [ordered]@{
@@ -176,7 +220,7 @@ if ($null -ne $os -and $os.TotalVisibleMemorySize) {
 }
 
 $report = [ordered]@{
-    schema_version = 1
+    schema_version = 2
     generated_at = (Get-Date).ToString('o')
     privacy = [ordered]@{
         username_recorded = $false
@@ -208,13 +252,13 @@ $report = [ordered]@{
         execution_policy = Sanitize-Text ((Get-ExecutionPolicy -List | Format-Table -AutoSize | Out-String).Trim())
     }
     python = [ordered]@{
-        py_launcher_versions = $pythonLauncher
-        py3_runtime = $pythonDefault
-        python_command_runtime = $pythonDirect
+        launcher_versions = $pythonLauncher
+        py3_version = $pythonVersion
+        runtime_probe = $pythonRuntimeProbe
         pip_version = $pipVersion
         pip_config = $pipConfig
-        relevant_packages = $pipRelevant
-        import_probe = $pythonImports
+        pymupdf = $pipPyMuPDF
+        pillow = $pipPillow
         environment_index_url = Sanitize-Text $env:PIP_INDEX_URL
         environment_extra_index_url = Sanitize-Text $env:PIP_EXTRA_INDEX_URL
     }
@@ -228,8 +272,9 @@ $report = [ordered]@{
         node = $nodeVersion
         npm = $npmVersion
         npm_registry = $npmRegistry
-        dotnet = $dotnetVersion
+        dotnet_info = $dotnetInfo
         dotnet_sdks = $dotnetSdks
+        dotnet_runtimes = $dotnetRuntimes
         java = $javaVersion
     }
     repository = [ordered]@{
@@ -246,6 +291,7 @@ $summary = @"
 Local Environment Snapshot
 ==========================
 Generated: $($report.generated_at)
+Schema: $($report.schema_version)
 
 Windows
 -------
@@ -257,10 +303,13 @@ PowerShell: $($report.powershell.version) ($($report.powershell.edition))
 Python
 ------
 py -0p:
-$($report.python.py_launcher_versions.output)
+$($report.python.launcher_versions.output)
 
-py -3 runtime:
-$($report.python.py3_runtime.output)
+py -3 --version:
+$($report.python.py3_version.output)
+
+Runtime/import probe:
+$($report.python.runtime_probe.output)
 
 pip:
 $($report.python.pip_version.output)
@@ -268,11 +317,11 @@ $($report.python.pip_version.output)
 pip config:
 $($report.python.pip_config.output)
 
-Import probe:
-$($report.python.import_probe.output)
+PyMuPDF:
+$($report.python.pymupdf.output)
 
-Relevant packages:
-$($report.python.relevant_packages.output)
+Pillow:
+$($report.python.pillow.output)
 
 Office
 ------
@@ -286,7 +335,11 @@ Developer tools
 Git: $($report.developer_tools.git.output)
 Node: $($report.developer_tools.node.output)
 npm: $($report.developer_tools.npm.output)
-.NET: $($report.developer_tools.dotnet.output)
+npm registry: $($report.developer_tools.npm_registry.output)
+.NET SDKs:
+$($report.developer_tools.dotnet_sdks.output)
+.NET runtimes:
+$($report.developer_tools.dotnet_runtimes.output)
 Java: $($report.developer_tools.java.output)
 
 Repository
@@ -304,7 +357,7 @@ $summary | Set-Content -LiteralPath $TextPath -Encoding UTF8
 
 Write-Host ''
 Write-Host 'Environment snapshot created:' -ForegroundColor Green
-Write-Host ("  {0}" -f $JsonPath) -ForegroundColor Green
-Write-Host ("  {0}" -f $TextPath) -ForegroundColor Green
+Write-Host ("  {0}" -f $JsonPath)
+Write-Host ("  {0}" -f $TextPath)
 Write-Host ''
-Write-Host 'Commit + Push the two files in Local_Environment_Collector\reports, then ask ChatGPT to read the environment report.' -ForegroundColor Cyan
+Write-Host 'Commit and Push the files in Local_Environment_Collector\reports, then ask ChatGPT to read the latest report.' -ForegroundColor Cyan
