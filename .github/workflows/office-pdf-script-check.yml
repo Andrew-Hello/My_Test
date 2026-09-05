@@ -23,7 +23,9 @@ jobs:
         run: |
           $paths = @(
             'Office_HQ_PDF_Converter/Convert-OfficeToPDF.ps1',
-            'Office_HQ_PDF_Converter/Convert-OfficeToPDF-v2.ps1'
+            'Office_HQ_PDF_Converter/Convert-OfficeToPDF-v2.ps1',
+            'Office_HQ_PDF_Converter/Convert-OfficeToPDF-v3.ps1',
+            'Office_HQ_PDF_Converter/Test-WordFixedFormat2-HQ.ps1'
           )
 
           $hasErrors = $false
@@ -47,3 +49,6 @@ jobs:
 
           if ($hasErrors) { exit 1 }
           Write-Host 'All PowerShell syntax checks passed.'
+
+      - name: Parse Python rebuilder
+        run: python -m py_compile Office_HQ_PDF_Converter/Rebuild-HighRes-PDF-Images.py
