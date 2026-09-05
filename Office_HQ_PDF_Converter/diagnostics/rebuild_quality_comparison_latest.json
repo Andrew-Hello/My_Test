@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-05T03:40:56.611607+00:00",
+  "generated_utc": "2026-09-05T03:43:20.576752+00:00",
   "source_docx": {
     "file_name": "demo_Report.docx",
     "size_bytes": 5514860,
@@ -1392,8 +1392,8 @@
     },
     {
       "file_name": "demo_Report_Rebuilt.pdf",
-      "size_bytes": 4442540,
-      "size_mb": 4.237,
+      "size_bytes": 5481542,
+      "size_mb": 5.228,
       "page_count": 19,
       "pdf_version": "PDF 1.7",
       "producer": "Microsoft® Word 2024",
@@ -1422,11 +1422,10 @@
         1
       ],
       "image_filters_by_placement": {
-        "FlateDecode": 39,
-        "DCTDecode": 1
+        "FlateDecode": 40
       },
-      "unique_image_compressed_stream_bytes": 3603061,
-      "unique_image_compressed_stream_mb": 3.436,
+      "unique_image_compressed_stream_bytes": 4642061,
+      "unique_image_compressed_stream_mb": 4.427,
       "unique_image_decoded_stream_bytes": 435236010,
       "effective_ppi": {
         "count": 40,
@@ -1441,6 +1440,22 @@
         "placements_ge_600": 38
       },
       "largest_images": [
+        {
+          "xref": 26,
+          "smask": 0,
+          "width_px": 2073,
+          "height_px": 2930,
+          "bpc": 8,
+          "colorspace": "ICCBased",
+          "name": "Image30",
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 1150764,
+          "decoded_stream_bytes": 18221670,
+          "placement_count": 1,
+          "effective_ppi_min": 219.8,
+          "effective_ppi_max": 219.8,
+          "effective_ppi_median": 219.8
+        },
         {
           "xref": 98,
           "smask": 2618,
@@ -1584,22 +1599,6 @@
           "effective_ppi_min": 680.8,
           "effective_ppi_max": 680.8,
           "effective_ppi_median": 680.8
-        },
-        {
-          "xref": 26,
-          "smask": 0,
-          "width_px": 2073,
-          "height_px": 2930,
-          "bpc": 8,
-          "colorspace": "DeviceRGB",
-          "name": "Image30",
-          "filter": "DCTDecode",
-          "compressed_stream_bytes": 111764,
-          "decoded_stream_bytes": 18221670,
-          "placement_count": 1,
-          "effective_ppi_min": 219.8,
-          "effective_ppi_max": 219.8,
-          "effective_ppi_median": 219.8
         },
         {
           "xref": 94,
@@ -1769,10 +1768,10 @@
           "width_px": 2073,
           "height_px": 2930,
           "bpc": 8,
-          "colorspace": "DeviceRGB",
+          "colorspace": "ICCBased",
           "name": "Image30",
-          "filter": "DCTDecode",
-          "compressed_stream_bytes": 111764,
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 1150764,
           "decoded_stream_bytes": 18221670,
           "placement_count": 1,
           "effective_ppi_min": 219.8,
@@ -2107,10 +2106,10 @@
           "width_px": 2073,
           "height_px": 2930,
           "bpc": 8,
-          "colorspace": "DeviceRGB",
+          "colorspace": "ICCBased",
           "name": "Image30",
-          "filter": "DCTDecode",
-          "compressed_stream_bytes": 111764,
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 1150764,
           "decoded_stream_bytes": 18221670,
           "placement_count": 1,
           "effective_ppi_min": 219.8,
