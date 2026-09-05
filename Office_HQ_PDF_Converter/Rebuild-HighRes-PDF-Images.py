@@ -27,7 +27,6 @@ def pil_from_bytes(data: bytes):
 
 
 def flatten_for_matching(im: Image.Image):
-    """Normalize transparency against white before perceptual comparison."""
     if im.mode == 'RGBA':
         bg = Image.new('RGB', im.size, 'white')
         bg.paste(im, mask=im.getchannel('A'))
@@ -58,11 +57,9 @@ def similarity_score(pdf_im, src_im):
 def load_ooxml_media(office_path: Path):
     if office_path.suffix.lower() not in OOXML_EXTS:
         raise ValueError(f'High-resolution media recovery supports OOXML only: {sorted(OOXML_EXTS)}')
-
     out = []
     with zipfile.ZipFile(office_path, 'r') as zf:
         for name in zf.namelist():
-            # DOCX -> word/media, XLSX -> xl/media, PPTX -> ppt/media.
             if '/media/' not in name:
                 continue
             ext = Path(name).suffix.lower()
@@ -116,11 +113,13 @@ def collect_pdf_images(doc):
 
 def encode_png(im: Image.Image):
     buf = io.BytesIO()
-    # The authoritative source pixels are re-encoded losslessly. This is
-    # deliberate even for JPEG sources: Office cannot introduce another lossy
-    # JPEG generation during this repair stage.
     im.save(buf, format='PNG', optimize=False)
     return buf.getvalue()
+
+
+def save_passthrough(doc, output_path: Path):
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(output_path, garbage=4, deflate=True, clean=True)
 
 
 def main():
@@ -128,17 +127,14 @@ def main():
         description='Replace downsampled Office-PDF image streams with authoritative OOXML source media.'
     )
     source_group = ap.add_mutually_exclusive_group(required=True)
-    source_group.add_argument('--source-office', type=Path,
-                              help='Source DOCX/XLSX/PPTX package.')
+    source_group.add_argument('--source-office', type=Path)
     source_group.add_argument('--source-docx', type=Path,
                               help='Deprecated alias retained for existing tests.')
     ap.add_argument('--input-pdf', type=Path, required=True)
     ap.add_argument('--output-pdf', type=Path, required=True)
     ap.add_argument('--report', type=Path, required=True)
-    ap.add_argument('--max-score', type=float, default=45.0,
-                    help='Maximum pHash/aspect matching score allowed for a normal replacement.')
-    ap.add_argument('--fallback-max-aspect-log', type=float, default=0.35,
-                    help='Maximum aspect-ratio log delta for the one-to-one high-resolution fallback.')
+    ap.add_argument('--max-score', type=float, default=45.0)
+    ap.add_argument('--fallback-max-aspect-log', type=float, default=0.35)
     args = ap.parse_args()
 
     source_path = args.source_office or args.source_docx
@@ -146,16 +142,35 @@ def main():
     doc = fitz.open(args.input_pdf)
     pdf_images = [x for x in collect_pdf_images(doc) if x.get('image') is not None]
 
-    if not sources:
-        raise RuntimeError('No supported raster media were found in the OOXML source package.')
-    if not pdf_images:
-        raise RuntimeError('No raster image objects were found in the PDF.')
+    # Text/vector-only documents need no raster repair. Preserve the Office PDF
+    # structure while still returning a successful HQ pipeline result.
+    if not sources or not pdf_images:
+        save_passthrough(doc, args.output_pdf)
+        doc.close()
+        report = {
+            'source_office': source_path.name,
+            'input_pdf': args.input_pdf.name,
+            'output_pdf': args.output_pdf.name,
+            'source_raster_media_count': len(sources),
+            'pdf_unique_raster_image_count': len(pdf_images),
+            'matched_count': 0,
+            'replaced_count': 0,
+            'passthrough_reason': 'no_supported_source_raster_media' if not sources else 'no_pdf_raster_images',
+            'matches': [],
+            'replacement_errors': [],
+            'output_size_bytes': args.output_pdf.stat().st_size,
+        }
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+        print(json.dumps({'source_images': len(sources), 'pdf_images': len(pdf_images), 'replaced': 0,
+                          'passthrough': True, 'output_mb': round(args.output_pdf.stat().st_size / 1024 / 1024, 3)},
+                         ensure_ascii=False, indent=2))
+        return
 
     pairs = []
     for pi, p in enumerate(pdf_images):
         for si, s in enumerate(sources):
-            score = similarity_score(p['image'], s['image'])
-            pairs.append((score, pi, si))
+            pairs.append((similarity_score(p['image'], s['image']), pi, si))
     pairs.sort(key=lambda x: x[0])
 
     used_pdf = set()
@@ -170,7 +185,6 @@ def main():
         used_src.add(si)
         area_ratio = (s['width'] * s['height']) / max(p['width'] * p['height'], 1)
         ar_delta = aspect_delta_log(p['image'], s['image'])
-
         confident_replace = bool(score <= args.max_score and area_ratio >= 0.95)
         if confident_replace and area_ratio <= 1.05:
             mode = 'same_resolution_source_preservation'
@@ -180,7 +194,6 @@ def main():
             mode = 'source_smaller_than_pdf'
         else:
             mode = 'initially_rejected'
-
         matches.append({
             'score': round(score, 4),
             'pdf_index': pi,
@@ -197,13 +210,11 @@ def main():
 
     fallback_candidates = [
         m for m in matches
-        if (not m['replace'])
-        and m['pixel_area_ratio'] >= 1.5
+        if (not m['replace']) and m['pixel_area_ratio'] >= 1.5
         and m['aspect_delta_log'] <= args.fallback_max_aspect_log
     ]
     fallback_enabled = (
-        len(sources) == len(pdf_images)
-        and len(matches) == len(pdf_images)
+        len(sources) == len(pdf_images) and len(matches) == len(pdf_images)
         and 0 < len(fallback_candidates) <= 3
     )
     if fallback_enabled:
@@ -219,9 +230,8 @@ def main():
         p = pdf_images[m['pdf_index']]
         s = sources[m['src_index']]
         try:
-            png = encode_png(s['image'])
             first_page = doc[p['pages'][0]]
-            first_page.replace_image(p['xref'], stream=png)
+            first_page.replace_image(p['xref'], stream=encode_png(s['image']))
             replaced += 1
         except Exception as exc:
             m['replace'] = False
