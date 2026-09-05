@@ -1,0 +1,97 @@
+{
+  "schema_version": 4,
+  "matching_engine": "builtin_phash_dct16+pptx_srcRect",
+  "source_office": "Test_docx (2).docx",
+  "input_pdf": "Test_docx (2)_55b2cbe346c3480e86ae26fa669acbbf_native.pdf",
+  "output_pdf": "Test_docx (2)_HQ.pdf",
+  "source_raster_media_count": 3,
+  "source_candidate_count": 3,
+  "pptx_crop_candidate_count": 0,
+  "pptx_semantic_crop_replaced_count": 0,
+  "pdf_unique_raster_image_count": 4,
+  "matched_count": 3,
+  "replaced_count": 1,
+  "normal_max_score": 45.0,
+  "fallback_enabled": false,
+  "fallback_candidate_count": 1,
+  "matches": [
+    {
+      "score": 4.0,
+      "pdf_index": 0,
+      "src_index": 0,
+      "pdf_xref": 5,
+      "pdf_px": [
+        2073,
+        2930
+      ],
+      "source_name": "word/media/image1.jpeg",
+      "source_px": [
+        2073,
+        2930
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "word/media/image1.jpeg",
+      "candidate_kind": "ooxml_media",
+      "full_source_px": [
+        2073,
+        2930
+      ]
+    },
+    {
+      "score": 192.0,
+      "pdf_index": 1,
+      "src_index": 1,
+      "pdf_xref": 22,
+      "pdf_px": [
+        266,
+        60
+      ],
+      "source_name": "word/media/image2.png",
+      "source_px": [
+        266,
+        60
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "word/media/image2.png",
+      "candidate_kind": "ooxml_media",
+      "full_source_px": [
+        266,
+        60
+      ]
+    },
+    {
+      "score": 200.1363,
+      "pdf_index": 2,
+      "src_index": 2,
+      "pdf_xref": 26,
+      "pdf_px": [
+        375,
+        85
+      ],
+      "source_name": "word/media/image4.png",
+      "source_px": [
+        1656,
+        376
+      ],
+      "pixel_area_ratio": 19.534,
+      "aspect_delta_log": 0.0017,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "word/media/image4.png",
+      "candidate_kind": "ooxml_media",
+      "full_source_px": [
+        1656,
+        376
+      ]
+    }
+  ],
+  "replacement_errors": [],
+  "media_errors": [],
+  "output_size_bytes": 1593120
+}

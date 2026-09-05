@@ -1,0 +1,226 @@
+﻿[2026-09-05 15:30:07.635 +08:00] [INFO] Office HQ PDF Converter production pipeline started.
+[2026-09-05 15:30:07.655 +08:00] [INFO] Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.
+[2026-09-05 15:30:07.657 +08:00] [INFO] Excel policy: A4, 1 page wide, unlimited pages tall, preserve sheet orientation.
+[2026-09-05 15:30:07.658 +08:00] [INFO] PowerPoint policy: preserve source slide canvas aspect ratio.
+[2026-09-05 15:30:07.659 +08:00] [INFO] PPTX image policy: parse slide relationships + DrawingML srcRect crop before HQ matching.
+[2026-09-05 15:30:07.659 +08:00] [INFO] Legacy policy: DOC/XLS/PPT are upgraded to temporary OOXML first; originals are never modified.
+[2026-09-05 15:30:07.660 +08:00] [INFO] Python stdout is isolated from process exit codes for Windows PowerShell 5.1 compatibility.
+[2026-09-05 15:30:07.676 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:07.679 +08:00] [INFO] Source: Test_xlsx (4).xlsx (0.028 MB)
+[2026-09-05 15:30:07.690 +08:00] [INFO] Starting Excel layout engine.
+[2026-09-05 15:30:08.264 +08:00] [INFO] Excel Version=16.0, Build=17932
+[2026-09-05 15:30:08.659 +08:00] [INFO] Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.
+[2026-09-05 15:30:08.837 +08:00] [DEBUG] Excel sheet 'Sheet1': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation=1
+[2026-09-05 15:30:08.842 +08:00] [INFO] Exporting structural PDF with Excel xlQualityStandard after page-setup normalization.
+[2026-09-05 15:30:09.458 +08:00] [INFO] Structural PDF created in temp/: 0.106 MB
+[2026-09-05 15:30:09.472 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:09.502 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:09.753 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:09.754 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:10.471 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:10.473 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:10.695 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:10.696 +08:00] [DEBUG] Python:   "source_images": 1,
+[2026-09-05 15:30:10.696 +08:00] [DEBUG] Python:   "source_candidates": 1,
+[2026-09-05 15:30:10.699 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:10.699 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:10.700 +08:00] [DEBUG] Python:   "pdf_images": 1,
+[2026-09-05 15:30:10.701 +08:00] [DEBUG] Python:   "replaced": 0,
+[2026-09-05 15:30:10.701 +08:00] [DEBUG] Python:   "fallback_enabled": false,
+[2026-09-05 15:30:10.702 +08:00] [DEBUG] Python:   "fallback_candidates": 0,
+[2026-09-05 15:30:10.703 +08:00] [DEBUG] Python:   "output_mb": 0.114
+[2026-09-05 15:30:10.704 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:10.705 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:10.710 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153010_473_Test_xlsx__4__image_rebuild.json
+[2026-09-05 15:30:10.715 +08:00] [OK] HQ_REBUILT: Test_xlsx (4)_HQ.pdf (0.114 MB) in 3.04 s
+[2026-09-05 15:30:10.756 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:10.757 +08:00] [INFO] Source: Test_ pptx(1).pptx (10.924 MB)
+[2026-09-05 15:30:10.762 +08:00] [INFO] Starting PowerPoint layout engine.
+[2026-09-05 15:30:11.130 +08:00] [INFO] PowerPoint Version=16.0, Build=17932
+[2026-09-05 15:30:11.263 +08:00] [INFO] PowerPoint slide canvas: 960.00 x 540.00 pt; aspect ratio=1.777778. PDF will preserve this slide ratio.
+[2026-09-05 15:30:11.265 +08:00] [INFO] Exporting structural PDF with PowerPoint SaveAs PDF (stable path; slide canvas ratio preserved).
+[2026-09-05 15:30:17.665 +08:00] [INFO] Structural PDF created in temp/: 3.692 MB
+[2026-09-05 15:30:17.668 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:17.690 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:17.951 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:17.952 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:18.652 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:18.653 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:22.285 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:22.286 +08:00] [DEBUG] Python:   "source_images": 65,
+[2026-09-05 15:30:22.287 +08:00] [DEBUG] Python:   "source_candidates": 71,
+[2026-09-05 15:30:22.287 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 18,
+[2026-09-05 15:30:22.288 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 16,
+[2026-09-05 15:30:22.289 +08:00] [DEBUG] Python:   "pdf_images": 115,
+[2026-09-05 15:30:22.289 +08:00] [DEBUG] Python:   "replaced": 56,
+[2026-09-05 15:30:22.290 +08:00] [DEBUG] Python:   "fallback_enabled": false,
+[2026-09-05 15:30:22.290 +08:00] [DEBUG] Python:   "fallback_candidates": 7,
+[2026-09-05 15:30:22.291 +08:00] [DEBUG] Python:   "output_mb": 9.235
+[2026-09-05 15:30:22.292 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:22.292 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:22.293 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153018_653_Test__pptx_1__image_rebuild.json
+[2026-09-05 15:30:22.294 +08:00] [OK] HQ_REBUILT: Test_ pptx(1)_HQ.pdf (9.235 MB) in 11.54 s
+[2026-09-05 15:30:22.297 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:22.298 +08:00] [INFO] Source: Test_docx (1).docx (0.102 MB)
+[2026-09-05 15:30:22.303 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 15:30:24.194 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 15:30:24.683 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat.
+[2026-09-05 15:30:28.615 +08:00] [INFO] Structural PDF created in temp/: 0.327 MB
+[2026-09-05 15:30:28.618 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:28.638 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:28.883 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:28.884 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:29.556 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:29.557 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:29.876 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:29.877 +08:00] [DEBUG] Python:   "source_images": 1,
+[2026-09-05 15:30:29.878 +08:00] [DEBUG] Python:   "source_candidates": 1,
+[2026-09-05 15:30:29.879 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:29.880 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:29.880 +08:00] [DEBUG] Python:   "pdf_images": 1,
+[2026-09-05 15:30:29.881 +08:00] [DEBUG] Python:   "replaced": 1,
+[2026-09-05 15:30:29.881 +08:00] [DEBUG] Python:   "fallback_enabled": true,
+[2026-09-05 15:30:29.882 +08:00] [DEBUG] Python:   "fallback_candidates": 1,
+[2026-09-05 15:30:29.883 +08:00] [DEBUG] Python:   "output_mb": 0.457
+[2026-09-05 15:30:29.883 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:29.884 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:29.885 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153029_557_Test_docx__1__image_rebuild.json
+[2026-09-05 15:30:29.886 +08:00] [OK] HQ_REBUILT: Test_docx (1)_HQ.pdf (0.457 MB) in 7.59 s
+[2026-09-05 15:30:29.888 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:29.889 +08:00] [INFO] Source: Test_docx (2).docx (0.438 MB)
+[2026-09-05 15:30:29.890 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 15:30:31.679 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 15:30:31.923 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat.
+[2026-09-05 15:30:35.926 +08:00] [INFO] Structural PDF created in temp/: 0.471 MB
+[2026-09-05 15:30:35.929 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:35.950 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:36.200 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:36.201 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:36.879 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:36.880 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:37.638 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:37.639 +08:00] [DEBUG] Python:   "source_images": 3,
+[2026-09-05 15:30:37.641 +08:00] [DEBUG] Python:   "source_candidates": 3,
+[2026-09-05 15:30:37.642 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:37.643 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:37.643 +08:00] [DEBUG] Python:   "pdf_images": 4,
+[2026-09-05 15:30:37.644 +08:00] [DEBUG] Python:   "replaced": 1,
+[2026-09-05 15:30:37.644 +08:00] [DEBUG] Python:   "fallback_enabled": false,
+[2026-09-05 15:30:37.645 +08:00] [DEBUG] Python:   "fallback_candidates": 1,
+[2026-09-05 15:30:37.646 +08:00] [DEBUG] Python:   "output_mb": 1.519
+[2026-09-05 15:30:37.646 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:37.647 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:37.648 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153036_880_Test_docx__2__image_rebuild.json
+[2026-09-05 15:30:37.649 +08:00] [OK] HQ_REBUILT: Test_docx (2)_HQ.pdf (1.519 MB) in 7.76 s
+[2026-09-05 15:30:37.651 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:37.652 +08:00] [INFO] Source: Test_docx (3).docx (0.145 MB)
+[2026-09-05 15:30:37.653 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 15:30:39.428 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 15:30:39.632 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat.
+[2026-09-05 15:30:43.257 +08:00] [INFO] Structural PDF created in temp/: 0.311 MB
+[2026-09-05 15:30:43.259 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:43.282 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:43.542 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:43.543 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:44.224 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:44.225 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:44.504 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:44.505 +08:00] [DEBUG] Python:   "source_images": 1,
+[2026-09-05 15:30:44.506 +08:00] [DEBUG] Python:   "source_candidates": 1,
+[2026-09-05 15:30:44.507 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:44.507 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:44.508 +08:00] [DEBUG] Python:   "pdf_images": 1,
+[2026-09-05 15:30:44.509 +08:00] [DEBUG] Python:   "replaced": 1,
+[2026-09-05 15:30:44.509 +08:00] [DEBUG] Python:   "fallback_enabled": true,
+[2026-09-05 15:30:44.510 +08:00] [DEBUG] Python:   "fallback_candidates": 1,
+[2026-09-05 15:30:44.511 +08:00] [DEBUG] Python:   "output_mb": 0.446
+[2026-09-05 15:30:44.512 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:44.512 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:44.513 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153044_225_Test_docx__3__image_rebuild.json
+[2026-09-05 15:30:44.514 +08:00] [OK] HQ_REBUILT: Test_docx (3)_HQ.pdf (0.446 MB) in 6.86 s
+[2026-09-05 15:30:44.517 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:44.518 +08:00] [INFO] Source: Test_xlsx (1).xlsx (0.031 MB)
+[2026-09-05 15:30:44.518 +08:00] [INFO] Starting Excel layout engine.
+[2026-09-05 15:30:44.954 +08:00] [INFO] Excel Version=16.0, Build=17932
+[2026-09-05 15:30:45.578 +08:00] [INFO] Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.
+[2026-09-05 15:30:45.760 +08:00] [DEBUG] Excel sheet 'Sheet1': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation=1
+[2026-09-05 15:30:45.762 +08:00] [INFO] Exporting structural PDF with Excel xlQualityStandard after page-setup normalization.
+[2026-09-05 15:30:48.885 +08:00] [INFO] Structural PDF created in temp/: 0.123 MB
+[2026-09-05 15:30:48.887 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:48.907 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:49.155 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:49.156 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:49.850 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:49.851 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:50.092 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:50.093 +08:00] [DEBUG] Python:   "source_images": 1,
+[2026-09-05 15:30:50.096 +08:00] [DEBUG] Python:   "source_candidates": 1,
+[2026-09-05 15:30:50.096 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:50.097 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:50.098 +08:00] [DEBUG] Python:   "pdf_images": 1,
+[2026-09-05 15:30:50.098 +08:00] [DEBUG] Python:   "replaced": 0,
+[2026-09-05 15:30:50.099 +08:00] [DEBUG] Python:   "fallback_enabled": false,
+[2026-09-05 15:30:50.100 +08:00] [DEBUG] Python:   "fallback_candidates": 0,
+[2026-09-05 15:30:50.100 +08:00] [DEBUG] Python:   "output_mb": 0.135
+[2026-09-05 15:30:50.101 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:50.102 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:50.103 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153049_851_Test_xlsx__1__image_rebuild.json
+[2026-09-05 15:30:50.104 +08:00] [OK] HQ_REBUILT: Test_xlsx (1)_HQ.pdf (0.135 MB) in 5.59 s
+[2026-09-05 15:30:50.106 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:50.107 +08:00] [INFO] Source: Test_xlsx (2).xlsx (0.029 MB)
+[2026-09-05 15:30:50.108 +08:00] [INFO] Starting Excel layout engine.
+[2026-09-05 15:30:50.521 +08:00] [INFO] Excel Version=16.0, Build=17932
+[2026-09-05 15:30:50.892 +08:00] [INFO] Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.
+[2026-09-05 15:30:51.029 +08:00] [DEBUG] Excel sheet 'Sheet1': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation=1
+[2026-09-05 15:30:51.032 +08:00] [INFO] Exporting structural PDF with Excel xlQualityStandard after page-setup normalization.
+[2026-09-05 15:30:51.574 +08:00] [INFO] Structural PDF created in temp/: 0.087 MB
+[2026-09-05 15:30:51.576 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:51.599 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:51.866 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:51.868 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:52.560 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:52.561 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:52.780 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:52.781 +08:00] [DEBUG] Python:   "source_images": 1,
+[2026-09-05 15:30:52.782 +08:00] [DEBUG] Python:   "source_candidates": 1,
+[2026-09-05 15:30:52.782 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:52.783 +08:00] [DEBUG] Python:   "pptx_semantic_crop_replaced": 0,
+[2026-09-05 15:30:52.784 +08:00] [DEBUG] Python:   "pdf_images": 1,
+[2026-09-05 15:30:52.784 +08:00] [DEBUG] Python:   "replaced": 0,
+[2026-09-05 15:30:52.785 +08:00] [DEBUG] Python:   "fallback_enabled": false,
+[2026-09-05 15:30:52.786 +08:00] [DEBUG] Python:   "fallback_candidates": 0,
+[2026-09-05 15:30:52.786 +08:00] [DEBUG] Python:   "output_mb": 0.095
+[2026-09-05 15:30:52.787 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:52.787 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:52.788 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153052_561_Test_xlsx__2__image_rebuild.json
+[2026-09-05 15:30:52.789 +08:00] [OK] HQ_REBUILT: Test_xlsx (2)_HQ.pdf (0.095 MB) in 2.68 s
+[2026-09-05 15:30:52.792 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:52.792 +08:00] [INFO] Source: Test_xlsx (3).xlsx (0.012 MB)
+[2026-09-05 15:30:52.793 +08:00] [INFO] Starting Excel layout engine.
+[2026-09-05 15:30:53.197 +08:00] [INFO] Excel Version=16.0, Build=17932
+[2026-09-05 15:30:53.392 +08:00] [INFO] Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.
+[2026-09-05 15:30:53.494 +08:00] [DEBUG] Excel sheet '原版': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation=1
+[2026-09-05 15:30:53.573 +08:00] [DEBUG] Excel sheet '新版': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation=1
+[2026-09-05 15:30:53.575 +08:00] [INFO] Exporting structural PDF with Excel xlQualityStandard after page-setup normalization.
+[2026-09-05 15:30:54.102 +08:00] [INFO] Structural PDF created in temp/: 0.053 MB
+[2026-09-05 15:30:54.105 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 15:30:54.128 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 15:30:54.404 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 15:30:54.405 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 15:30:55.057 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 15:30:55.058 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 15:30:55.242 +08:00] [DEBUG] Python: {
+[2026-09-05 15:30:55.243 +08:00] [DEBUG] Python:   "source_images": 0,
+[2026-09-05 15:30:55.244 +08:00] [DEBUG] Python:   "source_candidates": 0,
+[2026-09-05 15:30:55.246 +08:00] [DEBUG] Python:   "pptx_crop_candidates": 0,
+[2026-09-05 15:30:55.247 +08:00] [DEBUG] Python:   "pdf_images": 0,
+[2026-09-05 15:30:55.248 +08:00] [DEBUG] Python:   "replaced": 0,
+[2026-09-05 15:30:55.248 +08:00] [DEBUG] Python:   "passthrough": true,
+[2026-09-05 15:30:55.249 +08:00] [DEBUG] Python:   "output_mb": 0.063
+[2026-09-05 15:30:55.249 +08:00] [DEBUG] Python: }
+[2026-09-05 15:30:55.250 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 15:30:55.251 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_153055_058_Test_xlsx__3__image_rebuild.json
+[2026-09-05 15:30:55.252 +08:00] [OK] HQ_REBUILT: Test_xlsx (3)_HQ.pdf (0.063 MB) in 2.46 s
+[2026-09-05 15:30:55.254 +08:00] [INFO] ========================================================================
+[2026-09-05 15:30:55.255 +08:00] [INFO] Finished. Success=8; FailedOrDegraded=0
+[2026-09-05 15:30:55.256 +08:00] [INFO] Log: 20260905_153007_633_Office_HQ_PDF.log

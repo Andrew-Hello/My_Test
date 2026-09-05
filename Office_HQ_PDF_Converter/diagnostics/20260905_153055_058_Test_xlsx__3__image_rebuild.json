@@ -1,0 +1,18 @@
+{
+  "schema_version": 4,
+  "matching_engine": "builtin_phash_dct16+pptx_srcRect",
+  "source_office": "Test_xlsx (3).xlsx",
+  "input_pdf": "Test_xlsx (3)_4f722d1648c44f519ff291d5dd87d8da_native.pdf",
+  "output_pdf": "Test_xlsx (3)_HQ.pdf",
+  "source_raster_media_count": 0,
+  "source_candidate_count": 0,
+  "pptx_crop_candidate_count": 0,
+  "pdf_unique_raster_image_count": 0,
+  "matched_count": 0,
+  "replaced_count": 0,
+  "passthrough_reason": "no_supported_source_raster_media",
+  "matches": [],
+  "replacement_errors": [],
+  "media_errors": [],
+  "output_size_bytes": 66342
+}

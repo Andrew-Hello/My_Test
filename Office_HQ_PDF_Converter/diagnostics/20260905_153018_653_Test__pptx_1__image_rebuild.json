@@ -1,0 +1,2848 @@
+{
+  "schema_version": 4,
+  "matching_engine": "builtin_phash_dct16+pptx_srcRect",
+  "source_office": "Test_ pptx(1).pptx",
+  "input_pdf": "Test_ pptx(1)_487229454dea42de95292f3acee6e6d5_native.pdf",
+  "output_pdf": "Test_ pptx(1)_HQ.pdf",
+  "source_raster_media_count": 65,
+  "source_candidate_count": 71,
+  "pptx_crop_candidate_count": 18,
+  "pptx_semantic_crop_replaced_count": 16,
+  "pdf_unique_raster_image_count": 115,
+  "matched_count": 71,
+  "replaced_count": 56,
+  "normal_max_score": 45.0,
+  "fallback_enabled": false,
+  "fallback_candidate_count": 7,
+  "matches": [
+    {
+      "score": 0.0,
+      "pdf_index": 0,
+      "src_index": 70,
+      "pdf_xref": 5,
+      "pdf_px": [
+        2000,
+        1125
+      ],
+      "source_name": "ppt/media/image1.png",
+      "source_px": [
+        2000,
+        1125
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image1.png",
+      "candidate_kind": "ooxml_media_unreferenced",
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        2000,
+        1125
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 1,
+      "src_index": 0,
+      "pdf_xref": 13,
+      "pdf_px": [
+        351,
+        210
+      ],
+      "source_name": "ppt/media/image2.png#slide=slide1;picture=图片 30",
+      "source_px": [
+        351,
+        210
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image2.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide1.xml",
+      "pptx_picture_name": "图片 30",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        351,
+        210
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        351,
+        210
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 3,
+      "src_index": 2,
+      "pdf_xref": 15,
+      "pdf_px": [
+        351,
+        211
+      ],
+      "source_name": "ppt/media/image4.png#slide=slide1;picture=图片 32",
+      "source_px": [
+        351,
+        211
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image4.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide1.xml",
+      "pptx_picture_name": "图片 32",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        351,
+        211
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        351,
+        211
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 4,
+      "src_index": 3,
+      "pdf_xref": 21,
+      "pdf_px": [
+        742,
+        441
+      ],
+      "source_name": "ppt/media/image6.png#slide=slide1;picture=图片 2",
+      "source_px": [
+        742,
+        441
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image6.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide1.xml",
+      "pptx_picture_name": "图片 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        742,
+        441
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        742,
+        441
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 5,
+      "src_index": 36,
+      "pdf_xref": 26,
+      "pdf_px": [
+        445,
+        431
+      ],
+      "source_name": "ppt/media/image7.png#slide=slide2;picture=图片 6",
+      "source_px": [
+        445,
+        431
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image7.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide2.xml",
+      "pptx_picture_name": "图片 6",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        445,
+        431
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        445,
+        431
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 9,
+      "src_index": 54,
+      "pdf_xref": 44,
+      "pdf_px": [
+        811,
+        569
+      ],
+      "source_name": "ppt/media/image12.png#slide=slide3;picture=图片 12",
+      "source_px": [
+        811,
+        569
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image12.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide3.xml",
+      "pptx_picture_name": "图片 12",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        811,
+        569
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        811,
+        569
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 10,
+      "src_index": 55,
+      "pdf_xref": 60,
+      "pdf_px": [
+        1250,
+        325
+      ],
+      "source_name": "ppt/media/image16.png#slide=slide4;picture=图片 8",
+      "source_px": [
+        1250,
+        325
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image16.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide4.xml",
+      "pptx_picture_name": "图片 8",
+      "pptx_crop_100k": {
+        "l": 8310,
+        "t": 74147,
+        "r": 9858,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        127,
+        932,
+        1377,
+        1257
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        1528,
+        1257
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 12,
+      "src_index": 57,
+      "pdf_xref": 64,
+      "pdf_px": [
+        826,
+        323
+      ],
+      "source_name": "ppt/media/image18.png#slide=slide5;picture=图片 2",
+      "source_px": [
+        826,
+        323
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image18.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide5.xml",
+      "pptx_picture_name": "图片 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        826,
+        323
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        826,
+        323
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 13,
+      "src_index": 58,
+      "pdf_xref": 65,
+      "pdf_px": [
+        652,
+        519
+      ],
+      "source_name": "ppt/media/image19.png#slide=slide5;picture=图片 4",
+      "source_px": [
+        652,
+        519
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image19.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide5.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        652,
+        519
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        652,
+        519
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 14,
+      "src_index": 59,
+      "pdf_xref": 66,
+      "pdf_px": [
+        654,
+        610
+      ],
+      "source_name": "ppt/media/image20.png#slide=slide5;picture=图片 6",
+      "source_px": [
+        654,
+        610
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image20.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide5.xml",
+      "pptx_picture_name": "图片 6",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        654,
+        610
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        654,
+        610
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 15,
+      "src_index": 60,
+      "pdf_xref": 67,
+      "pdf_px": [
+        194,
+        54
+      ],
+      "source_name": "ppt/media/image18.png#slide=slide5;picture=图片 16",
+      "source_px": [
+        194,
+        54
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image18.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide5.xml",
+      "pptx_picture_name": "图片 16",
+      "pptx_crop_100k": {
+        "l": 76555,
+        "t": 0,
+        "r": 0,
+        "b": 83242
+      },
+      "pptx_crop_box_px": [
+        632,
+        0,
+        826,
+        54
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        826,
+        323
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 17,
+      "src_index": 61,
+      "pdf_xref": 84,
+      "pdf_px": [
+        1016,
+        1027
+      ],
+      "source_name": "ppt/media/image21.png#slide=slide6;picture=图片 2",
+      "source_px": [
+        1016,
+        1027
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image21.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide6.xml",
+      "pptx_picture_name": "图片 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 5900
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1016,
+        1027
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        1016,
+        1091
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 22,
+      "src_index": 63,
+      "pdf_xref": 96,
+      "pdf_px": [
+        959,
+        836
+      ],
+      "source_name": "ppt/media/image23.png#slide=slide7;picture=图片 4",
+      "source_px": [
+        959,
+        836
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image23.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide7.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        959,
+        836
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        959,
+        836
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 26,
+      "src_index": 65,
+      "pdf_xref": 104,
+      "pdf_px": [
+        870,
+        1190
+      ],
+      "source_name": "ppt/media/image25.png#slide=slide8;picture=图片 6",
+      "source_px": [
+        870,
+        1190
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image25.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide8.xml",
+      "pptx_picture_name": "图片 6",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        870,
+        1190
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        870,
+        1190
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 28,
+      "src_index": 67,
+      "pdf_xref": 108,
+      "pdf_px": [
+        464,
+        288
+      ],
+      "source_name": "ppt/media/image27.png#slide=slide9;picture=图片 4",
+      "source_px": [
+        464,
+        288
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image27.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide9.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 68060,
+        "t": 14420,
+        "r": 1132,
+        "b": 1127
+      },
+      "pptx_crop_box_px": [
+        1025,
+        49,
+        1489,
+        337
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        1506,
+        341
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 29,
+      "src_index": 68,
+      "pdf_xref": 109,
+      "pdf_px": [
+        391,
+        377
+      ],
+      "source_name": "ppt/media/image28.png#slide=slide9;picture=图片 6",
+      "source_px": [
+        391,
+        377
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image28.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide9.xml",
+      "pptx_picture_name": "图片 6",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        391,
+        377
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        391,
+        377
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 30,
+      "src_index": 69,
+      "pdf_xref": 110,
+      "pdf_px": [
+        915,
+        167
+      ],
+      "source_name": "ppt/media/image29.png#slide=slide9;picture=图片 3",
+      "source_px": [
+        915,
+        167
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image29.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide9.xml",
+      "pptx_picture_name": "图片 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        915,
+        167
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        915,
+        167
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 54,
+      "src_index": 10,
+      "pdf_xref": 216,
+      "pdf_px": [
+        1162,
+        909
+      ],
+      "source_name": "ppt/media/image36.jpg#slide=slide15;picture=图片 4",
+      "source_px": [
+        1162,
+        909
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image36.jpg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide15.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1162,
+        909
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1162,
+        909
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 55,
+      "src_index": 11,
+      "pdf_xref": 219,
+      "pdf_px": [
+        748,
+        514
+      ],
+      "source_name": "ppt/media/image37.jpeg#slide=slide16;picture=Picture 4",
+      "source_px": [
+        748,
+        514
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image37.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "Picture 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        748,
+        514
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        748,
+        514
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 62,
+      "src_index": 12,
+      "pdf_xref": 266,
+      "pdf_px": [
+        569,
+        202
+      ],
+      "source_name": "ppt/media/image38.jpeg#slide=slide16;picture=Picture 5",
+      "source_px": [
+        569,
+        202
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image38.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "Picture 5",
+      "pptx_crop_100k": {
+        "l": 3561,
+        "t": 11688,
+        "r": 0,
+        "b": 25974
+      },
+      "pptx_crop_box_px": [
+        21,
+        38,
+        590,
+        240
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        590,
+        324
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 63,
+      "src_index": 13,
+      "pdf_xref": 267,
+      "pdf_px": [
+        827,
+        321
+      ],
+      "source_name": "ppt/media/image39.gif#slide=slide16;picture=Picture 2",
+      "source_px": [
+        827,
+        321
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image39.gif",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "Picture 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        827,
+        321
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        827,
+        321
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 90,
+      "src_index": 34,
+      "pdf_xref": 318,
+      "pdf_px": [
+        508,
+        421
+      ],
+      "source_name": "ppt/media/image60.png#slide=slide19;picture=图片 1",
+      "source_px": [
+        508,
+        421
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image60.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide19.xml",
+      "pptx_picture_name": "图片 1",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        508,
+        421
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        508,
+        421
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 91,
+      "src_index": 35,
+      "pdf_xref": 319,
+      "pdf_px": [
+        403,
+        230
+      ],
+      "source_name": "ppt/media/image61.png#slide=slide19;picture=图片 3",
+      "source_px": [
+        403,
+        230
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image61.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide19.xml",
+      "pptx_picture_name": "图片 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        403,
+        230
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        403,
+        230
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 93,
+      "src_index": 38,
+      "pdf_xref": 368,
+      "pdf_px": [
+        714,
+        353
+      ],
+      "source_name": "ppt/media/image63.png#slide=slide21;picture=图片 8",
+      "source_px": [
+        714,
+        353
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image63.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide21.xml",
+      "pptx_picture_name": "图片 8",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 50192
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        714,
+        353
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        714,
+        708
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 94,
+      "src_index": 40,
+      "pdf_xref": 369,
+      "pdf_px": [
+        574,
+        580
+      ],
+      "source_name": "ppt/media/image64.png#slide=slide21;picture=图片 3",
+      "source_px": [
+        574,
+        580
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image64.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide21.xml",
+      "pptx_picture_name": "图片 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        574,
+        580
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        574,
+        580
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 101,
+      "src_index": 42,
+      "pdf_xref": 392,
+      "pdf_px": [
+        500,
+        408
+      ],
+      "source_name": "ppt/media/image66.jpg#slide=slide23;picture=图片 34",
+      "source_px": [
+        500,
+        408
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image66.jpg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 34",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 50836,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        421,
+        500,
+        829
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        500,
+        829
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 103,
+      "src_index": 43,
+      "pdf_xref": 395,
+      "pdf_px": [
+        460,
+        408
+      ],
+      "source_name": "ppt/media/image67.jpg#slide=slide23;picture=图片 35",
+      "source_px": [
+        460,
+        408
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image67.jpg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 35",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 51340,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        430,
+        460,
+        838
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        460,
+        838
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 107,
+      "src_index": 46,
+      "pdf_xref": 401,
+      "pdf_px": [
+        460,
+        383
+      ],
+      "source_name": "ppt/media/image67.jpg#slide=slide23;picture=图片 38",
+      "source_px": [
+        460,
+        383
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image67.jpg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 38",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 54310
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        460,
+        383
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        460,
+        838
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 111,
+      "src_index": 50,
+      "pdf_xref": 414,
+      "pdf_px": [
+        127,
+        106
+      ],
+      "source_name": "ppt/media/image71.png#slide=slide24;picture=图片 9",
+      "source_px": [
+        127,
+        106
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image71.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide24.xml",
+      "pptx_picture_name": "图片 9",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        127,
+        106
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        127,
+        106
+      ]
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 112,
+      "src_index": 51,
+      "pdf_xref": 415,
+      "pdf_px": [
+        291,
+        244
+      ],
+      "source_name": "ppt/media/image72.png#slide=slide24;picture=图片 10",
+      "source_px": [
+        291,
+        244
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image72.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide24.xml",
+      "pptx_picture_name": "图片 10",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 5114,
+        "r": 2126,
+        "b": 1945
+      },
+      "pptx_crop_box_px": [
+        0,
+        13,
+        291,
+        257
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        297,
+        262
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 2,
+      "src_index": 1,
+      "pdf_xref": 14,
+      "pdf_px": [
+        394,
+        211
+      ],
+      "source_name": "ppt/media/image3.png#slide=slide1;picture=图片 31",
+      "source_px": [
+        394,
+        211
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image3.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide1.xml",
+      "pptx_picture_name": "图片 31",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        394,
+        211
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        394,
+        211
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 11,
+      "src_index": 56,
+      "pdf_xref": 61,
+      "pdf_px": [
+        1483,
+        268
+      ],
+      "source_name": "ppt/media/image17.jpeg#slide=slide4;picture=图片 10",
+      "source_px": [
+        1483,
+        268
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image17.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide4.xml",
+      "pptx_picture_name": "图片 10",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1483,
+        268
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1483,
+        268
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 19,
+      "src_index": 62,
+      "pdf_xref": 87,
+      "pdf_px": [
+        898,
+        984
+      ],
+      "source_name": "ppt/media/image22.png#slide=slide6;picture=图片 4",
+      "source_px": [
+        898,
+        984
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image22.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide6.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 478,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        4,
+        0,
+        902,
+        984
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        902,
+        984
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 24,
+      "src_index": 64,
+      "pdf_xref": 101,
+      "pdf_px": [
+        898,
+        1183
+      ],
+      "source_name": "ppt/media/image24.png#slide=slide8;picture=图片 4",
+      "source_px": [
+        898,
+        1183
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image24.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide8.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        898,
+        1183
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        898,
+        1183
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 27,
+      "src_index": 66,
+      "pdf_xref": 107,
+      "pdf_px": [
+        1709,
+        813
+      ],
+      "source_name": "ppt/media/image26.png#slide=slide9;picture=图片 2",
+      "source_px": [
+        1709,
+        813
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image26.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide9.xml",
+      "pptx_picture_name": "图片 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1709,
+        813
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1709,
+        813
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 50,
+      "src_index": 8,
+      "pdf_xref": 205,
+      "pdf_px": [
+        796,
+        666
+      ],
+      "source_name": "ppt/media/image34.jpeg#slide=slide13;picture=SPR原理.jpg",
+      "source_px": [
+        796,
+        666
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image34.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide13.xml",
+      "pptx_picture_name": "SPR原理.jpg",
+      "pptx_crop_100k": {
+        "l": 11839,
+        "t": 0,
+        "r": 5252,
+        "b": 7452
+      },
+      "pptx_crop_box_px": [
+        114,
+        0,
+        910,
+        666
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        960,
+        720
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 77,
+      "src_index": 21,
+      "pdf_xref": 296,
+      "pdf_px": [
+        301,
+        101
+      ],
+      "source_name": "ppt/media/image47.jpeg#slide=slide17;picture=Picture 15",
+      "source_px": [
+        301,
+        101
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image47.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 15",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        301,
+        101
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        301,
+        101
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 79,
+      "src_index": 23,
+      "pdf_xref": 298,
+      "pdf_px": [
+        157,
+        116
+      ],
+      "source_name": "ppt/media/image49.jpeg#slide=slide17;picture=Picture 2",
+      "source_px": [
+        157,
+        116
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image49.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        157,
+        116
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        157,
+        116
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 81,
+      "src_index": 25,
+      "pdf_xref": 300,
+      "pdf_px": [
+        157,
+        116
+      ],
+      "source_name": "ppt/media/image51.jpeg#slide=slide17;picture=Picture 5",
+      "source_px": [
+        157,
+        116
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image51.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 5",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        157,
+        116
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        157,
+        116
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 86,
+      "src_index": 30,
+      "pdf_xref": 305,
+      "pdf_px": [
+        155,
+        114
+      ],
+      "source_name": "ppt/media/image56.jpeg#slide=slide17;picture=Picture 10",
+      "source_px": [
+        155,
+        114
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image56.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 10",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        155,
+        114
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        155,
+        114
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 87,
+      "src_index": 31,
+      "pdf_xref": 306,
+      "pdf_px": [
+        154,
+        114
+      ],
+      "source_name": "ppt/media/image57.jpeg#slide=slide17;picture=Picture 11",
+      "source_px": [
+        154,
+        114
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image57.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 11",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        154,
+        114
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        154,
+        114
+      ]
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 89,
+      "src_index": 33,
+      "pdf_xref": 317,
+      "pdf_px": [
+        1181,
+        702
+      ],
+      "source_name": "ppt/media/image59.png#slide=slide19;picture=图片 2",
+      "source_px": [
+        1181,
+        702
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image59.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide19.xml",
+      "pptx_picture_name": "图片 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 16483,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1181,
+        702
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        1414,
+        702
+      ]
+    },
+    {
+      "score": 2.236,
+      "pdf_index": 7,
+      "src_index": 52,
+      "pdf_xref": 41,
+      "pdf_px": [
+        786,
+        485
+      ],
+      "source_name": "ppt/media/image10.png#slide=slide3;picture=Picture 2",
+      "source_px": [
+        1497,
+        921
+      ],
+      "pixel_area_ratio": 3.617,
+      "aspect_delta_log": 0.00295,
+      "replace": true,
+      "match_mode": "confident_hash_highres",
+      "media_name": "ppt/media/image10.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide3.xml",
+      "pptx_picture_name": "Picture 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1497,
+        921
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1497,
+        921
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 8,
+      "src_index": 53,
+      "pdf_xref": 43,
+      "pdf_px": [
+        864,
+        569
+      ],
+      "source_name": "ppt/media/image11.png#slide=slide3;picture=Picture 4",
+      "source_px": [
+        864,
+        569
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image11.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide3.xml",
+      "pptx_picture_name": "Picture 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        864,
+        569
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        864,
+        569
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 80,
+      "src_index": 24,
+      "pdf_xref": 299,
+      "pdf_px": [
+        157,
+        116
+      ],
+      "source_name": "ppt/media/image50.jpeg#slide=slide17;picture=Picture 4",
+      "source_px": [
+        157,
+        116
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image50.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        157,
+        116
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        157,
+        116
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 82,
+      "src_index": 26,
+      "pdf_xref": 301,
+      "pdf_px": [
+        155,
+        114
+      ],
+      "source_name": "ppt/media/image52.jpeg#slide=slide17;picture=Picture 6",
+      "source_px": [
+        155,
+        114
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image52.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 6",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        155,
+        114
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        155,
+        114
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 83,
+      "src_index": 27,
+      "pdf_xref": 302,
+      "pdf_px": [
+        155,
+        114
+      ],
+      "source_name": "ppt/media/image53.jpeg#slide=slide17;picture=Picture 7",
+      "source_px": [
+        155,
+        114
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image53.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 7",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        155,
+        114
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        155,
+        114
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 84,
+      "src_index": 28,
+      "pdf_xref": 303,
+      "pdf_px": [
+        155,
+        114
+      ],
+      "source_name": "ppt/media/image54.jpeg#slide=slide17;picture=Picture 8",
+      "source_px": [
+        155,
+        114
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image54.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 8",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        155,
+        114
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        155,
+        114
+      ]
+    },
+    {
+      "score": 4.0,
+      "pdf_index": 85,
+      "src_index": 29,
+      "pdf_xref": 304,
+      "pdf_px": [
+        157,
+        115
+      ],
+      "source_name": "ppt/media/image55.jpeg#slide=slide17;picture=Picture 9",
+      "source_px": [
+        157,
+        115
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image55.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 9",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        157,
+        115
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        157,
+        115
+      ]
+    },
+    {
+      "score": 4.1232,
+      "pdf_index": 31,
+      "src_index": 4,
+      "pdf_xref": 113,
+      "pdf_px": [
+        198,
+        204
+      ],
+      "source_name": "ppt/media/image30.png#slide=slide10;picture=图片 8",
+      "source_px": [
+        439,
+        453
+      ],
+      "pixel_area_ratio": 4.923,
+      "aspect_delta_log": 0.00154,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image30.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide10.xml",
+      "pptx_picture_name": "图片 8",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 1023,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        439,
+        453
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        444,
+        453
+      ]
+    },
+    {
+      "score": 4.3254,
+      "pdf_index": 106,
+      "src_index": 45,
+      "pdf_xref": 400,
+      "pdf_px": [
+        490,
+        343
+      ],
+      "source_name": "ppt/media/image69.png#slide=slide23;picture=图片 37",
+      "source_px": [
+        1425,
+        945
+      ],
+      "pixel_area_ratio": 8.012,
+      "aspect_delta_log": 0.05407,
+      "replace": true,
+      "match_mode": "confident_hash_highres",
+      "media_name": "ppt/media/image69.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 37",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1425,
+        945
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1425,
+        945
+      ]
+    },
+    {
+      "score": 6.0,
+      "pdf_index": 108,
+      "src_index": 47,
+      "pdf_xref": 402,
+      "pdf_px": [
+        500,
+        408
+      ],
+      "source_name": "ppt/media/image66.jpg#slide=slide23;picture=图片 39",
+      "source_px": [
+        500,
+        408
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image66.jpg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 39",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 50836
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        500,
+        408
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        500,
+        829
+      ]
+    },
+    {
+      "score": 10.0,
+      "pdf_index": 78,
+      "src_index": 22,
+      "pdf_xref": 297,
+      "pdf_px": [
+        393,
+        342
+      ],
+      "source_name": "ppt/media/image48.jpeg#slide=slide17;picture=Picture 3",
+      "source_px": [
+        393,
+        342
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation",
+      "media_name": "ppt/media/image48.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        393,
+        342
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        393,
+        342
+      ]
+    },
+    {
+      "score": 11.6828,
+      "pdf_index": 105,
+      "src_index": 44,
+      "pdf_xref": 398,
+      "pdf_px": [
+        490,
+        343
+      ],
+      "source_name": "ppt/media/image68.png#slide=slide23;picture=图片 36",
+      "source_px": [
+        1485,
+        921
+      ],
+      "pixel_area_ratio": 8.138,
+      "aspect_delta_log": 0.12104,
+      "replace": true,
+      "match_mode": "pptx_semantic_crop_match",
+      "media_name": "ppt/media/image68.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "图片 36",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 786,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1485,
+        921
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        1497,
+        921
+      ]
+    },
+    {
+      "score": 26.6516,
+      "pdf_index": 110,
+      "src_index": 49,
+      "pdf_xref": 413,
+      "pdf_px": [
+        960,
+        516
+      ],
+      "source_name": "ppt/media/image34.jpeg#slide=slide24;picture=SPR原理.jpg",
+      "source_px": [
+        960,
+        720
+      ],
+      "pixel_area_ratio": 1.395,
+      "aspect_delta_log": 0.33314,
+      "replace": true,
+      "match_mode": "confident_hash_highres",
+      "media_name": "ppt/media/image34.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide24.xml",
+      "pptx_picture_name": "SPR原理.jpg",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        960,
+        720
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        960,
+        720
+      ]
+    },
+    {
+      "score": 28.002,
+      "pdf_index": 92,
+      "src_index": 37,
+      "pdf_xref": 366,
+      "pdf_px": [
+        1206,
+        808
+      ],
+      "source_name": "ppt/media/image62.jpeg#slide=slide21;picture=Picture 2",
+      "source_px": [
+        500,
+        335
+      ],
+      "pixel_area_ratio": 0.172,
+      "aspect_delta_log": 2e-05,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image62.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide21.xml",
+      "pptx_picture_name": "Picture 2",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        500,
+        335
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        500,
+        335
+      ]
+    },
+    {
+      "score": 28.8148,
+      "pdf_index": 88,
+      "src_index": 32,
+      "pdf_xref": 307,
+      "pdf_px": [
+        277,
+        512
+      ],
+      "source_name": "ppt/media/image58.png#slide=slide17;picture=Picture 3",
+      "source_px": [
+        277,
+        734
+      ],
+      "pixel_area_ratio": 1.434,
+      "aspect_delta_log": 0.36018,
+      "replace": true,
+      "match_mode": "confident_hash_highres",
+      "media_name": "ppt/media/image58.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide17.xml",
+      "pptx_picture_name": "Picture 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        277,
+        734
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        277,
+        734
+      ]
+    },
+    {
+      "score": 100.0068,
+      "pdf_index": 33,
+      "src_index": 6,
+      "pdf_xref": 116,
+      "pdf_px": [
+        794,
+        1135
+      ],
+      "source_name": "ppt/media/image32.png#slide=slide10;picture=图片 4",
+      "source_px": [
+        1818,
+        2599
+      ],
+      "pixel_area_ratio": 5.243,
+      "aspect_delta_log": 9e-05,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image32.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide10.xml",
+      "pptx_picture_name": "图片 4",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1818,
+        2599
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1818,
+        2599
+      ]
+    },
+    {
+      "score": 112.0,
+      "pdf_index": 51,
+      "src_index": 9,
+      "pdf_xref": 206,
+      "pdf_px": [
+        1347,
+        875
+      ],
+      "source_name": "ppt/media/image35.png#slide=slide13;picture=图片 1",
+      "source_px": [
+        1347,
+        875
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image35.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide13.xml",
+      "pptx_picture_name": "图片 1",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        1347,
+        875
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        1347,
+        875
+      ]
+    },
+    {
+      "score": 116.0661,
+      "pdf_index": 36,
+      "src_index": 18,
+      "pdf_xref": 131,
+      "pdf_px": [
+        131,
+        154
+      ],
+      "source_name": "ppt/media/image44.png#slide=slide16;picture=图片 27",
+      "source_px": [
+        91,
+        92
+      ],
+      "pixel_area_ratio": 0.415,
+      "aspect_delta_log": 0.15083,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image44.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 27",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        91,
+        92
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        91,
+        92
+      ]
+    },
+    {
+      "score": 116.9648,
+      "pdf_index": 67,
+      "src_index": 48,
+      "pdf_xref": 274,
+      "pdf_px": [
+        167,
+        100
+      ],
+      "source_name": "ppt/media/image70.png#slide=slide24;picture=Picture 12",
+      "source_px": [
+        2045,
+        1180
+      ],
+      "pixel_area_ratio": 144.497,
+      "aspect_delta_log": 0.03706,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image70.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide24.xml",
+      "pptx_picture_name": "Picture 12",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        2045,
+        1180
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        2045,
+        1180
+      ]
+    },
+    {
+      "score": 117.6903,
+      "pdf_index": 99,
+      "src_index": 19,
+      "pdf_xref": 381,
+      "pdf_px": [
+        121,
+        116
+      ],
+      "source_name": "ppt/media/image45.png#slide=slide16;picture=图片 28",
+      "source_px": [
+        112,
+        100
+      ],
+      "pixel_area_ratio": 0.798,
+      "aspect_delta_log": 0.07113,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image45.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 28",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        112,
+        100
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        112,
+        100
+      ]
+    },
+    {
+      "score": 118.0149,
+      "pdf_index": 32,
+      "src_index": 5,
+      "pdf_xref": 114,
+      "pdf_px": [
+        810,
+        632
+      ],
+      "source_name": "ppt/media/image31.png#slide=slide10;picture=图片 3",
+      "source_px": [
+        2295,
+        1791
+      ],
+      "pixel_area_ratio": 8.029,
+      "aspect_delta_log": 0.00019,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image31.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide10.xml",
+      "pptx_picture_name": "图片 3",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        2295,
+        1791
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        2295,
+        1791
+      ]
+    },
+    {
+      "score": 124.4961,
+      "pdf_index": 66,
+      "src_index": 41,
+      "pdf_xref": 272,
+      "pdf_px": [
+        140,
+        108
+      ],
+      "source_name": "ppt/media/image34.jpeg#slide=slide23;picture=SPR原理.jpg",
+      "source_px": [
+        796,
+        666
+      ],
+      "pixel_area_ratio": 35.062,
+      "aspect_delta_log": 0.0812,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image34.jpeg",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide23.xml",
+      "pptx_picture_name": "SPR原理.jpg",
+      "pptx_crop_100k": {
+        "l": 11839,
+        "t": 0,
+        "r": 5252,
+        "b": 7452
+      },
+      "pptx_crop_box_px": [
+        114,
+        0,
+        910,
+        666
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        960,
+        720
+      ]
+    },
+    {
+      "score": 126.0391,
+      "pdf_index": 70,
+      "src_index": 39,
+      "pdf_xref": 280,
+      "pdf_px": [
+        150,
+        78
+      ],
+      "source_name": "ppt/media/image63.png#slide=slide21;picture=图片 7",
+      "source_px": [
+        714,
+        353
+      ],
+      "pixel_area_ratio": 21.542,
+      "aspect_delta_log": 0.05049,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image63.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide21.xml",
+      "pptx_picture_name": "图片 7",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 50192
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        714,
+        353
+      ],
+      "pptx_crop_applied": true,
+      "full_source_px": [
+        714,
+        708
+      ]
+    },
+    {
+      "score": 126.3563,
+      "pdf_index": 69,
+      "src_index": 15,
+      "pdf_xref": 278,
+      "pdf_px": [
+        112,
+        100
+      ],
+      "source_name": "ppt/media/image41.png#slide=slide16;picture=图片 24",
+      "source_px": [
+        144,
+        128
+      ],
+      "pixel_area_ratio": 1.646,
+      "aspect_delta_log": 0.00445,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image41.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 24",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        144,
+        128
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        144,
+        128
+      ]
+    },
+    {
+      "score": 128.3058,
+      "pdf_index": 61,
+      "src_index": 7,
+      "pdf_xref": 248,
+      "pdf_px": [
+        118,
+        73
+      ],
+      "source_name": "ppt/media/image33.png#slide=slide10;picture=图片 5",
+      "source_px": [
+        2309,
+        1423
+      ],
+      "pixel_area_ratio": 381.438,
+      "aspect_delta_log": 0.00382,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "ppt/media/image33.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide10.xml",
+      "pptx_picture_name": "图片 5",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        2309,
+        1423
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        2309,
+        1423
+      ]
+    },
+    {
+      "score": 128.8471,
+      "pdf_index": 42,
+      "src_index": 20,
+      "pdf_xref": 157,
+      "pdf_px": [
+        241,
+        124
+      ],
+      "source_name": "ppt/media/image46.png#slide=slide16;picture=图片 29",
+      "source_px": [
+        150,
+        78
+      ],
+      "pixel_area_ratio": 0.392,
+      "aspect_delta_log": 0.01059,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image46.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 29",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        150,
+        78
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        150,
+        78
+      ]
+    },
+    {
+      "score": 128.8708,
+      "pdf_index": 47,
+      "src_index": 14,
+      "pdf_xref": 185,
+      "pdf_px": [
+        130,
+        124
+      ],
+      "source_name": "ppt/media/image40.png#slide=slide16;picture=图片 23",
+      "source_px": [
+        112,
+        108
+      ],
+      "pixel_area_ratio": 0.75,
+      "aspect_delta_log": 0.01089,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image40.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 23",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        112,
+        108
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        112,
+        108
+      ]
+    },
+    {
+      "score": 129.3383,
+      "pdf_index": 65,
+      "src_index": 16,
+      "pdf_xref": 270,
+      "pdf_px": [
+        144,
+        128
+      ],
+      "source_name": "ppt/media/image42.png#slide=slide16;picture=图片 25",
+      "source_px": [
+        140,
+        108
+      ],
+      "pixel_area_ratio": 0.82,
+      "aspect_delta_log": 0.14173,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image42.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 25",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        140,
+        108
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        140,
+        108
+      ]
+    },
+    {
+      "score": 130.2716,
+      "pdf_index": 34,
+      "src_index": 17,
+      "pdf_xref": 118,
+      "pdf_px": [
+        810,
+        499
+      ],
+      "source_name": "ppt/media/image43.png#slide=slide16;picture=图片 26",
+      "source_px": [
+        167,
+        100
+      ],
+      "pixel_area_ratio": 0.041,
+      "aspect_delta_log": 0.0284,
+      "replace": false,
+      "match_mode": "source_smaller_than_pdf",
+      "media_name": "ppt/media/image43.png",
+      "candidate_kind": "pptx_slide_picture",
+      "pptx_slide": "ppt/slides/slide16.xml",
+      "pptx_picture_name": "图片 26",
+      "pptx_crop_100k": {
+        "l": 0,
+        "t": 0,
+        "r": 0,
+        "b": 0
+      },
+      "pptx_crop_box_px": [
+        0,
+        0,
+        167,
+        100
+      ],
+      "pptx_crop_applied": false,
+      "full_source_px": [
+        167,
+        100
+      ]
+    }
+  ],
+  "replacement_errors": [],
+  "media_errors": [],
+  "output_size_bytes": 9683172
+}
