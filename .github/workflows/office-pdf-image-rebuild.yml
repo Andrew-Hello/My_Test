@@ -54,9 +54,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The browser assistant may push another development commit while this analysis runs.
-          # Refresh dev before creating the result commit to avoid a non-fast-forward push.
-          git pull --rebase origin dev
           git add Office_HQ_PDF_Converter/demo_Report_Rebuilt.pdf \
                   Office_HQ_PDF_Converter/diagnostics/image_rebuild_mapping_latest.json \
                   Office_HQ_PDF_Converter/diagnostics/rebuild_quality_comparison_latest.json \
