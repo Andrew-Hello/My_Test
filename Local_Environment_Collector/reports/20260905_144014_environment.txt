@@ -1,0 +1,129 @@
+﻿Local Environment Snapshot
+==========================
+Generated: 2026-09-05T14:40:23.2761186+08:00
+
+Windows
+-------
+Microsoft Windows 10 专业版 / version 10.0.19045 / build 19045 / 64-bit
+CPU: AMD Ryzen 7 8845H w/ Radeon 780M Graphics
+RAM: 30.81 GB
+PowerShell: 5.1.19041.7663 (Desktop)
+
+Python
+------
+py -0p:
+-V:3.14 *        %USERPROFILE%\AppData\Local\Programs\Python\Python314\python.exe
+ -V:3.13          %USERPROFILE%\AppData\Local\Programs\Python\Python313\python.exe
+ -V:3.12          %USERPROFILE%\AppData\Local\Programs\Python\Python312\python.exe
+ -V:3.11          %USERPROFILE%\AppData\Local\Programs\Python\Python311\python.exe
+ -V:Astral/CPython3.11.15 %USERPROFILE%\AppData\Roaming\uv\python\cpython-3.11.15-windows-x86_64-none\python.exe
+
+py -3 runtime:
+py.exe : Traceback (most recent call last):
+At D:\Code\GitHub\My_Test\Local_Environment_Collector\Collect-Local-Environment.ps1:41 char:20
++         $output = (& $cmd.Source @Arguments 2>&1 | Out-String).Trim()
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], Remote 
+   Exception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 1, in <module>
+    import sys,platform,json; print(json.dumps({version:sys.version,executable:sys.executable,archi
+tecture:platform.architecture()[0],implementation:platform.python_implementation()}))
+                                                ^^^^^^^
+NameError: name 'version' is not defined
+
+pip:
+pip 26.1.2 from %USERPROFILE%\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+
+pip config:
+global.index-url='https://pypi.tuna.tsinghua.edu.cn/simple/'
+global.trusted-host='pypi.tuna.tsinghua.edu.cn'
+
+Import probe:
+py.exe : Traceback (most recent call last):
+At D:\Code\GitHub\My_Test\Local_Environment_Collector\Collect-Local-Environment.ps1:41 char:20
++         $output = (& $cmd.Source @Arguments 2>&1 | Out-String).Trim()
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], Remote 
+   Exception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 1, in <module>
+    import importlib.util,json; mods=[pymupdf,fitz,PIL,imagehash,numpy,scipy]; print(json.dumps({m:
+(importlib.util.find_spec(m) is not None) for m in mods}))
+                                      ^^^^^^^
+NameError: name 'pymupdf' is not defined
+
+Relevant packages:
+py.exe : WARNING: Package(s) not found: ImageHash
+At D:\Code\GitHub\My_Test\Local_Environment_Collector\Collect-Local-Environment.ps1:41 char:20
++         $output = (& $cmd.Source @Arguments 2>&1 | Out-String).Trim()
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Package(s) not found: ImageHash:String) [],  
+   RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Name: PyMuPDF
+Version: 1.27.2.2
+Summary: A high performance Python library for data extraction, analysis, conversion & manipulation of PDF (and other) documents.
+Home-page: 
+Author: Artifex
+Author-email: support@artifex.com
+License: Dual Licensed - GNU AFFERO GPL 3.0 or Artifex Commercial License
+Location: %USERPROFILE%\AppData\Local\Programs\Python\Python314\Lib\site-packages
+Requires: 
+Required-by: 
+---
+Name: pillow
+Version: 12.1.1
+Summary: Python Imaging Library (fork)
+Home-page: https://python-pillow.github.io
+Author: 
+Author-email: "Jeffrey A. Clark" <aclark@aclark.net>
+License-Expression: MIT-CMU
+Location: %USERPROFILE%\AppData\Local\Programs\Python\Python314\Lib\site-packages
+Requires: 
+Required-by: matplotlib, pdfplumber, pystray, python-pptx, rapidocr-onnxruntime, reportlab
+
+Office
+------
+Word: available=True, version=16.0, build=16.0.17932
+Excel: available=True, version=16.0, build=17932
+PowerPoint: available=True, version=16.0, build=17932
+PDFMaker registered: True
+
+Developer tools
+---------------
+Git: git version 2.47.1.windows.1
+Node: v24.14.0
+npm: 11.18.0
+.NET: dotnet.exe : The command could not be loaded, possibly because:
+At D:\Code\GitHub\My_Test\Local_Environment_Collector\Collect-Local-Environment.ps1:41 char:20
++         $output = (& $cmd.Source @Arguments 2>&1 | Out-String).Trim()
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (The command cou...ssibly because::String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  * You intended to execute a .NET application:
+      The application '--version' does not exist.
+  * You intended to execute a .NET SDK command:
+      No .NET SDKs were found.
+
+Download a .NET SDK:
+https://aka.ms/dotnet/download
+
+Learn about SDK resolution:
+https://aka.ms/dotnet/sdk-not-found
+Java: 
+
+Repository
+----------
+Branch: dev
+Commit: a385e6e
+Origin: https://github.com/Andrew-Hello/My_Test.git
+
+Privacy
+-------
+Username/computer name are not intentionally recorded. User-profile paths are replaced with %USERPROFILE% and URL credentials are masked.
