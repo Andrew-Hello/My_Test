@@ -16,7 +16,7 @@ Windows + Microsoft Office 桌面版的高保真 Office → PDF 转换工具。
 DragDrop_Office_to_PDF.cmd
 ```
 
-成功结果生成在原文档同目录：
+成功结果会生成在原文档同目录，并命名为：
 
 ```text
 Report_HQ.pdf
@@ -34,8 +34,6 @@ Report_NATIVE_ONLY.pdf
 
 ## 当前正式质量路线
 
-现代 OOXML 文件的正式流程：
-
 ```text
 Office 原生排版引擎
         ↓
@@ -43,26 +41,60 @@ Office 原生排版引擎
         ↓
 src/HQImageRebuilder.py
         ↓
-读取 DOCX/XLSX/PPTX 内部原始栅格媒体
+读取 OOXML 原始 raster media
         ↓
-结合 PDF 图像对象进行安全匹配
+关系/裁剪/透明度语义匹配
         ↓
-原始像素无损回填
+使用原始像素无损回填 PDF 图片 XObject
         ↓
 *_HQ.pdf
 ```
 
 Office 负责分页、字体、表格、图表和对象布局；我们自己的重建器负责恢复原始栅格图像质量。
 
-正式流程不再使用：
+正式流程不使用：
 
 - Adobe Acrobat PDFMaker
 - Word `ExportAsFixedFormat2`
 - ImageHash
 
+## 高清匹配引擎
+
+当前匹配器不是单纯放宽图像相似度阈值，而是逐步理解 Office/PDF 的结构语义：
+
+### PDF SMask 透明度重建
+
+Office 会把带透明度的 PNG 拆成 PDF 基础图像 XObject + Soft Mask。匹配器会先把 SMask 合成回 RGBA 图像，再计算 pHash，避免透明 Logo/条带被误判成“完全不同的图片”。
+
+### DOCX 结构感知
+
+DOCX 会读取：
+
+```text
+word/document.xml
+word/header*.xml
+word/footer*.xml
+word/footnotes.xml
+word/endnotes.xml
+word/comments*.xml
+对应的 *_rels/*.rels
+```
+
+解析：
+
+```text
+pic:pic → a:blip → r:embed → word/media/*
+```
+
+如果图片存在 `a:srcRect`，会先在 DOCX 原始高清图片上复现同样裁剪，再参与匹配。因此 Word 中裁剪过的图片不再只能依赖模糊视觉猜测。
+
+### PPTX 结构感知
+
+PPTX 读取 slide relationship 和 DrawingML `a:srcRect`。原始高清图片先复现 PowerPoint 裁剪，再匹配 PDF 对象。当前真实验证文件中，65 个原始 raster media、115 个 PDF 图片对象中安全回填 56 个，其中 18 个裁剪候选里 16 个通过语义裁剪恢复，且 replacement errors 为 0。
+
 ## Excel 输出规则
 
-Excel 使用固定的 PDF 页面策略，避免工作簿原有打印设置造成列被裁切或横向分页：
+Excel 固定执行：
 
 ```text
 PaperSize = A4
@@ -73,83 +105,35 @@ FitToPagesTall = False
 
 也就是：
 
-- 每个工作表强制使用 A4 纸张；
-- 保留工作表原来的横向/纵向方向；
-- 所有列在水平方向强制压缩到 **1 个 A4 页面宽**；
-- 纵向不强制压缩为一页，内容较长时允许自然分页；
+- 每个工作表强制使用 A4；
+- 保留原有横向/纵向方向；
+- 所有列在水平方向强制压缩到 1 个 A4 页面宽；
+- 纵向不强制压成一页，长表允许自然分页；
 - PDF 导出后再执行 OOXML 原图高清恢复。
 
 ## PowerPoint 输出规则
 
-PowerPoint 使用自身的 `SaveAs PDF` 作为稳定结构导出路径。
+PowerPoint 直接使用稳定的 `SaveAs PDF` 结构导出：
 
-PDF 页面保持源 PPT/PPTX 的幻灯片画布尺寸，因此：
-
-- 不强制改成 A4；
+- 保持源 SlideWidth / SlideHeight；
+- 保持原始宽高比；
+- 不强制 A4；
 - 不拉伸；
-- 不改变宽高比；
-- 日志记录幻灯片宽度、高度和宽高比。
+- 之后执行 PPTX relationship/srcRect 高清恢复。
 
-### PPTX 裁剪图片高清恢复
+## 旧二进制格式
 
-对于 PPTX，高清恢复器不再只比较 `ppt/media/` 原图和 PDF 图片。
-
-新版会额外解析：
+旧格式先在 `temp/` 中升级为现代 OOXML，再沿用同一套 HQ 流程：
 
 ```text
-ppt/slides/slide*.xml
-ppt/slides/_rels/slide*.xml.rels
+.doc → 临时 .docx → HQ
+.xls → 临时 .xlsx → HQ
+.ppt → 临时 .pptx → HQ
 ```
 
-识别每张图片的：
+原文件从不修改。若 Office 无法完成旧格式升级，则明确降级为 `NATIVE_ONLY`。
 
-- `r:embed`：实际引用的 `ppt/media/image*.png`；
-- `a:srcRect`：PowerPoint 对图片执行的左/上/右/下裁剪比例。
-
-然后先在原始高清图片上复现同样的裁剪，再进行 pHash + 宽高比匹配。只有语义裁剪和视觉内容同时吻合才回填，因此无需通过放宽阈值来冒险替换。
-
-当前 PPTX 样例实测：
-
-- 原始栅格媒体：14 个；
-- PDF 唯一栅格对象：15 个；
-- 识别到 `srcRect` 裁剪候选：6 个；
-- 其中安全语义裁剪回填：5 个；
-- 总回填对象：**由上一版 9/15 提升到 14/15**；
-- replacement errors：0。
-
-## 旧二进制格式升级
-
-`.doc/.xls/.ppt` 不再默认停留在 `NATIVE_ONLY`。
-
-新版会先在 `temp/` 中建立一次临时现代 OOXML 文件：
-
-```text
-.doc → .docx   Word SaveAs2 / wdFormatXMLDocument = 12
-.xls → .xlsx   Excel SaveAs / xlOpenXMLWorkbook = 51
-.ppt → .pptx   PowerPoint SaveAs / ppSaveAsOpenXMLPresentation = 24
-```
-
-随后按现代格式继续执行：
-
-```text
-临时 OOXML
-   ↓
-Office 结构 PDF
-   ↓
-OOXML 原始媒体高清恢复
-   ↓
-*_HQ.pdf
-```
-
-原始 `.doc/.xls/.ppt` 文件不会被修改；临时 OOXML 用完后立即删除。
-
-成功时日志/诊断会标记：
-
-```text
-HQ_REBUILT_FROM_LEGACY
-```
-
-如果旧文件无法可靠转换成临时 OOXML，才退回 Office 原生 PDF，并明确标记 `NATIVE_ONLY`。
+此兼容代码已经实现，但仍需要更多真实 `.doc/.xls/.ppt` 文件做 Windows 实机验证。
 
 ## Python 依赖
 
@@ -160,25 +144,32 @@ PyMuPDF
 Pillow
 ```
 
-脚本使用同一个 Python 解释器的 pip metadata 检查依赖。如果已经安装，不会再次安装；如果缺失，会先尝试当前 pip 镜像，再尝试一次官方 PyPI。
-
-`ImageHash` 已完全移除。
+脚本使用同一个 Python 解释器的 pip metadata 检查依赖。如果已经安装不会重复安装；缺失时先尝试当前 pip 源，再尝试官方 PyPI。
 
 ## 目录结构
 
 ```text
 Office_HQ_PDF_Converter/
-├─ DragDrop_Office_to_PDF.cmd      # 用户入口
-├─ Convert-OfficeToPDF.ps1         # 唯一正式主脚本
+├─ DragDrop_Office_to_PDF.cmd
+├─ Convert-OfficeToPDF.ps1
 ├─ src/
-│  └─ HQImageRebuilder.py          # 正式高清图片恢复核心
+│  └─ HQImageRebuilder.py
 ├─ test/
-│  ├─ Analyze-PDF-Quality.py       # PDF 质量分析测试工具
-│  └─ samples/                     # 测试文档/基准 PDF
-├─ temp/                           # 转换中间文件；Git 忽略
-├─ logs/                           # 可读运行日志
-└─ diagnostics/                    # JSON 诊断结果
+│  ├─ Analyze-PDF-Quality.py
+│  └─ samples/
+│     ├─ demo_Report.docx
+│     ├─ demo_Report_lowres.pdf
+│     ├─ current/
+│     └─ validation_20260905/
+│        ├─ docx/
+│        ├─ pptx/
+│        └─ xlsx/
+├─ temp/
+├─ logs/
+└─ diagnostics/
 ```
+
+`temp/` 是转换中间目录并由 Git 忽略；真实测试文档统一放在 `test/samples/` 下，不再堆在正式项目根目录。
 
 ## 日志与诊断
 
@@ -190,39 +181,65 @@ diagnostics/*_conversion.json
 diagnostics/*_image_rebuild.json
 ```
 
-日志会记录：
+图像重建诊断会记录：
 
-- Office 版本；
-- Excel A4 / 1 页宽策略；
-- PowerPoint 画布尺寸和宽高比；
-- PPTX `srcRect` 语义裁剪恢复统计；
-- 老格式临时 OOXML 升级是否成功；
-- Python 环境；
-- HQ 重建统计；
-- 最终结果、文件大小和耗时。
+- 原始 media 数量；
+- semantic candidate 数量；
+- DOCX/PPTX `srcRect` 裁剪候选；
+- PDF soft mask 重建数量；
+- pHash / 宽高比 / 像素面积倍率；
+- 实际替换数量；
+- replacement errors。
 
-## 当前样例基线
+## 当前验证基线
 
-DOCX 样例：
+### DOCX 高清基线
 
-- Word 原生 PDF：有效 PPI 中位数约 **199.7**，`>=600 PPI` 为 **0/40**；
-- 高清重建 PDF：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**；
-- Acrobat HD 基准：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**。
+`demo_Report.docx`：
 
-2026-09-05 三格式实机测试：
+- Word 原生 PDF median PPI ≈ 199.7；
+- 高清重建 PDF median PPI ≈ 760.3；
+- `>=600 PPI` = 38/40；
+- 与 Acrobat HD 样例的 PPI 分布一致。
 
-- `demo_docx.docx` → `demo_docx_HQ.pdf`：约 **5.228 MB**，HQ_REBUILT；
-- `demo_pptx.pptx` → `demo_pptx_HQ.pdf`：约 **2.016 MB**，HQ_REBUILT；
-- `demo_xlsx.xlsx` → `demo_xlsx_HQ.pdf`：约 **0.112 MB**，HQ_REBUILT；
-- 同批运行：`Success=3; FailedOrDegraded=0`。
+### 2026-09-05 多文档实机验证
 
-自动回归测试还会验证：
+真实批量测试：
 
-- DOCX 恢复对象不少于 20；
-- DOCX 重建 PDF median PPI 不低于 600；
-- PPTX 能解析真实 `srcRect`；
-- PPTX 总回填不少于既有基线；
-- 不允许出现 replacement errors。
+```text
+3 × DOCX
+4 × XLSX
+1 × PPTX
+合计 8 份
+```
+
+同批运行结果：
+
+```text
+Success=8
+FailedOrDegraded=0
+```
+
+其中 PPTX 验证文件：
+
+- 65 个原始 raster media；
+- 71 个语义候选；
+- 18 个 srcRect 裁剪候选；
+- 16 个语义裁剪恢复；
+- 56 个图片对象安全回填；
+- replacement errors = 0。
+
+## CI
+
+GitHub Actions 会持续检查：
+
+- PowerShell 语法；
+- Python 语法；
+- DOCX 760 PPI 基线；
+- PPTX srcRect 语义裁剪恢复；
+- DOCX relationship/srcRect 解析；
+- PDF SMask 透明度匹配；
+- replacement errors。
 
 ## 通用本机环境快照
 
