@@ -1,0 +1,18 @@
+﻿[2026-09-05 14:45:55.915 +08:00] [INFO] Office HQ PDF Converter production pipeline started.
+[2026-09-05 14:45:55.933 +08:00] [INFO] Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.
+[2026-09-05 14:45:55.934 +08:00] [INFO] Production path intentionally does NOT use Acrobat PDFMaker, ExportAsFixedFormat2, or ImageHash.
+[2026-09-05 14:45:55.947 +08:00] [INFO] ========================================================================
+[2026-09-05 14:45:55.950 +08:00] [INFO] Source: demo_Report.docx (5.259 MB)
+[2026-09-05 14:45:55.964 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 14:45:57.818 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 14:45:58.309 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat. Raster image quality will be restored afterwards.
+[2026-09-05 14:46:05.109 +08:00] [INFO] Structural PDF created in temp/: 1.693 MB
+[2026-09-05 14:46:05.124 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe
+[2026-09-05 14:46:05.196 +08:00] [INFO] Checking Python modules: pymupdf + Pillow.
+[2026-09-05 14:46:05.258 +08:00] [WARN] Required Python modules are missing. Trying the currently configured pip index.
+[2026-09-05 14:46:05.799 +08:00] [WARN] Configured pip index did not provide all dependencies. Trying official PyPI once.
+[2026-09-05 14:46:06.314 +08:00] [ERROR] Automatic Python dependency installation failed. Run Collect_Local_Environment.cmd and push the report for diagnosis.
+[2026-09-05 14:46:06.323 +08:00] [WARN] NATIVE_ONLY: HQ rebuild failed. Low-resolution Office PDF preserved as demo_Report_NATIVE_ONLY.pdf.
+[2026-09-05 14:46:06.361 +08:00] [INFO] ========================================================================
+[2026-09-05 14:46:06.362 +08:00] [INFO] Finished. Success=0; FailedOrDegraded=1
+[2026-09-05 14:46:06.363 +08:00] [INFO] Log: 20260905_144555_912_Office_HQ_PDF.log
