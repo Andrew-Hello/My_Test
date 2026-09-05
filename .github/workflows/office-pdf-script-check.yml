@@ -18,21 +18,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Parse PowerShell script
+      - name: Parse PowerShell scripts
         shell: pwsh
         run: |
-          $path = 'Office_HQ_PDF_Converter/Convert-OfficeToPDF.ps1'
-          $tokens = $null
-          $errors = $null
-          [void][System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path $path),
-            [ref]$tokens,
-            [ref]$errors
+          $paths = @(
+            'Office_HQ_PDF_Converter/Convert-OfficeToPDF.ps1',
+            'Office_HQ_PDF_Converter/Convert-OfficeToPDF-v2.ps1'
           )
 
-          if ($errors.Count -gt 0) {
-            $errors | ForEach-Object { Write-Error $_.Message }
-            exit 1
+          $hasErrors = $false
+          foreach ($path in $paths) {
+            Write-Host "Checking $path"
+            $tokens = $null
+            $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path),
+              [ref]$tokens,
+              [ref]$errors
+            )
+
+            if ($errors.Count -gt 0) {
+              $hasErrors = $true
+              $errors | ForEach-Object { Write-Error "$path : $($_.Message)" }
+            } else {
+              Write-Host "Syntax OK: $path"
+            }
           }
 
-          Write-Host 'PowerShell syntax check passed.'
+          if ($hasErrors) { exit 1 }
+          Write-Host 'All PowerShell syntax checks passed.'
