@@ -79,8 +79,12 @@ jobs:
               'pdf_images': report.get('pdf_unique_raster_image_count'),
               'replaced': report.get('replaced_count'),
           }, indent=2))
-          if report.get('replaced_count', 0) < 20:
-              raise SystemExit('Regression: fewer than 20 baseline DOCX image objects were restored')
+          if report.get('replaced_count', 0) != 22:
+              raise SystemExit('Regression: DOCX baseline must restore all 22 unique raster image objects')
+          if report.get('docx_semantic_picture_count', 0) != 22:
+              raise SystemExit('Regression: DOCX baseline semantic picture count changed')
+          if report.get('pdf_soft_mask_reconstructed_count', 0) < 1:
+              raise SystemExit('Regression: DOCX baseline no longer exercises PDF soft-mask reconstruction')
           if report.get('replacement_errors'):
               raise SystemExit('DOCX baseline replacement errors detected')
           PY
@@ -102,8 +106,8 @@ jobs:
           print('Rebuilt placements >=600 PPI:', rebuilt['effective_ppi']['placements_ge_600'])
           if rebuilt['effective_ppi']['median'] < 600:
               raise SystemExit('Regression: rebuilt median PPI fell below 600')
-          if rebuilt['effective_ppi']['placements_ge_600'] < 30:
-              raise SystemExit('Regression: too few >=600 PPI image placements')
+          if rebuilt['effective_ppi']['placements_ge_600'] < 38:
+              raise SystemExit('Regression: DOCX baseline lost >=600 PPI placements')
           PY
 
       - name: Exercise crop-aware PPTX semantic matching
@@ -132,8 +136,8 @@ jobs:
               raise SystemExit('PPTX sample did not expose any srcRect crop candidates')
           if r.get('pptx_semantic_crop_replaced_count', 0) < 1:
               raise SystemExit('PPTX sample did not exercise semantic crop restoration')
-          if r.get('replaced_count', 0) < 9:
-              raise SystemExit('Regression: PPTX source preservation fell below previous baseline')
+          if r.get('replaced_count', 0) < 14:
+              raise SystemExit('Regression: PPTX source preservation fell below current 14-object baseline')
           if r.get('replacement_errors'):
               raise SystemExit('PPTX replacement errors detected')
           PY
@@ -162,10 +166,35 @@ jobs:
               'replacement_errors': len(r.get('replacement_errors') or []),
           }
           print(json.dumps(summary, indent=2))
-          if r.get('docx_semantic_picture_count', 0) < 1:
-              raise SystemExit('DOCX validation file did not expose relationship-backed picture candidates')
-          if r.get('replaced_count', 0) < 1:
-              raise SystemExit('Regression: DOCX validation file lost its previously safe replacement')
+          if r.get('docx_semantic_picture_count', 0) != 3:
+              raise SystemExit('Regression: DOCX validation semantic picture count must remain 3')
+          if r.get('pdf_soft_mask_reconstructed_count', 0) < 2:
+              raise SystemExit('Regression: DOCX validation must reconstruct its two PDF soft masks')
+          if r.get('replaced_count', 0) != 3:
+              raise SystemExit('Regression: DOCX validation must safely restore all 3 raster images')
           if r.get('replacement_errors'):
               raise SystemExit('DOCX semantic replacement errors detected')
+          PY
+
+      - name: Probe XLSX soft-mask matching
+        run: |
+          python Office_HQ_PDF_Converter/src/HQImageRebuilder.py \
+            --source-office 'Office_HQ_PDF_Converter/test/samples/validation_20260905/xlsx/Test_xlsx (1).xlsx' \
+            --input-pdf 'Office_HQ_PDF_Converter/test/samples/validation_20260905/xlsx/Test_xlsx (1)_HQ.pdf' \
+            --output-pdf /tmp/validation_xlsx1_smask.pdf \
+            --report /tmp/validation_xlsx1_smask.json
+          python - <<'PY'
+          import json
+          r = json.load(open('/tmp/validation_xlsx1_smask.json', encoding='utf-8'))
+          summary = {
+              'matching_engine': r.get('matching_engine'),
+              'unique_media': r.get('source_raster_media_count'),
+              'soft_masks': r.get('pdf_soft_mask_reconstructed_count'),
+              'pdf_images': r.get('pdf_unique_raster_image_count'),
+              'replaced': r.get('replaced_count'),
+              'replacement_errors': len(r.get('replacement_errors') or []),
+          }
+          print(json.dumps(summary, indent=2))
+          if r.get('replacement_errors'):
+              raise SystemExit('XLSX soft-mask probe detected replacement errors')
           PY
