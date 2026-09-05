@@ -11,6 +11,7 @@ import imagehash
 from PIL import Image, ImageOps
 
 RASTER_EXTS = {'.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', '.webp'}
+OOXML_EXTS = {'.docx', '.xlsx', '.pptx'}
 
 
 def pil_from_bytes(data: bytes):
@@ -49,16 +50,19 @@ def aspect_delta_log(pdf_im, src_im):
 
 
 def similarity_score(pdf_im, src_im):
-    # Lower is better. pHash dominates; aspect ratio prevents obvious mismatches.
     ph = normalized_hash(pdf_im) - normalized_hash(src_im)
     ar = aspect_delta_log(pdf_im, src_im)
     return float(ph) + ar * 80.0
 
 
-def load_docx_media(docx_path: Path):
+def load_ooxml_media(office_path: Path):
+    if office_path.suffix.lower() not in OOXML_EXTS:
+        raise ValueError(f'High-resolution media recovery supports OOXML only: {sorted(OOXML_EXTS)}')
+
     out = []
-    with zipfile.ZipFile(docx_path, 'r') as zf:
+    with zipfile.ZipFile(office_path, 'r') as zf:
         for name in zf.namelist():
+            # DOCX -> word/media, XLSX -> xl/media, PPTX -> ppt/media.
             if '/media/' not in name:
                 continue
             ext = Path(name).suffix.lower()
@@ -112,16 +116,22 @@ def collect_pdf_images(doc):
 
 def encode_png(im: Image.Image):
     buf = io.BytesIO()
-    # Re-encoding the authoritative source pixels as PNG is lossless. This is
-    # deliberate even for a source JPEG: it prevents Word from introducing a
-    # second lossy JPEG generation into the PDF.
+    # The authoritative source pixels are re-encoded losslessly. This is
+    # deliberate even for JPEG sources: Office cannot introduce another lossy
+    # JPEG generation during this repair stage.
     im.save(buf, format='PNG', optimize=False)
     return buf.getvalue()
 
 
 def main():
-    ap = argparse.ArgumentParser(description='Replace Office PDF image streams with authoritative DOCX source media.')
-    ap.add_argument('--source-docx', type=Path, required=True)
+    ap = argparse.ArgumentParser(
+        description='Replace downsampled Office-PDF image streams with authoritative OOXML source media.'
+    )
+    source_group = ap.add_mutually_exclusive_group(required=True)
+    source_group.add_argument('--source-office', type=Path,
+                              help='Source DOCX/XLSX/PPTX package.')
+    source_group.add_argument('--source-docx', type=Path,
+                              help='Deprecated alias retained for existing tests.')
     ap.add_argument('--input-pdf', type=Path, required=True)
     ap.add_argument('--output-pdf', type=Path, required=True)
     ap.add_argument('--report', type=Path, required=True)
@@ -131,11 +141,16 @@ def main():
                     help='Maximum aspect-ratio log delta for the one-to-one high-resolution fallback.')
     args = ap.parse_args()
 
-    sources = [x for x in load_docx_media(args.source_docx) if x.get('image') is not None]
+    source_path = args.source_office or args.source_docx
+    sources = [x for x in load_ooxml_media(source_path) if x.get('image') is not None]
     doc = fitz.open(args.input_pdf)
     pdf_images = [x for x in collect_pdf_images(doc) if x.get('image') is not None]
 
-    # Build all candidate pairs, then greedy one-to-one assignment from best match to worst.
+    if not sources:
+        raise RuntimeError('No supported raster media were found in the OOXML source package.')
+    if not pdf_images:
+        raise RuntimeError('No raster image objects were found in the PDF.')
+
     pairs = []
     for pi, p in enumerate(pdf_images):
         for si, s in enumerate(sources):
@@ -156,9 +171,6 @@ def main():
         area_ratio = (s['width'] * s['height']) / max(p['width'] * p['height'], 1)
         ar_delta = aspect_delta_log(p['image'], s['image'])
 
-        # A confident match is worth replacing even when dimensions are unchanged:
-        # Word may preserve pixel dimensions but re-JPEG the image at much lower quality.
-        # Replacing from the DOCX source avoids that second lossy generation.
         confident_replace = bool(score <= args.max_score and area_ratio >= 0.95)
         if confident_replace and area_ratio <= 1.05:
             mode = 'same_resolution_source_preservation'
@@ -183,8 +195,6 @@ def main():
             'match_mode': mode,
         })
 
-    # Safe fallback for a few crop / transparency-altered images whose source is
-    # uniquely paired and substantially higher resolution.
     fallback_candidates = [
         m for m in matches
         if (not m['replace'])
@@ -220,12 +230,11 @@ def main():
             replacement_errors.append({'xref': p['xref'], 'error': str(exc)})
 
     args.output_pdf.parent.mkdir(parents=True, exist_ok=True)
-    # Garbage collection removes superseded streams; deflate is lossless.
     doc.save(args.output_pdf, garbage=4, deflate=True, clean=True)
     doc.close()
 
     report = {
-        'source_docx': args.source_docx.name,
+        'source_office': source_path.name,
         'input_pdf': args.input_pdf.name,
         'output_pdf': args.output_pdf.name,
         'source_raster_media_count': len(sources),
