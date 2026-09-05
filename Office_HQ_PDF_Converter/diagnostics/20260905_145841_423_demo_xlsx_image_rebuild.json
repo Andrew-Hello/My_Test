@@ -1,0 +1,37 @@
+{
+  "schema_version": 3,
+  "matching_engine": "builtin_phash_dct16",
+  "source_office": "demo_xlsx.xlsx",
+  "input_pdf": "demo_xlsx_af1f550301ea40ff9a5ee1908120a2c9_native.pdf",
+  "output_pdf": "demo_xlsx_HQ.pdf",
+  "source_raster_media_count": 1,
+  "pdf_unique_raster_image_count": 2,
+  "matched_count": 1,
+  "replaced_count": 0,
+  "normal_max_score": 45.0,
+  "fallback_enabled": false,
+  "fallback_candidate_count": 0,
+  "matches": [
+    {
+      "score": 204.0,
+      "pdf_index": 1,
+      "src_index": 0,
+      "pdf_xref": 27,
+      "pdf_px": [
+        518,
+        118
+      ],
+      "source_name": "xl/media/image1.png",
+      "source_px": [
+        518,
+        118
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    }
+  ],
+  "replacement_errors": [],
+  "output_size_bytes": 117346
+}

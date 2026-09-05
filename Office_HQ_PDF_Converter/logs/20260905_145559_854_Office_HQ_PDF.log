@@ -1,0 +1,29 @@
+﻿[2026-09-05 14:55:59.856 +08:00] [INFO] Office HQ PDF Converter production pipeline started.
+[2026-09-05 14:55:59.874 +08:00] [INFO] Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.
+[2026-09-05 14:55:59.875 +08:00] [INFO] Python stdout is isolated from process exit codes for Windows PowerShell 5.1 compatibility.
+[2026-09-05 14:55:59.888 +08:00] [INFO] ========================================================================
+[2026-09-05 14:55:59.892 +08:00] [INFO] Source: demo_Report.docx (5.259 MB)
+[2026-09-05 14:55:59.904 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 14:56:01.744 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 14:56:02.207 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat.
+[2026-09-05 14:56:08.957 +08:00] [INFO] Structural PDF created in temp/: 1.693 MB
+[2026-09-05 14:56:08.969 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 14:56:08.999 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 14:56:09.250 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 14:56:09.251 +08:00] [INFO] Checking production packages using pip metadata: PyMuPDF + Pillow.
+[2026-09-05 14:56:09.923 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 14:56:09.925 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 14:56:17.262 +08:00] [DEBUG] Python: {
+[2026-09-05 14:56:17.263 +08:00] [DEBUG] Python:   "source_images": 22,
+[2026-09-05 14:56:17.264 +08:00] [DEBUG] Python:   "pdf_images": 22,
+[2026-09-05 14:56:17.265 +08:00] [DEBUG] Python:   "replaced": 21,
+[2026-09-05 14:56:17.268 +08:00] [DEBUG] Python:   "fallback_enabled": true,
+[2026-09-05 14:56:17.269 +08:00] [DEBUG] Python:   "fallback_candidates": 2,
+[2026-09-05 14:56:17.270 +08:00] [DEBUG] Python:   "output_mb": 5.228
+[2026-09-05 14:56:17.271 +08:00] [DEBUG] Python: }
+[2026-09-05 14:56:17.271 +08:00] [DEBUG] Python rebuilder exit code: 0
+[2026-09-05 14:56:17.274 +08:00] [OK] HQ image restoration completed. Diagnostic: 20260905_145609_925_demo_Report_image_rebuild.json
+[2026-09-05 14:56:17.278 +08:00] [OK] HQ_REBUILT: demo_Report_HQ.pdf (5.228 MB) in 17.39 s
+[2026-09-05 14:56:17.315 +08:00] [INFO] ========================================================================
+[2026-09-05 14:56:17.316 +08:00] [INFO] Finished. Success=1; FailedOrDegraded=0
+[2026-09-05 14:56:17.316 +08:00] [INFO] Log: 20260905_145559_854_Office_HQ_PDF.log

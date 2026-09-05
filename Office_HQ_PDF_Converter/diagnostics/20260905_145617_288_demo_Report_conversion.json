@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  6,
+    "timestamp_local":  "2026-09-05T14:56:17.2852188+08:00",
+    "source_file":  "demo_Report.docx",
+    "source_extension":  ".docx",
+    "source_size_bytes":  5514860,
+    "output_file":  "demo_Report_HQ.pdf",
+    "output_size_bytes":  5482071,
+    "result_mode":  "HQ_REBUILT",
+    "duration_seconds":  17.393,
+    "message":  "Office layout preserved; OOXML raster media restored.",
+    "production_pipeline":  "Office layout -\u003e OOXML source raster restoration",
+    "python_process_handling":  "stdout captured separately; integer exit code only",
+    "log_file":  "20260905_145559_854_Office_HQ_PDF.log"
+}

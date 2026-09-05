@@ -1,0 +1,284 @@
+{
+  "schema_version": 3,
+  "matching_engine": "builtin_phash_dct16",
+  "source_office": "demo_pptx.pptx",
+  "input_pdf": "demo_pptx_c22c016c02a649e3ae02e7a3b393dfc4_native.pdf",
+  "output_pdf": "demo_pptx_HQ.pdf",
+  "source_raster_media_count": 14,
+  "pdf_unique_raster_image_count": 15,
+  "matched_count": 14,
+  "replaced_count": 9,
+  "normal_max_score": 45.0,
+  "fallback_enabled": false,
+  "fallback_candidate_count": 1,
+  "matches": [
+    {
+      "score": 0.0,
+      "pdf_index": 0,
+      "src_index": 3,
+      "pdf_xref": 5,
+      "pdf_px": [
+        2000,
+        1125
+      ],
+      "source_name": "ppt/media/image1.png",
+      "source_px": [
+        2000,
+        1125
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 4,
+      "src_index": 13,
+      "pdf_xref": 54,
+      "pdf_px": [
+        1896,
+        1049
+      ],
+      "source_name": "ppt/media/image4.png",
+      "source_px": [
+        1896,
+        1049
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 7,
+      "src_index": 0,
+      "pdf_xref": 59,
+      "pdf_px": [
+        890,
+        1267
+      ],
+      "source_name": "ppt/media/image7.png",
+      "source_px": [
+        890,
+        1267
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 8,
+      "src_index": 4,
+      "pdf_xref": 60,
+      "pdf_px": [
+        174,
+        44
+      ],
+      "source_name": "ppt/media/image8.png",
+      "source_px": [
+        174,
+        44
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 10,
+      "src_index": 6,
+      "pdf_xref": 71,
+      "pdf_px": [
+        1304,
+        1035
+      ],
+      "source_name": "ppt/media/image10.png",
+      "source_px": [
+        1304,
+        1035
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 12,
+      "src_index": 9,
+      "pdf_xref": 75,
+      "pdf_px": [
+        1092,
+        737
+      ],
+      "source_name": "ppt/media/image12.png",
+      "source_px": [
+        1092,
+        737
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 13,
+      "src_index": 10,
+      "pdf_xref": 76,
+      "pdf_px": [
+        1033,
+        675
+      ],
+      "source_name": "ppt/media/image13.png",
+      "source_px": [
+        1033,
+        675
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 0.0,
+      "pdf_index": 14,
+      "src_index": 11,
+      "pdf_xref": 77,
+      "pdf_px": [
+        1099,
+        321
+      ],
+      "source_name": "ppt/media/image14.png",
+      "source_px": [
+        1099,
+        321
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 2.0,
+      "pdf_index": 6,
+      "src_index": 8,
+      "pdf_xref": 58,
+      "pdf_px": [
+        889,
+        1279
+      ],
+      "source_name": "ppt/media/image6.png",
+      "source_px": [
+        889,
+        1279
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": true,
+      "match_mode": "same_resolution_source_preservation"
+    },
+    {
+      "score": 102.8477,
+      "pdf_index": 9,
+      "src_index": 5,
+      "pdf_xref": 68,
+      "pdf_px": [
+        607,
+        884
+      ],
+      "source_name": "ppt/media/image9.png",
+      "source_px": [
+        607,
+        963
+      ],
+      "pixel_area_ratio": 1.089,
+      "aspect_delta_log": 0.0856,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    },
+    {
+      "score": 123.0987,
+      "pdf_index": 11,
+      "src_index": 12,
+      "pdf_xref": 72,
+      "pdf_px": [
+        796,
+        594
+      ],
+      "source_name": "ppt/media/image5.png",
+      "source_px": [
+        1012,
+        674
+      ],
+      "pixel_area_ratio": 1.443,
+      "aspect_delta_log": 0.11373,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    },
+    {
+      "score": 132.8549,
+      "pdf_index": 5,
+      "src_index": 1,
+      "pdf_xref": 55,
+      "pdf_px": [
+        486,
+        118
+      ],
+      "source_name": "ppt/media/image3.png",
+      "source_px": [
+        1524,
+        374
+      ],
+      "pixel_area_ratio": 9.939,
+      "aspect_delta_log": 0.01069,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    },
+    {
+      "score": 162.864,
+      "pdf_index": 3,
+      "src_index": 2,
+      "pdf_xref": 45,
+      "pdf_px": [
+        124,
+        52
+      ],
+      "source_name": "ppt/media/image2.png",
+      "source_px": [
+        1524,
+        374
+      ],
+      "pixel_area_ratio": 88.396,
+      "aspect_delta_log": 0.5358,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    },
+    {
+      "score": 287.6274,
+      "pdf_index": 1,
+      "src_index": 7,
+      "pdf_xref": 42,
+      "pdf_px": [
+        1747,
+        221
+      ],
+      "source_name": "ppt/media/image11.png",
+      "source_px": [
+        1132,
+        841
+      ],
+      "pixel_area_ratio": 2.466,
+      "aspect_delta_log": 1.77034,
+      "replace": false,
+      "match_mode": "initially_rejected"
+    }
+  ],
+  "replacement_errors": [],
+  "output_size_bytes": 2114241
+}
