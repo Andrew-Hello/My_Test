@@ -25,19 +25,39 @@ def pil_from_bytes(data: bytes):
     return im.copy()
 
 
+def flatten_for_matching(im: Image.Image):
+    """Normalize transparency against white before perceptual comparison.
+
+    Office often flattens transparent PNGs onto a white page before putting them
+    into a PDF. Comparing raw RGBA -> RGB can therefore make the same image look
+    artificially different. Flattening both sides mirrors the rendered page more
+    closely without touching the source used for replacement.
+    """
+    if im.mode == 'RGBA':
+        bg = Image.new('RGB', im.size, 'white')
+        bg.paste(im, mask=im.getchannel('A'))
+        return bg
+    if im.mode != 'RGB':
+        return im.convert('RGB')
+    return im
+
+
 def normalized_hash(im: Image.Image):
-    rgb = im.convert('RGB')
-    return imagehash.phash(rgb, hash_size=16)
+    return imagehash.phash(flatten_for_matching(im), hash_size=16)
 
 
 def aspect(im):
     return im.width / max(im.height, 1)
 
 
+def aspect_delta_log(pdf_im, src_im):
+    return abs(math.log(max(aspect(pdf_im), 1e-9) / max(aspect(src_im), 1e-9)))
+
+
 def similarity_score(pdf_im, src_im):
     # Lower is better. pHash dominates; aspect ratio prevents obvious mismatches.
     ph = normalized_hash(pdf_im) - normalized_hash(src_im)
-    ar = abs(math.log(max(aspect(pdf_im), 1e-9) / max(aspect(src_im), 1e-9)))
+    ar = aspect_delta_log(pdf_im, src_im)
     return float(ph) + ar * 80.0
 
 
@@ -98,7 +118,7 @@ def collect_pdf_images(doc):
 
 def encode_png(im: Image.Image):
     buf = io.BytesIO()
-    # PNG is lossless. optimize=False avoids spending time recompressing at the cost of fidelity.
+    # PNG is lossless; no JPEG recompression is introduced by this repair stage.
     im.save(buf, format='PNG', optimize=False)
     return buf.getvalue()
 
@@ -110,7 +130,9 @@ def main():
     ap.add_argument('--output-pdf', type=Path, required=True)
     ap.add_argument('--report', type=Path, required=True)
     ap.add_argument('--max-score', type=float, default=45.0,
-                    help='Maximum pHash/aspect matching score allowed for replacement.')
+                    help='Maximum pHash/aspect matching score allowed for a normal replacement.')
+    ap.add_argument('--fallback-max-aspect-log', type=float, default=0.35,
+                    help='Maximum aspect-ratio log delta for the one-to-one high-resolution fallback.')
     args = ap.parse_args()
 
     sources = [x for x in load_docx_media(args.source_docx) if x.get('image') is not None]
@@ -118,6 +140,8 @@ def main():
     pdf_images = [x for x in collect_pdf_images(doc) if x.get('image') is not None]
 
     # Build all candidate pairs, then greedy one-to-one assignment from best match to worst.
+    # In Office-produced PDFs this preserves the unique source<->PDF relationship even when
+    # cropping / transparency makes a few perceptual hashes imperfect.
     pairs = []
     for pi, p in enumerate(pdf_images):
         for si, s in enumerate(sources):
@@ -136,6 +160,14 @@ def main():
         used_pdf.add(pi)
         used_src.add(si)
         area_ratio = (s['width'] * s['height']) / max(p['width'] * p['height'], 1)
+        ar_delta = aspect_delta_log(p['image'], s['image'])
+        normal_replace = bool(score <= args.max_score and area_ratio > 1.05)
+        if area_ratio <= 1.05:
+            mode = 'same_resolution_no_gain'
+        elif normal_replace:
+            mode = 'confident_hash'
+        else:
+            mode = 'initially_rejected'
         matches.append({
             'score': round(score, 4),
             'pdf_index': pi,
@@ -145,8 +177,33 @@ def main():
             'source_name': s['name'],
             'source_px': [s['width'], s['height']],
             'pixel_area_ratio': round(area_ratio, 3),
-            'replace': bool(score <= args.max_score and area_ratio > 1.05),
+            'aspect_delta_log': round(ar_delta, 5),
+            'replace': normal_replace,
+            'match_mode': mode,
         })
+
+    # Safe fallback for the exact pattern seen in Office exports:
+    # - the DOCX and PDF expose the same number of unique raster images;
+    # - the greedy assignment is one-to-one for every image;
+    # - only a very small number of high-resolution originals remain rejected;
+    # - those originals are much larger than the PDF image and have a plausible aspect ratio.
+    # This recovers images whose pixels were cropped, flattened or otherwise altered enough
+    # to confuse pHash, while avoiding broad fuzzy replacement on unrelated documents.
+    fallback_candidates = [
+        m for m in matches
+        if (not m['replace'])
+        and m['pixel_area_ratio'] >= 1.5
+        and m['aspect_delta_log'] <= args.fallback_max_aspect_log
+    ]
+    fallback_enabled = (
+        len(sources) == len(pdf_images)
+        and len(matches) == len(pdf_images)
+        and 0 < len(fallback_candidates) <= 3
+    )
+    if fallback_enabled:
+        for m in fallback_candidates:
+            m['replace'] = True
+            m['match_mode'] = 'unique_one_to_one_highres_fallback'
 
     replacement_errors = []
     replaced = 0
@@ -162,6 +219,7 @@ def main():
             replaced += 1
         except Exception as exc:
             m['replace'] = False
+            m['match_mode'] = 'replacement_error'
             m['error'] = str(exc)
             replacement_errors.append({'xref': p['xref'], 'error': str(exc)})
 
@@ -178,7 +236,9 @@ def main():
         'pdf_unique_raster_image_count': len(pdf_images),
         'matched_count': len(matches),
         'replaced_count': replaced,
-        'max_score': args.max_score,
+        'normal_max_score': args.max_score,
+        'fallback_enabled': fallback_enabled,
+        'fallback_candidate_count': len(fallback_candidates),
         'matches': matches,
         'replacement_errors': replacement_errors,
         'output_size_bytes': args.output_pdf.stat().st_size if args.output_pdf.exists() else None,
@@ -190,6 +250,8 @@ def main():
         'source_images': len(sources),
         'pdf_images': len(pdf_images),
         'replaced': replaced,
+        'fallback_enabled': fallback_enabled,
+        'fallback_candidates': len(fallback_candidates),
         'output_mb': round(args.output_pdf.stat().st_size / 1024 / 1024, 3),
     }, ensure_ascii=False, indent=2))
 
