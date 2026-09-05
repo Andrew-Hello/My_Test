@@ -1,0 +1,16 @@
+﻿[2026-09-05 12:14:51.945 +08:00] [INFO] Office HQ PDF Converter v3 started.
+[2026-09-05 12:14:51.964 +08:00] [INFO] Stable strategy: Office layout engine -> native structural PDF -> lossless OOXML image restoration.
+[2026-09-05 12:14:51.965 +08:00] [INFO] PDFMaker and ExportAsFixedFormat2 are intentionally NOT used in the production path.
+[2026-09-05 12:14:51.978 +08:00] [INFO] ========================================================================
+[2026-09-05 12:14:51.981 +08:00] [INFO] Source: demo_Report.docx (5.259 MB)
+[2026-09-05 12:14:51.996 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 12:14:53.823 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 12:14:54.320 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat. Image quality will be repaired afterwards.
+[2026-09-05 12:15:01.054 +08:00] [INFO] Structural PDF created: 1.693 MB
+[2026-09-05 12:15:01.069 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe
+[2026-09-05 12:15:01.383 +08:00] [WARN] HQ Python modules are missing. Attempting one-time pip installation: pymupdf pillow ImageHash.
+[2026-09-05 12:15:02.553 +08:00] [ERROR] Automatic Python dependency installation failed.
+[2026-09-05 12:15:02.563 +08:00] [WARN] NATIVE_ONLY: HQ rebuild failed. Low-resolution Office PDF preserved as demo_Report_NATIVE_ONLY.pdf.
+[2026-09-05 12:15:02.598 +08:00] [INFO] ========================================================================
+[2026-09-05 12:15:02.599 +08:00] [INFO] Finished. Success=0; FailedOrDegraded=1
+[2026-09-05 12:15:02.604 +08:00] [INFO] Log: 20260905_121451_942_Office_HQ_PDF_v3.log

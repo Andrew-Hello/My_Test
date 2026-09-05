@@ -1,0 +1,7 @@
+﻿[2026-09-05 12:14:47.133 +08:00] [INFO] Office HQ PDF Converter v3 started.
+[2026-09-05 12:14:47.149 +08:00] [INFO] Stable strategy: Office layout engine -> native structural PDF -> lossless OOXML image restoration.
+[2026-09-05 12:14:47.150 +08:00] [INFO] PDFMaker and ExportAsFixedFormat2 are intentionally NOT used in the production path.
+[2026-09-05 12:14:47.172 +08:00] [ERROR] Unhandled conversion error: D:\Code\GitHub\My_Test\Office_HQ_PDF_Converter\demo_Report_Rebuilt.pdf | Type=System.Management.Automation.RuntimeException; HRESULT=0x80131501; Message=Unsupported file type: .pdf
+[2026-09-05 12:14:47.181 +08:00] [INFO] ========================================================================
+[2026-09-05 12:14:47.182 +08:00] [INFO] Finished. Success=0; FailedOrDegraded=1
+[2026-09-05 12:14:47.185 +08:00] [INFO] Log: 20260905_121447_130_Office_HQ_PDF_v3.log

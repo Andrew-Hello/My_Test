@@ -1,0 +1,13 @@
+﻿{
+    "schema_version":  3,
+    "timestamp_local":  "2026-09-05T12:15:02.5702472+08:00",
+    "source_file":  "demo_Report.docx",
+    "source_extension":  ".docx",
+    "source_size_bytes":  5514860,
+    "output_file":  "demo_Report_NATIVE_ONLY.pdf",
+    "output_size_bytes":  1775135,
+    "result_mode":  "NATIVE_ONLY",
+    "duration_seconds":  10.587,
+    "message":  "HQ rebuild unavailable or failed; output may be ~200 PPI.",
+    "log_file":  "20260905_121451_942_Office_HQ_PDF_v3.log"
+}
