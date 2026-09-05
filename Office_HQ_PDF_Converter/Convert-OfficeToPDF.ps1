@@ -82,46 +82,88 @@ function Get-TempPdfPath([string]$SourcePath) {
 }
 
 function Find-PythonRunner {
-    foreach ($name in @('py.exe', 'python.exe', 'python3.exe')) {
+    $py = Get-Command 'py.exe' -ErrorAction SilentlyContinue
+    if ($null -ne $py) {
+        return [pscustomobject]@{ Exe = $py.Source; Prefix = @('-3'); Label = 'py -3' }
+    }
+
+    foreach ($name in @('python.exe', 'python3.exe')) {
         $cmd = Get-Command $name -ErrorAction SilentlyContinue
         if ($null -ne $cmd) {
-            if ($name -eq 'py.exe') {
-                return [pscustomobject]@{ Exe = $cmd.Source; Prefix = @('-3') }
-            }
-            return [pscustomobject]@{ Exe = $cmd.Source; Prefix = @() }
+            return [pscustomobject]@{ Exe = $cmd.Source; Prefix = @(); Label = $name }
         }
     }
     return $null
 }
 
-function Invoke-Python($Runner, [string[]]$Arguments) {
+function Invoke-Python($Runner, [string[]]$Arguments, [switch]$Quiet) {
     $allArgs = @()
     $allArgs += $Runner.Prefix
     $allArgs += $Arguments
-    & $Runner.Exe @allArgs
+    if ($Quiet) {
+        & $Runner.Exe @allArgs *> $null
+    } else {
+        & $Runner.Exe @allArgs
+    }
     return $LASTEXITCODE
 }
 
-function Ensure-HqPythonDependencies($Runner) {
-    Write-Log 'INFO' 'Checking Python modules: pymupdf + Pillow.'
-    $check = Invoke-Python $Runner @('-c', 'import pymupdf, PIL; print("HQ Python dependencies OK")')
-    if ($check -eq 0) { return $true }
+function Get-PythonText($Runner, [string[]]$Arguments) {
+    $allArgs = @()
+    $allArgs += $Runner.Prefix
+    $allArgs += $Arguments
+    try {
+        return ((& $Runner.Exe @allArgs 2>&1 | Out-String).Trim())
+    } catch {
+        return $_.Exception.Message
+    }
+}
 
-    Write-Log 'WARN' 'Required Python modules are missing. Trying the currently configured pip index.'
-    $install = Invoke-Python $Runner @('-m', 'pip', 'install', '--user', 'pymupdf', 'pillow')
+function Test-PythonPackage($Runner, [string]$PackageName) {
+    $code = Invoke-Python $Runner @('-m', 'pip', 'show', $PackageName) -Quiet
+    return ($code -eq 0)
+}
+
+function Ensure-HqPythonDependencies($Runner) {
+    $pythonVersion = Get-PythonText $Runner @('--version')
+    $pipVersion = Get-PythonText $Runner @('-m', 'pip', '--version')
+    Write-Log 'INFO' ("Python runtime: {0}" -f $pythonVersion)
+    Write-Log 'INFO' ("Python package manager: {0}" -f $pipVersion)
+    Write-Log 'INFO' 'Checking production packages using pip metadata (no python -c probe): PyMuPDF + Pillow.'
+
+    $hasMuPdf = Test-PythonPackage $Runner 'pymupdf'
+    $hasPillow = Test-PythonPackage $Runner 'pillow'
+    Write-Log 'INFO' ("Package status: pymupdf={0}; pillow={1}" -f $hasMuPdf, $hasPillow)
+    if ($hasMuPdf -and $hasPillow) { return $true }
+
+    $missing = @()
+    if (-not $hasMuPdf) { $missing += 'pymupdf' }
+    if (-not $hasPillow) { $missing += 'pillow' }
+    Write-Log 'WARN' ("Missing package(s): {0}. Trying the configured pip index." -f ($missing -join ', '))
+
+    $installArgs = @('-m', 'pip', 'install', '--user') + $missing
+    $install = Invoke-Python $Runner $installArgs
     if ($install -eq 0) {
-        $check2 = Invoke-Python $Runner @('-c', 'import pymupdf, PIL')
-        if ($check2 -eq 0) { return $true }
+        $hasMuPdf = Test-PythonPackage $Runner 'pymupdf'
+        $hasPillow = Test-PythonPackage $Runner 'pillow'
+        if ($hasMuPdf -and $hasPillow) { return $true }
     }
 
     Write-Log 'WARN' 'Configured pip index did not provide all dependencies. Trying official PyPI once.'
-    $install2 = Invoke-Python $Runner @('-m', 'pip', 'install', '--user', '--index-url', 'https://pypi.org/simple', 'pymupdf', 'pillow')
+    $installArgs2 = @('-m', 'pip', 'install', '--user', '--index-url', 'https://pypi.org/simple') + $missing
+    $install2 = Invoke-Python $Runner $installArgs2
     if ($install2 -ne 0) {
-        Write-Log 'ERROR' 'Automatic Python dependency installation failed. Run Collect_Local_Environment.cmd and push the report for diagnosis.'
+        Write-Log 'ERROR' 'Automatic Python dependency installation failed. Run Local_Environment_Collector and push the report for diagnosis.'
         return $false
     }
-    $check3 = Invoke-Python $Runner @('-c', 'import pymupdf, PIL')
-    return ($check3 -eq 0)
+
+    $hasMuPdf = Test-PythonPackage $Runner 'pymupdf'
+    $hasPillow = Test-PythonPackage $Runner 'pillow'
+    if (-not ($hasMuPdf -and $hasPillow)) {
+        Write-Log 'ERROR' 'pip reported success but required package metadata is still unavailable to the selected Python runtime.'
+        return $false
+    }
+    return $true
 }
 
 function Export-WordNative([string]$SourcePath, [string]$PdfPath) {
@@ -220,11 +262,10 @@ function Invoke-HqRebuild([string]$SourcePath, [string]$NativePdf, [string]$Fina
 
     $runner = Find-PythonRunner
     if ($null -eq $runner) {
-        Write-Log 'ERROR' 'Python 3 was not found. Run Collect_Local_Environment.cmd and push the report for diagnosis.'
+        Write-Log 'ERROR' 'Python 3 was not found. Run Local_Environment_Collector and push the report for diagnosis.'
         return $false
     }
-    Write-Log 'INFO' ("Python runner: {0}" -f $runner.Exe)
-    [void](Invoke-Python $runner @('-c', 'import sys; print("Python=" + sys.version.replace("\n"," ")); print("Executable=" + sys.executable)'))
+    Write-Log 'INFO' ("Python runner: {0} ({1})" -f $runner.Exe, $runner.Label)
 
     if (-not (Ensure-HqPythonDependencies $runner)) { return $false }
 
@@ -258,7 +299,7 @@ function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [strin
     $size = $null
     if (Test-Path -LiteralPath $OutputPath) { $size = (Get-Item -LiteralPath $OutputPath).Length }
     $record = [ordered]@{
-        schema_version = 4
+        schema_version = 5
         timestamp_local = (Get-Date).ToString('o')
         source_file = $source.Name
         source_extension = $source.Extension.ToLowerInvariant()
@@ -269,6 +310,7 @@ function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [strin
         duration_seconds = [math]::Round($Seconds, 3)
         message = $Message
         production_pipeline = 'Office layout -> OOXML source raster restoration'
+        python_dependency_detection = 'pip metadata; no python -c quoting dependency'
         log_file = [IO.Path]::GetFileName($Script:LogPath)
     }
     $safe = [IO.Path]::GetFileNameWithoutExtension($SourcePath) -replace '[^A-Za-z0-9._-]', '_'
@@ -336,6 +378,7 @@ function Convert-One([string]$InputPath) {
 Write-Log 'INFO' 'Office HQ PDF Converter production pipeline started.'
 Write-Log 'INFO' 'Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.'
 Write-Log 'INFO' 'Production path intentionally does NOT use Acrobat PDFMaker, ExportAsFixedFormat2, or ImageHash.'
+Write-Log 'INFO' 'Python dependency detection uses pip metadata to avoid PowerShell 5.1 / py.exe -c quoting problems.'
 
 if ($null -eq $InputFiles -or $InputFiles.Count -eq 0) {
     Write-Log 'ERROR' 'No input files. Drag Office documents onto DragDrop_Office_to_PDF.cmd.'
