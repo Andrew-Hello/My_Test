@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-05T03:36:21.858437+00:00",
+  "generated_utc": "2026-09-05T03:40:56.611607+00:00",
   "source_docx": {
     "file_name": "demo_Report.docx",
     "size_bytes": 5514860,
@@ -1392,8 +1392,8 @@
     },
     {
       "file_name": "demo_Report_Rebuilt.pdf",
-      "size_bytes": 4375117,
-      "size_mb": 4.172,
+      "size_bytes": 4442540,
+      "size_mb": 4.237,
       "page_count": 19,
       "pdf_version": "PDF 1.7",
       "producer": "Microsoft® Word 2024",
@@ -1425,25 +1425,25 @@
         "FlateDecode": 39,
         "DCTDecode": 1
       },
-      "unique_image_compressed_stream_bytes": 3552200,
-      "unique_image_compressed_stream_mb": 3.388,
-      "unique_image_decoded_stream_bytes": 419877192,
+      "unique_image_compressed_stream_bytes": 3603061,
+      "unique_image_compressed_stream_mb": 3.436,
+      "unique_image_decoded_stream_bytes": 435236010,
       "effective_ppi": {
         "count": 40,
-        "min": 199.7,
-        "p10": 199.7,
-        "median": 209.8,
-        "p90": 724.0,
-        "max": 760.3,
+        "min": 219.8,
+        "p10": 678.5,
+        "median": 760.3,
+        "p90": 882.6,
+        "max": 882.6,
         "placements_lt_150": 0,
-        "placements_lt_220": 21,
-        "placements_ge_300": 18,
-        "placements_ge_600": 18
+        "placements_lt_220": 1,
+        "placements_ge_300": 38,
+        "placements_ge_600": 38
       },
       "largest_images": [
         {
-          "xref": 99,
-          "smask": 2619,
+          "xref": 98,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -1458,8 +1458,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 101,
-          "smask": 2619,
+          "xref": 100,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -1474,8 +1474,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 97,
-          "smask": 2619,
+          "xref": 96,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -1490,8 +1490,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 100,
-          "smask": 2619,
+          "xref": 99,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -1506,7 +1506,7 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 108,
+          "xref": 107,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1522,7 +1522,7 @@
           "effective_ppi_median": 642.7
         },
         {
-          "xref": 110,
+          "xref": 109,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1538,7 +1538,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 112,
+          "xref": 111,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1554,7 +1554,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 113,
+          "xref": 112,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1570,7 +1570,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 111,
+          "xref": 110,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1586,7 +1586,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 27,
+          "xref": 26,
           "smask": 0,
           "width_px": 2073,
           "height_px": 2930,
@@ -1602,7 +1602,23 @@
           "effective_ppi_median": 219.8
         },
         {
-          "xref": 96,
+          "xref": 94,
+          "smask": 2621,
+          "width_px": 2520,
+          "height_px": 1957,
+          "bpc": 8,
+          "colorspace": "ICCBased",
+          "name": "Image107",
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 99741,
+          "decoded_stream_bytes": 14794920,
+          "placement_count": 1,
+          "effective_ppi_min": 657.7,
+          "effective_ppi_max": 657.7,
+          "effective_ppi_median": 657.7
+        },
+        {
+          "xref": 95,
           "smask": 2620,
           "width_px": 3292,
           "height_px": 2029,
@@ -1618,7 +1634,7 @@
           "effective_ppi_median": 760.3
         },
         {
-          "xref": 118,
+          "xref": 117,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1634,7 +1650,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 109,
+          "xref": 108,
           "smask": 0,
           "width_px": 2952,
           "height_px": 2361,
@@ -1650,7 +1666,7 @@
           "effective_ppi_median": 690.1
         },
         {
-          "xref": 115,
+          "xref": 114,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1666,7 +1682,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 116,
+          "xref": 115,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1682,7 +1698,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 114,
+          "xref": 113,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1698,7 +1714,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 117,
+          "xref": 116,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1714,7 +1730,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 119,
+          "xref": 118,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1730,8 +1746,8 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 98,
-          "smask": 2621,
+          "xref": 97,
+          "smask": 2619,
           "width_px": 3292,
           "height_px": 2029,
           "bpc": 8,
@@ -1744,59 +1760,11 @@
           "effective_ppi_min": 760.3,
           "effective_ppi_max": 760.3,
           "effective_ppi_median": 760.3
-        },
-        {
-          "xref": 95,
-          "smask": 0,
-          "width_px": 677,
-          "height_px": 595,
-          "bpc": 8,
-          "colorspace": "DeviceRGB",
-          "name": "Image107",
-          "filter": "FlateDecode",
-          "compressed_stream_bytes": 78789,
-          "decoded_stream_bytes": 1208445,
-          "placement_count": 1,
-          "effective_ppi_min": 199.8,
-          "effective_ppi_max": 199.8,
-          "effective_ppi_median": 199.8
         }
       ],
       "lowest_effective_ppi_images": [
         {
-          "xref": 25,
-          "smask": 26,
-          "width_px": 375,
-          "height_px": 85,
-          "bpc": 8,
-          "colorspace": "DeviceRGB",
-          "name": "Image28",
-          "filter": "FlateDecode",
-          "compressed_stream_bytes": 6318,
-          "decoded_stream_bytes": 95625,
-          "placement_count": 19,
-          "effective_ppi_min": 199.7,
-          "effective_ppi_max": 199.7,
-          "effective_ppi_median": 199.7
-        },
-        {
-          "xref": 95,
-          "smask": 0,
-          "width_px": 677,
-          "height_px": 595,
-          "bpc": 8,
-          "colorspace": "DeviceRGB",
-          "name": "Image107",
-          "filter": "FlateDecode",
-          "compressed_stream_bytes": 78789,
-          "decoded_stream_bytes": 1208445,
-          "placement_count": 1,
-          "effective_ppi_min": 199.8,
-          "effective_ppi_max": 199.8,
-          "effective_ppi_median": 199.8
-        },
-        {
-          "xref": 27,
+          "xref": 26,
           "smask": 0,
           "width_px": 2073,
           "height_px": 2930,
@@ -1812,8 +1780,8 @@
           "effective_ppi_median": 219.8
         },
         {
-          "xref": 38,
-          "smask": 39,
+          "xref": 37,
+          "smask": 38,
           "width_px": 266,
           "height_px": 60,
           "bpc": 8,
@@ -1828,7 +1796,7 @@
           "effective_ppi_median": 223.3
         },
         {
-          "xref": 108,
+          "xref": 107,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1844,7 +1812,23 @@
           "effective_ppi_median": 642.7
         },
         {
-          "xref": 110,
+          "xref": 94,
+          "smask": 2621,
+          "width_px": 2520,
+          "height_px": 1957,
+          "bpc": 8,
+          "colorspace": "ICCBased",
+          "name": "Image107",
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 99741,
+          "decoded_stream_bytes": 14794920,
+          "placement_count": 1,
+          "effective_ppi_min": 657.7,
+          "effective_ppi_max": 657.7,
+          "effective_ppi_median": 657.7
+        },
+        {
+          "xref": 109,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1860,7 +1844,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 111,
+          "xref": 110,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1876,7 +1860,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 112,
+          "xref": 111,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1892,7 +1876,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 113,
+          "xref": 112,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1908,7 +1892,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 114,
+          "xref": 113,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1924,7 +1908,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 115,
+          "xref": 114,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1940,7 +1924,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 116,
+          "xref": 115,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1956,7 +1940,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 117,
+          "xref": 116,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1972,7 +1956,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 118,
+          "xref": 117,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -1988,7 +1972,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 119,
+          "xref": 118,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2004,7 +1988,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 109,
+          "xref": 108,
           "smask": 0,
           "width_px": 2952,
           "height_px": 2361,
@@ -2020,8 +2004,8 @@
           "effective_ppi_median": 690.1
         },
         {
-          "xref": 97,
-          "smask": 2619,
+          "xref": 96,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2036,8 +2020,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 99,
-          "smask": 2619,
+          "xref": 98,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2052,8 +2036,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 100,
-          "smask": 2619,
+          "xref": 99,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2068,8 +2052,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 101,
-          "smask": 2619,
+          "xref": 100,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2082,27 +2066,43 @@
           "effective_ppi_min": 724.0,
           "effective_ppi_max": 724.0,
           "effective_ppi_median": 724.0
+        },
+        {
+          "xref": 95,
+          "smask": 2620,
+          "width_px": 3292,
+          "height_px": 2029,
+          "bpc": 8,
+          "colorspace": "ICCBased",
+          "name": "Image109",
+          "filter": "FlateDecode",
+          "compressed_stream_bytes": 98287,
+          "decoded_stream_bytes": 20038404,
+          "placement_count": 1,
+          "effective_ppi_min": 760.3,
+          "effective_ppi_max": 760.3,
+          "effective_ppi_median": 760.3
         }
       ],
       "images": [
         {
           "xref": 25,
-          "smask": 26,
-          "width_px": 375,
-          "height_px": 85,
+          "smask": 2622,
+          "width_px": 1656,
+          "height_px": 376,
           "bpc": 8,
-          "colorspace": "DeviceRGB",
+          "colorspace": "ICCBased",
           "name": "Image28",
           "filter": "FlateDecode",
-          "compressed_stream_bytes": 6318,
-          "decoded_stream_bytes": 95625,
+          "compressed_stream_bytes": 36227,
+          "decoded_stream_bytes": 1867968,
           "placement_count": 19,
-          "effective_ppi_min": 199.7,
-          "effective_ppi_max": 199.7,
-          "effective_ppi_median": 199.7
+          "effective_ppi_min": 882.6,
+          "effective_ppi_max": 882.6,
+          "effective_ppi_median": 882.6
         },
         {
-          "xref": 27,
+          "xref": 26,
           "smask": 0,
           "width_px": 2073,
           "height_px": 2930,
@@ -2118,8 +2118,8 @@
           "effective_ppi_median": 219.8
         },
         {
-          "xref": 38,
-          "smask": 39,
+          "xref": 37,
+          "smask": 38,
           "width_px": 266,
           "height_px": 60,
           "bpc": 8,
@@ -2134,23 +2134,23 @@
           "effective_ppi_median": 223.3
         },
         {
-          "xref": 95,
-          "smask": 0,
-          "width_px": 677,
-          "height_px": 595,
+          "xref": 94,
+          "smask": 2621,
+          "width_px": 2520,
+          "height_px": 1957,
           "bpc": 8,
-          "colorspace": "DeviceRGB",
+          "colorspace": "ICCBased",
           "name": "Image107",
           "filter": "FlateDecode",
-          "compressed_stream_bytes": 78789,
-          "decoded_stream_bytes": 1208445,
+          "compressed_stream_bytes": 99741,
+          "decoded_stream_bytes": 14794920,
           "placement_count": 1,
-          "effective_ppi_min": 199.8,
-          "effective_ppi_max": 199.8,
-          "effective_ppi_median": 199.8
+          "effective_ppi_min": 657.7,
+          "effective_ppi_max": 657.7,
+          "effective_ppi_median": 657.7
         },
         {
-          "xref": 96,
+          "xref": 95,
           "smask": 2620,
           "width_px": 3292,
           "height_px": 2029,
@@ -2166,8 +2166,8 @@
           "effective_ppi_median": 760.3
         },
         {
-          "xref": 97,
-          "smask": 2619,
+          "xref": 96,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2182,8 +2182,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 98,
-          "smask": 2621,
+          "xref": 97,
+          "smask": 2619,
           "width_px": 3292,
           "height_px": 2029,
           "bpc": 8,
@@ -2198,8 +2198,8 @@
           "effective_ppi_median": 760.3
         },
         {
-          "xref": 99,
-          "smask": 2619,
+          "xref": 98,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2214,8 +2214,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 100,
-          "smask": 2619,
+          "xref": 99,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2230,8 +2230,8 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 101,
-          "smask": 2619,
+          "xref": 100,
+          "smask": 2618,
           "width_px": 3135,
           "height_px": 2077,
           "bpc": 8,
@@ -2246,7 +2246,7 @@
           "effective_ppi_median": 724.0
         },
         {
-          "xref": 108,
+          "xref": 107,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2262,7 +2262,7 @@
           "effective_ppi_median": 642.7
         },
         {
-          "xref": 109,
+          "xref": 108,
           "smask": 0,
           "width_px": 2952,
           "height_px": 2361,
@@ -2278,7 +2278,7 @@
           "effective_ppi_median": 690.1
         },
         {
-          "xref": 110,
+          "xref": 109,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2294,7 +2294,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 111,
+          "xref": 110,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2310,7 +2310,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 112,
+          "xref": 111,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2326,7 +2326,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 113,
+          "xref": 112,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2342,7 +2342,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 114,
+          "xref": 113,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2358,7 +2358,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 115,
+          "xref": 114,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2374,7 +2374,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 116,
+          "xref": 115,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2390,7 +2390,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 117,
+          "xref": 116,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2406,7 +2406,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 118,
+          "xref": 117,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,
@@ -2422,7 +2422,7 @@
           "effective_ppi_median": 680.8
         },
         {
-          "xref": 119,
+          "xref": 118,
           "smask": 0,
           "width_px": 3216,
           "height_px": 2461,

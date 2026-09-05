@@ -1,6 +1,6 @@
 # PDF Quality Comparison
 
-Generated: 2026-09-05T03:36:21.858437+00:00
+Generated: 2026-09-05T03:40:56.611607+00:00
 
 ## Source DOCX
 
@@ -13,16 +13,16 @@ Generated: 2026-09-05T03:36:21.858437+00:00
 
 | Metric | demo_Report.pdf | demo_Report_Rebuilt.pdf | demo_Report_HD.pdf |
 |---|---:|---:|---:|
-| PDF size (MB) | 1.693 | 4.172 | 7.356 |
+| PDF size (MB) | 1.693 | 4.237 | 7.356 |
 | Pages | 19 | 19 | 19 |
 | Unique image XRefs | 22 | 22 | 22 |
 | Image placements | 40 | 40 | 40 |
-| Unique compressed image streams (MB) | 1.088 | 3.388 | 6.404 |
-| Effective PPI min | 199.7 | 199.7 | 219.8 |
-| Effective PPI median | 199.7 | 209.8 | 760.3 |
-| Effective PPI p90 | 199.8 | 724.0 | 882.6 |
-| Placements >=300 PPI | 0 | 18 | 38 |
-| Placements >=600 PPI | 0 | 18 | 38 |
+| Unique compressed image streams (MB) | 1.088 | 3.436 | 6.404 |
+| Effective PPI min | 199.7 | 219.8 | 219.8 |
+| Effective PPI median | 199.7 | 760.3 | 760.3 |
+| Effective PPI p90 | 199.8 | 882.6 | 882.6 |
+| Placements >=300 PPI | 0 | 38 | 38 |
+| Placements >=600 PPI | 0 | 38 | 38 |
 
 ## demo_Report.pdf
 
@@ -55,24 +55,24 @@ Generated: 2026-09-05T03:36:21.858437+00:00
 - Creator: `Microsoft® Word 2024`
 - PDF format: `PDF 1.7`
 - Image filters: `{'FlateDecode': 39, 'DCTDecode': 1}`
-- Effective PPI: `{'count': 40, 'min': 199.7, 'p10': 199.7, 'median': 209.8, 'p90': 724.0, 'max': 760.3, 'placements_lt_150': 0, 'placements_lt_220': 21, 'placements_ge_300': 18, 'placements_ge_600': 18}`
+- Effective PPI: `{'count': 40, 'min': 219.8, 'p10': 678.5, 'median': 760.3, 'p90': 882.6, 'max': 882.6, 'placements_lt_150': 0, 'placements_lt_220': 1, 'placements_ge_300': 38, 'placements_ge_600': 38}`
 
 ### Largest embedded image streams
 
 | xref | px | filter | compressed KB | placements | min PPI | median PPI |
 |---:|---:|---|---:|---:|---:|---:|
-| 99 | 3135x2077 | FlateDecode | 472.5 | 1 | 724.0 | 724.0 |
-| 101 | 3135x2077 | FlateDecode | 442.2 | 1 | 724.0 | 724.0 |
-| 97 | 3135x2077 | FlateDecode | 424.8 | 1 | 724.0 | 724.0 |
-| 100 | 3135x2077 | FlateDecode | 418.7 | 1 | 724.0 | 724.0 |
-| 108 | 3216x2461 | FlateDecode | 160.6 | 1 | 642.7 | 642.7 |
-| 110 | 3216x2461 | FlateDecode | 151.4 | 1 | 680.8 | 680.8 |
-| 112 | 3216x2461 | FlateDecode | 133.3 | 1 | 680.8 | 680.8 |
-| 113 | 3216x2461 | FlateDecode | 127.8 | 1 | 680.8 | 680.8 |
-| 111 | 3216x2461 | FlateDecode | 111.6 | 1 | 680.8 | 680.8 |
-| 27 | 2073x2930 | DCTDecode | 109.1 | 1 | 219.8 | 219.8 |
-| 96 | 3292x2029 | FlateDecode | 96.0 | 1 | 760.3 | 760.3 |
-| 118 | 3216x2461 | FlateDecode | 94.8 | 1 | 680.8 | 680.8 |
+| 98 | 3135x2077 | FlateDecode | 472.5 | 1 | 724.0 | 724.0 |
+| 100 | 3135x2077 | FlateDecode | 442.2 | 1 | 724.0 | 724.0 |
+| 96 | 3135x2077 | FlateDecode | 424.8 | 1 | 724.0 | 724.0 |
+| 99 | 3135x2077 | FlateDecode | 418.7 | 1 | 724.0 | 724.0 |
+| 107 | 3216x2461 | FlateDecode | 160.6 | 1 | 642.7 | 642.7 |
+| 109 | 3216x2461 | FlateDecode | 151.4 | 1 | 680.8 | 680.8 |
+| 111 | 3216x2461 | FlateDecode | 133.3 | 1 | 680.8 | 680.8 |
+| 112 | 3216x2461 | FlateDecode | 127.8 | 1 | 680.8 | 680.8 |
+| 110 | 3216x2461 | FlateDecode | 111.6 | 1 | 680.8 | 680.8 |
+| 26 | 2073x2930 | DCTDecode | 109.1 | 1 | 219.8 | 219.8 |
+| 94 | 2520x1957 | FlateDecode | 97.4 | 1 | 657.7 | 657.7 |
+| 95 | 3292x2029 | FlateDecode | 96.0 | 1 | 760.3 | 760.3 |
 
 ## demo_Report_HD.pdf
 
