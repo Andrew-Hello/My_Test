@@ -1,0 +1,55 @@
+name: Office PDF Quality Comparison
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'Office_HQ_PDF_Converter/demo_Report.docx'
+      - 'Office_HQ_PDF_Converter/demo_Report.pdf'
+      - 'Office_HQ_PDF_Converter/demo_Report_HD.pdf'
+      - 'Office_HQ_PDF_Converter/Analyze-PDF-Quality.py'
+      - '.github/workflows/office-pdf-quality-analysis.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install analyzer dependencies
+        run: python -m pip install --disable-pip-version-check pymupdf pillow
+
+      - name: Analyze source and PDFs
+        run: >-
+          python Office_HQ_PDF_Converter/Analyze-PDF-Quality.py
+          --source-docx Office_HQ_PDF_Converter/demo_Report.docx
+          --pdf Office_HQ_PDF_Converter/demo_Report.pdf
+          --pdf Office_HQ_PDF_Converter/demo_Report_HD.pdf
+          --json-out Office_HQ_PDF_Converter/diagnostics/quality_comparison_latest.json
+          --md-out Office_HQ_PDF_Converter/diagnostics/quality_comparison_latest.md
+
+      - name: Commit comparison report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Office_HQ_PDF_Converter/diagnostics/quality_comparison_latest.json
+          git add Office_HQ_PDF_Converter/diagnostics/quality_comparison_latest.md
+          if git diff --cached --quiet; then
+            echo "No report changes."
+          else
+            git commit -m "Update Office PDF quality comparison report"
+            git push origin HEAD:dev
+          fi
