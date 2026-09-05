@@ -8,219 +8,138 @@ Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# -----------------------------------------------------------------------------
-# High-quality Office -> PDF converter + diagnostics
-# Requires desktop Microsoft Office on Windows.
-# Supported: .docx .doc .xlsx .xls .pptx .ppt
-# The source document is opened read-only and is never saved/modified.
-# -----------------------------------------------------------------------------
-
 $SupportedExtensions = @('.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt')
+$ModernExtensions = @('.docx', '.xlsx', '.pptx')
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$LogsDirectory = Join-Path $ScriptRoot 'logs'
 $DiagnosticsDirectory = Join-Path $ScriptRoot 'diagnostics'
-New-Item -ItemType Directory -Path $DiagnosticsDirectory -Force | Out-Null
+$TempDirectory = Join-Path $ScriptRoot 'temp'
+$RebuilderScript = Join-Path $ScriptRoot 'src\HQImageRebuilder.py'
 
-function Write-Info([string]$Message) { Write-Host "[INFO] $Message" -ForegroundColor Cyan }
-function Write-Ok([string]$Message) { Write-Host "[ OK ] $Message" -ForegroundColor Green }
-function Write-WarnText([string]$Message) { Write-Host "[WARN] $Message" -ForegroundColor Yellow }
-function Write-Fail([string]$Message) { Write-Host "[FAIL] $Message" -ForegroundColor Red }
+foreach ($dir in @($LogsDirectory, $DiagnosticsDirectory, $TempDirectory)) {
+    New-Item -ItemType Directory -Path $dir -Force | Out-Null
+}
+
+$SessionStamp = Get-Date -Format 'yyyyMMdd_HHmmss_fff'
+$Script:LogPath = Join-Path $LogsDirectory ("{0}_Office_HQ_PDF.log" -f $SessionStamp)
+
+function Get-ExceptionText($Exception) {
+    if ($null -eq $Exception) { return '' }
+    $hr = 'n/a'
+    try { $hr = ('0x{0:X8}' -f ($Exception.HResult -band 0xffffffff)) } catch { }
+    return ("Type={0}; HRESULT={1}; Message={2}" -f $Exception.GetType().FullName, $hr, $Exception.Message)
+}
+
+function Write-Log([string]$Level, [string]$Message, $Exception = $null) {
+    $ts = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff zzz')
+    $line = "[{0}] [{1}] {2}" -f $ts, $Level.ToUpperInvariant(), $Message
+    if ($null -ne $Exception) { $line += ' | ' + (Get-ExceptionText $Exception) }
+    Add-Content -LiteralPath $Script:LogPath -Value $line -Encoding UTF8
+    switch ($Level.ToUpperInvariant()) {
+        'OK'    { Write-Host $line -ForegroundColor Green }
+        'WARN'  { Write-Host $line -ForegroundColor Yellow }
+        'ERROR' { Write-Host $line -ForegroundColor Red }
+        'DEBUG' { Write-Host $line -ForegroundColor DarkGray }
+        default { Write-Host $line -ForegroundColor Cyan }
+    }
+}
 
 function Release-ComObject($Object) {
     if ($null -ne $Object) {
         try {
-            if ([System.Runtime.InteropServices.Marshal]::IsComObject($Object)) {
-                [void][System.Runtime.InteropServices.Marshal]::FinalReleaseComObject($Object)
+            if ([Runtime.InteropServices.Marshal]::IsComObject($Object)) {
+                [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($Object)
             }
         } catch { }
     }
 }
 
 function Force-ComCleanup {
-    [GC]::Collect()
-    [GC]::WaitForPendingFinalizers()
-    [GC]::Collect()
-    [GC]::WaitForPendingFinalizers()
-}
-
-function Get-SafeFileName([string]$Name) {
-    if ([string]::IsNullOrWhiteSpace($Name)) { return 'unknown' }
-    $invalid = [System.IO.Path]::GetInvalidFileNameChars()
-    $safe = $Name
-    foreach ($char in $invalid) { $safe = $safe.Replace([string]$char, '_') }
-    return $safe
-}
-
-function Get-SystemDiagnostics {
-    $osCaption = $null
-    $osVersion = [Environment]::OSVersion.VersionString
-    $osBuild = $null
-    try {
-        $os = Get-CimInstance Win32_OperatingSystem -ErrorAction Stop
-        $osCaption = $os.Caption
-        $osVersion = $os.Version
-        $osBuild = $os.BuildNumber
-    } catch { }
-
-    return [ordered]@{
-        os_caption = $osCaption
-        os_version = $osVersion
-        os_build = $osBuild
-        process_architecture = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString()
-        powershell_version = $PSVersionTable.PSVersion.ToString()
-        dotnet_runtime = [System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription
-    }
-}
-
-function Get-OpenXmlMediaStats([string]$Path) {
-    $ext = [System.IO.Path]::GetExtension($Path).ToLowerInvariant()
-    if ($ext -notin @('.docx', '.xlsx', '.pptx')) { return $null }
-
-    try {
-        Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
-        $zip = [System.IO.Compression.ZipFile]::OpenRead($Path)
-        try {
-            $count = 0
-            [int64]$totalBytes = 0
-            $types = @{}
-            foreach ($entry in $zip.Entries) {
-                if ($entry.FullName -match '/media/') {
-                    $count++
-                    $totalBytes += $entry.Length
-                    $mediaExt = [System.IO.Path]::GetExtension($entry.FullName).ToLowerInvariant()
-                    if ([string]::IsNullOrWhiteSpace($mediaExt)) { $mediaExt = '(none)' }
-                    if (-not $types.ContainsKey($mediaExt)) { $types[$mediaExt] = 0 }
-                    $types[$mediaExt]++
-                }
-            }
-            return [ordered]@{
-                embedded_media_count = $count
-                embedded_media_uncompressed_bytes = $totalBytes
-                embedded_media_uncompressed_mb = [math]::Round($totalBytes / 1MB, 3)
-                media_extensions = $types
-            }
-        }
-        finally {
-            if ($null -ne $zip) { $zip.Dispose() }
-        }
-    }
-    catch {
-        return [ordered]@{
-            embedded_media_scan_error = $_.Exception.Message
-        }
-    }
-}
-
-function Get-PdfPageCountHeuristic([string]$PdfPath) {
-    try {
-        $file = Get-Item -LiteralPath $PdfPath
-        if ($file.Length -gt 200MB) {
-            return [ordered]@{ count = $null; method = 'skipped_over_200MB' }
-        }
-        $bytes = [System.IO.File]::ReadAllBytes($PdfPath)
-        $text = [System.Text.Encoding]::ASCII.GetString($bytes)
-        $matches = [regex]::Matches($text, '/Type\s*/Page(?!s)\b')
-        return [ordered]@{ count = $matches.Count; method = 'pdf_dictionary_heuristic' }
-    }
-    catch {
-        return [ordered]@{ count = $null; method = 'unavailable'; error = $_.Exception.Message }
-    }
-}
-
-function Get-OutputPdfPath([string]$SourcePath) {
-    $directory = [System.IO.Path]::GetDirectoryName($SourcePath)
-    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($SourcePath)
-
-    $candidate = Join-Path $directory ($baseName + '.pdf')
-    if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
-
-    $candidate = Join-Path $directory ($baseName + '_HQ.pdf')
-    if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
-
-    $index = 2
-    while ($true) {
-        $candidate = Join-Path $directory ("{0}_HQ_{1}.pdf" -f $baseName, $index)
-        if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
-        $index++
-    }
+    [GC]::Collect(); [GC]::WaitForPendingFinalizers()
+    [GC]::Collect(); [GC]::WaitForPendingFinalizers()
 }
 
 function Disable-OfficeMacros($Application) {
-    # msoAutomationSecurityForceDisable = 3
     try { $Application.AutomationSecurity = 3 } catch { }
 }
 
-function Convert-WordToPdf([string]$SourcePath, [string]$OutputPath) {
-    $word = $null
-    $doc = $null
-    $meta = [ordered]@{
-        application = 'Microsoft Word'
-        office_version = $null
-        office_build = $null
-        source_pages = $null
-        inline_shapes = $null
-        floating_shapes = $null
-        tables = $null
-        export_engine = $null
-        optimize_for_image_quality = $false
+function Get-UniquePdfPath([string]$SourcePath, [string]$Suffix) {
+    $dir = [IO.Path]::GetDirectoryName($SourcePath)
+    $base = [IO.Path]::GetFileNameWithoutExtension($SourcePath)
+    $candidate = Join-Path $dir ($base + $Suffix + '.pdf')
+    if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
+    $i = 2
+    while ($true) {
+        $candidate = Join-Path $dir ("{0}{1}_{2}.pdf" -f $base, $Suffix, $i)
+        if (-not (Test-Path -LiteralPath $candidate)) { return $candidate }
+        $i++
+    }
+}
+
+function Get-TempPdfPath([string]$SourcePath) {
+    $base = [IO.Path]::GetFileNameWithoutExtension($SourcePath)
+    return (Join-Path $TempDirectory ("{0}_{1}_native.pdf" -f $base, [guid]::NewGuid().ToString('N')))
+}
+
+function Find-PythonRunner {
+    foreach ($name in @('py.exe', 'python.exe', 'python3.exe')) {
+        $cmd = Get-Command $name -ErrorAction SilentlyContinue
+        if ($null -ne $cmd) {
+            if ($name -eq 'py.exe') {
+                return [pscustomobject]@{ Exe = $cmd.Source; Prefix = @('-3') }
+            }
+            return [pscustomobject]@{ Exe = $cmd.Source; Prefix = @() }
+        }
+    }
+    return $null
+}
+
+function Invoke-Python($Runner, [string[]]$Arguments) {
+    $allArgs = @()
+    $allArgs += $Runner.Prefix
+    $allArgs += $Arguments
+    & $Runner.Exe @allArgs
+    return $LASTEXITCODE
+}
+
+function Ensure-HqPythonDependencies($Runner) {
+    Write-Log 'INFO' 'Checking Python modules: pymupdf + Pillow.'
+    $check = Invoke-Python $Runner @('-c', 'import pymupdf, PIL; print("HQ Python dependencies OK")')
+    if ($check -eq 0) { return $true }
+
+    Write-Log 'WARN' 'Required Python modules are missing. Trying the currently configured pip index.'
+    $install = Invoke-Python $Runner @('-m', 'pip', 'install', '--user', 'pymupdf', 'pillow')
+    if ($install -eq 0) {
+        $check2 = Invoke-Python $Runner @('-c', 'import pymupdf, PIL')
+        if ($check2 -eq 0) { return $true }
     }
 
+    Write-Log 'WARN' 'Configured pip index did not provide all dependencies. Trying official PyPI once.'
+    $install2 = Invoke-Python $Runner @('-m', 'pip', 'install', '--user', '--index-url', 'https://pypi.org/simple', 'pymupdf', 'pillow')
+    if ($install2 -ne 0) {
+        Write-Log 'ERROR' 'Automatic Python dependency installation failed. Run Collect_Local_Environment.cmd and push the report for diagnosis.'
+        return $false
+    }
+    $check3 = Invoke-Python $Runner @('-c', 'import pymupdf, PIL')
+    return ($check3 -eq 0)
+}
+
+function Export-WordNative([string]$SourcePath, [string]$PdfPath) {
+    $word = $null; $doc = $null
     try {
-        Write-Info 'Starting Microsoft Word...'
+        Write-Log 'INFO' 'Starting Word layout engine.'
         $word = New-Object -ComObject Word.Application
         $word.Visible = $false
         $word.DisplayAlerts = 0
         Disable-OfficeMacros $word
-        try { $meta.office_version = [string]$word.Version } catch { }
-        try { $meta.office_build = [string]$word.Build } catch { }
-
+        Write-Log 'INFO' ("Word Version={0}, Build={1}" -f $word.Version, $word.Build)
         $doc = $word.Documents.Open($SourcePath, $false, $true, $false)
         try { [void]$doc.Repaginate() } catch { }
-        try { $meta.source_pages = [int]$doc.ComputeStatistics(2) } catch { }
-        try { $meta.inline_shapes = [int]$doc.InlineShapes.Count } catch { }
-        try { $meta.floating_shapes = [int]$doc.Shapes.Count } catch { }
-        try { $meta.tables = [int]$doc.Tables.Count } catch { }
-
-        $exported = $false
-        try {
-            [void]$doc.ExportAsFixedFormat3(
-                $OutputPath, 17, $false, 0, 0, 1, 1, 0,
-                $true, $false, 1, $true, $true, $false,
-                $true, $false, $null
-            )
-            $exported = $true
-            $meta.export_engine = 'ExportAsFixedFormat3'
-            $meta.optimize_for_image_quality = $true
-            Write-Info 'Word ExportAsFixedFormat3 used (OptimizeForImageQuality=True).'
-        } catch {
-            Write-WarnText 'ExportAsFixedFormat3 is unavailable; trying ExportAsFixedFormat2.'
-        }
-
-        if (-not $exported) {
-            try {
-                [void]$doc.ExportAsFixedFormat2(
-                    $OutputPath, 17, $false, 0, 0, 1, 1, 0,
-                    $true, $false, 1, $true, $true, $false,
-                    $true, $null
-                )
-                $exported = $true
-                $meta.export_engine = 'ExportAsFixedFormat2'
-                $meta.optimize_for_image_quality = $true
-                Write-Info 'Word ExportAsFixedFormat2 used (OptimizeForImageQuality=True).'
-            } catch {
-                Write-WarnText 'ExportAsFixedFormat2 is unavailable; using classic ExportAsFixedFormat.'
-            }
-        }
-
-        if (-not $exported) {
-            [void]$doc.ExportAsFixedFormat(
-                $OutputPath, 17, $false, 0, 0, 1, 1, 0,
-                $true, $false, 1, $true, $true, $false
-            )
-            $meta.export_engine = 'ExportAsFixedFormat'
-            Write-Info 'Classic Word ExportAsFixedFormat used at print quality.'
-        }
-
-        return $meta
+        Write-Log 'INFO' 'Exporting structural PDF with classic Word ExportAsFixedFormat. Raster image quality will be restored afterwards.'
+        [void]$doc.ExportAsFixedFormat(
+            $PdfPath, 17, $false, 0, 0, 1, 1, 0,
+            $true, $false, 1, $true, $true, $false
+        )
     }
     finally {
         if ($null -ne $doc) { try { $doc.Close(0) } catch { } }
@@ -231,304 +150,210 @@ function Convert-WordToPdf([string]$SourcePath, [string]$OutputPath) {
     }
 }
 
-function Convert-ExcelToPdf([string]$SourcePath, [string]$OutputPath) {
-    $excel = $null
-    $workbook = $null
-    $meta = [ordered]@{
-        application = 'Microsoft Excel'
-        office_version = $null
-        office_build = $null
-        worksheet_count = $null
-        total_shapes = 0
-        picture_shapes = 0
-        chart_objects = 0
-        sheets_with_saved_print_area = 0
-        export_engine = 'Workbook.ExportAsFixedFormat'
-        export_quality = 'xlQualityStandard'
-        ignore_saved_print_areas = $true
-    }
-
+function Export-ExcelNative([string]$SourcePath, [string]$PdfPath) {
+    $excel = $null; $book = $null
     try {
-        Write-Info 'Starting Microsoft Excel...'
+        Write-Log 'INFO' 'Starting Excel layout engine.'
         $excel = New-Object -ComObject Excel.Application
         $excel.Visible = $false
         $excel.DisplayAlerts = $false
-        try { $excel.AskToUpdateLinks = $false } catch { }
         Disable-OfficeMacros $excel
-        try { $meta.office_version = [string]$excel.Version } catch { }
-        try { $meta.office_build = [string]$excel.Build } catch { }
-
-        $workbook = $excel.Workbooks.Open($SourcePath, 0, $true)
-        $worksheetCount = [int]$workbook.Worksheets.Count
-        $meta.worksheet_count = $worksheetCount
-
-        for ($i = 1; $i -le $worksheetCount; $i++) {
-            $sheet = $null
-            try {
-                $sheet = $workbook.Worksheets.Item($i)
-                try { $meta.total_shapes += [int]$sheet.Shapes.Count } catch { }
-                try { $meta.chart_objects += [int]$sheet.ChartObjects().Count } catch { }
-                try {
-                    if (-not [string]::IsNullOrWhiteSpace([string]$sheet.PageSetup.PrintArea)) {
-                        $meta.sheets_with_saved_print_area++
-                    }
-                } catch { }
-                try {
-                    $shapeCount = [int]$sheet.Shapes.Count
-                    for ($s = 1; $s -le $shapeCount; $s++) {
-                        $shape = $null
-                        try {
-                            $shape = $sheet.Shapes.Item($s)
-                            # msoLinkedPicture=11, msoPicture=13
-                            if ([int]$shape.Type -in @(11, 13)) { $meta.picture_shapes++ }
-                        } catch { }
-                        finally { Release-ComObject $shape }
-                    }
-                } catch { }
-            }
-            finally { Release-ComObject $sheet }
-        }
-
-        [void]$workbook.ExportAsFixedFormat(0, $OutputPath, 0, $true, $true)
-        Write-Info 'Excel exported at xlQualityStandard with saved print areas ignored.'
-        return $meta
+        Write-Log 'INFO' ("Excel Version={0}, Build={1}" -f $excel.Version, $excel.Build)
+        $book = $excel.Workbooks.Open($SourcePath, 0, $true)
+        Write-Log 'INFO' 'Exporting structural PDF with Excel xlQualityStandard; OOXML raster media will be restored afterwards.'
+        [void]$book.ExportAsFixedFormat(0, $PdfPath, 0, $true, $true)
     }
     finally {
-        if ($null -ne $workbook) { try { $workbook.Close($false) } catch { } }
-        Release-ComObject $workbook
+        if ($null -ne $book) { try { $book.Close($false) } catch { } }
+        Release-ComObject $book
         if ($null -ne $excel) { try { $excel.Quit() } catch { } }
         Release-ComObject $excel
         Force-ComCleanup
     }
 }
 
-function Convert-PowerPointToPdf([string]$SourcePath, [string]$OutputPath) {
-    $powerPoint = $null
-    $presentation = $null
-    $meta = [ordered]@{
-        application = 'Microsoft PowerPoint'
-        office_version = $null
-        office_build = $null
-        slide_count = $null
-        total_shapes = 0
-        picture_shapes = 0
-        chart_shapes = 0
-        slide_width_points = $null
-        slide_height_points = $null
-        export_engine = $null
-        export_intent = 'Print'
-    }
-
+function Export-PowerPointNative([string]$SourcePath, [string]$PdfPath) {
+    $ppt = $null; $pres = $null
     try {
-        Write-Info 'Starting Microsoft PowerPoint...'
-        $powerPoint = New-Object -ComObject PowerPoint.Application
-        Disable-OfficeMacros $powerPoint
-        try { $meta.office_version = [string]$powerPoint.Version } catch { }
-        try { $meta.office_build = [string]$powerPoint.Build } catch { }
-
-        $presentation = $powerPoint.Presentations.Open($SourcePath, -1, 0, 0)
-        $slideCount = [int]$presentation.Slides.Count
-        $meta.slide_count = $slideCount
-        try { $meta.slide_width_points = [double]$presentation.PageSetup.SlideWidth } catch { }
-        try { $meta.slide_height_points = [double]$presentation.PageSetup.SlideHeight } catch { }
-
-        for ($i = 1; $i -le $slideCount; $i++) {
-            $slide = $null
-            try {
-                $slide = $presentation.Slides.Item($i)
-                $shapeCount = [int]$slide.Shapes.Count
-                $meta.total_shapes += $shapeCount
-                for ($s = 1; $s -le $shapeCount; $s++) {
-                    $shape = $null
-                    try {
-                        $shape = $slide.Shapes.Item($s)
-                        $shapeType = [int]$shape.Type
-                        if ($shapeType -in @(11, 13)) { $meta.picture_shapes++ }
-                        try { if ($shape.HasChart -eq -1) { $meta.chart_shapes++ } } catch { }
-                    } catch { }
-                    finally { Release-ComObject $shape }
-                }
-            }
-            finally { Release-ComObject $slide }
-        }
-
+        Write-Log 'INFO' 'Starting PowerPoint layout engine.'
+        $ppt = New-Object -ComObject PowerPoint.Application
+        Disable-OfficeMacros $ppt
+        Write-Log 'INFO' ("PowerPoint Version={0}, Build={1}" -f $ppt.Version, $ppt.Build)
+        $pres = $ppt.Presentations.Open($SourcePath, -1, 0, 0)
+        Write-Log 'INFO' 'Exporting structural PDF with PowerPoint Print intent; OOXML raster media will be restored afterwards.'
         try {
-            [void]$presentation.ExportAsFixedFormat(
-                $OutputPath, 2, 2, 0, 1, 1, 0,
+            [void]$pres.ExportAsFixedFormat(
+                $PdfPath, 2, 2, 0, 1, 1, 0,
                 $null, 1, '', $true, $true, $true, $true, $false
             )
-            $meta.export_engine = 'ExportAsFixedFormat'
-            Write-Info 'PowerPoint ExportAsFixedFormat used with Print intent.'
         } catch {
-            Write-WarnText 'PowerPoint ExportAsFixedFormat failed; falling back to SaveAs PDF.'
-            [void]$presentation.SaveAs($OutputPath, 32)
-            $meta.export_engine = 'SaveAs PDF fallback'
+            Write-Log 'WARN' 'PowerPoint ExportAsFixedFormat failed; using SaveAs PDF as structural fallback.' $_.Exception
+            [void]$pres.SaveAs($PdfPath, 32)
         }
-
-        return $meta
     }
     finally {
-        if ($null -ne $presentation) { try { $presentation.Close() } catch { } }
-        Release-ComObject $presentation
-        if ($null -ne $powerPoint) { try { $powerPoint.Quit() } catch { } }
-        Release-ComObject $powerPoint
+        if ($null -ne $pres) { try { $pres.Close() } catch { } }
+        Release-ComObject $pres
+        if ($null -ne $ppt) { try { $ppt.Quit() } catch { } }
+        Release-ComObject $ppt
         Force-ComCleanup
     }
 }
 
-function Save-DiagnosticRecord($Record, [string]$BaseName) {
-    $stamp = Get-Date -Format 'yyyyMMdd_HHmmss_fff'
-    $safe = Get-SafeFileName $BaseName
-    $path = Join-Path $DiagnosticsDirectory ("{0}_{1}.json" -f $stamp, $safe)
-    $Record | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $path -Encoding UTF8
-    return $path
+function Export-StructuralPdf([string]$SourcePath, [string]$PdfPath, [string]$Extension) {
+    switch ($Extension) {
+        '.docx' { Export-WordNative $SourcePath $PdfPath }
+        '.doc'  { Export-WordNative $SourcePath $PdfPath }
+        '.xlsx' { Export-ExcelNative $SourcePath $PdfPath }
+        '.xls'  { Export-ExcelNative $SourcePath $PdfPath }
+        '.pptx' { Export-PowerPointNative $SourcePath $PdfPath }
+        '.ppt'  { Export-PowerPointNative $SourcePath $PdfPath }
+        default { throw "Unsupported extension: $Extension" }
+    }
 }
 
-function Convert-OneFile([string]$InputPath) {
+function Invoke-HqRebuild([string]$SourcePath, [string]$NativePdf, [string]$FinalPdf) {
+    if (-not (Test-Path -LiteralPath $RebuilderScript)) {
+        Write-Log 'ERROR' ("HQ rebuilder is missing: {0}" -f $RebuilderScript)
+        return $false
+    }
+
+    $runner = Find-PythonRunner
+    if ($null -eq $runner) {
+        Write-Log 'ERROR' 'Python 3 was not found. Run Collect_Local_Environment.cmd and push the report for diagnosis.'
+        return $false
+    }
+    Write-Log 'INFO' ("Python runner: {0}" -f $runner.Exe)
+    [void](Invoke-Python $runner @('-c', 'import sys; print("Python=" + sys.version.replace("\n"," ")); print("Executable=" + sys.executable)'))
+
+    if (-not (Ensure-HqPythonDependencies $runner)) { return $false }
+
+    $safe = [IO.Path]::GetFileNameWithoutExtension($SourcePath) -replace '[^A-Za-z0-9._-]', '_'
+    $report = Join-Path $DiagnosticsDirectory ("{0}_{1}_image_rebuild.json" -f (Get-Date -Format 'yyyyMMdd_HHmmss_fff'), $safe)
+    Write-Log 'INFO' 'Starting lossless OOXML raster-image restoration.'
+
+    $exitCode = Invoke-Python $runner @(
+        $RebuilderScript,
+        '--source-office', $SourcePath,
+        '--input-pdf', $NativePdf,
+        '--output-pdf', $FinalPdf,
+        '--report', $report
+    )
+
+    if ($exitCode -ne 0) {
+        Write-Log 'ERROR' ("HQ image restoration failed with exit code {0}." -f $exitCode)
+        return $false
+    }
+    if (-not (Test-Path -LiteralPath $FinalPdf)) {
+        Write-Log 'ERROR' 'HQ rebuilder exited successfully but no final PDF was created.'
+        return $false
+    }
+
+    Write-Log 'OK' ("HQ image restoration completed. Diagnostic: {0}" -f [IO.Path]::GetFileName($report))
+    return $true
+}
+
+function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [string]$Mode, [double]$Seconds, [string]$Message) {
+    $source = Get-Item -LiteralPath $SourcePath
+    $size = $null
+    if (Test-Path -LiteralPath $OutputPath) { $size = (Get-Item -LiteralPath $OutputPath).Length }
+    $record = [ordered]@{
+        schema_version = 4
+        timestamp_local = (Get-Date).ToString('o')
+        source_file = $source.Name
+        source_extension = $source.Extension.ToLowerInvariant()
+        source_size_bytes = $source.Length
+        output_file = [IO.Path]::GetFileName($OutputPath)
+        output_size_bytes = $size
+        result_mode = $Mode
+        duration_seconds = [math]::Round($Seconds, 3)
+        message = $Message
+        production_pipeline = 'Office layout -> OOXML source raster restoration'
+        log_file = [IO.Path]::GetFileName($Script:LogPath)
+    }
+    $safe = [IO.Path]::GetFileNameWithoutExtension($SourcePath) -replace '[^A-Za-z0-9._-]', '_'
+    $path = Join-Path $DiagnosticsDirectory ("{0}_{1}_conversion.json" -f (Get-Date -Format 'yyyyMMdd_HHmmss_fff'), $safe)
+    $record | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+}
+
+function Convert-One([string]$InputPath) {
     $started = Get-Date
     $resolved = (Resolve-Path -LiteralPath $InputPath).Path
-    $sourceItem = Get-Item -LiteralPath $resolved
+    $item = Get-Item -LiteralPath $resolved
+    if ($item.PSIsContainer) { throw 'Folders are not supported.' }
+    $ext = $item.Extension.ToLowerInvariant()
+    if ($SupportedExtensions -notcontains $ext) { throw "Unsupported file type: $ext" }
 
-    if ($sourceItem.PSIsContainer) { throw "Folders are not supported: $resolved" }
+    Write-Log 'INFO' ('=' * 72)
+    Write-Log 'INFO' ("Source: {0} ({1:N3} MB)" -f $item.Name, ($item.Length / 1MB))
 
-    $extension = [System.IO.Path]::GetExtension($resolved).ToLowerInvariant()
-    if ($SupportedExtensions -notcontains $extension) {
-        throw "Unsupported file type '$extension'. Supported: $($SupportedExtensions -join ', ')"
-    }
-
-    $outputPath = Get-OutputPdfPath $resolved
-    $sourceHash = $null
-    try { $sourceHash = (Get-FileHash -LiteralPath $resolved -Algorithm SHA256).Hash } catch { }
-
-    $record = [ordered]@{
-        schema_version = 1
-        timestamp_local = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-        status = 'running'
-        source = [ordered]@{
-            file_name = $sourceItem.Name
-            extension = $extension
-            size_bytes = [int64]$sourceItem.Length
-            size_mb = [math]::Round($sourceItem.Length / 1MB, 3)
-            sha256 = $sourceHash
-            full_local_path_recorded = $false
-            openxml_media = Get-OpenXmlMediaStats $resolved
-        }
-        output = [ordered]@{
-            file_name = [System.IO.Path]::GetFileName($outputPath)
-            size_bytes = $null
-            size_mb = $null
-            sha256 = $null
-            pdf_page_count = $null
-        }
-        environment = Get-SystemDiagnostics
-        office = $null
-        conversion = [ordered]@{
-            started_local = $started.ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-            finished_local = $null
-            duration_seconds = $null
-            source_opened_read_only = $true
-            macro_automation_security = 'ForceDisable when Office COM supports it'
-            success = $false
-            error = $null
-        }
-    }
-
-    Write-Host ''
-    Write-Host ('=' * 78) -ForegroundColor DarkGray
-    Write-Info ("Source : {0}" -f $resolved)
-    Write-Info ("Output : {0}" -f $outputPath)
-
+    $nativeTemp = Get-TempPdfPath $resolved
     try {
-        switch ($extension) {
-            '.docx' { $record.office = Convert-WordToPdf $resolved $outputPath }
-            '.doc'  { $record.office = Convert-WordToPdf $resolved $outputPath }
-            '.xlsx' { $record.office = Convert-ExcelToPdf $resolved $outputPath }
-            '.xls'  { $record.office = Convert-ExcelToPdf $resolved $outputPath }
-            '.pptx' { $record.office = Convert-PowerPointToPdf $resolved $outputPath }
-            '.ppt'  { $record.office = Convert-PowerPointToPdf $resolved $outputPath }
+        Export-StructuralPdf $resolved $nativeTemp $ext
+        if (-not (Test-Path -LiteralPath $nativeTemp)) { throw 'Office structural PDF was not created.' }
+        $nativeSize = (Get-Item -LiteralPath $nativeTemp).Length
+        Write-Log 'INFO' ("Structural PDF created in temp/: {0:N3} MB" -f ($nativeSize / 1MB))
+
+        if ($ModernExtensions -contains $ext) {
+            $final = Get-UniquePdfPath $resolved '_HQ'
+            if (Invoke-HqRebuild $resolved $nativeTemp $final) {
+                $seconds = ((Get-Date) - $started).TotalSeconds
+                $finalSize = (Get-Item -LiteralPath $final).Length
+                Write-Log 'OK' ("HQ_REBUILT: {0} ({1:N3} MB) in {2:N2} s" -f [IO.Path]::GetFileName($final), ($finalSize / 1MB), $seconds)
+                Save-SessionDiagnostic $resolved $final 'HQ_REBUILT' $seconds 'Office layout preserved; source OOXML raster media restored losslessly.'
+                return $true
+            }
+
+            if (Test-Path -LiteralPath $final) { try { Remove-Item -LiteralPath $final -Force } catch { } }
+            $fallback = Get-UniquePdfPath $resolved '_NATIVE_ONLY'
+            Move-Item -LiteralPath $nativeTemp -Destination $fallback -Force
+            $seconds = ((Get-Date) - $started).TotalSeconds
+            Write-Log 'WARN' ("NATIVE_ONLY: HQ rebuild failed. Low-resolution Office PDF preserved as {0}." -f [IO.Path]::GetFileName($fallback))
+            Save-SessionDiagnostic $resolved $fallback 'NATIVE_ONLY' $seconds 'HQ rebuild unavailable or failed; raster images may be approximately 200 PPI.'
+            return $false
         }
 
-        if (-not (Test-Path -LiteralPath $outputPath)) {
-            throw 'Office returned without an error, but the PDF file was not created.'
-        }
-
-        $pdf = Get-Item -LiteralPath $outputPath
-        if ($pdf.Length -le 0) { throw 'The generated PDF is empty.' }
-
-        $record.output.size_bytes = [int64]$pdf.Length
-        $record.output.size_mb = [math]::Round($pdf.Length / 1MB, 3)
-        try { $record.output.sha256 = (Get-FileHash -LiteralPath $outputPath -Algorithm SHA256).Hash } catch { }
-        $record.output.pdf_page_count = Get-PdfPageCountHeuristic $outputPath
-
-        $finished = Get-Date
-        $record.status = 'success'
-        $record.conversion.success = $true
-        $record.conversion.finished_local = $finished.ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-        $record.conversion.duration_seconds = [math]::Round(($finished - $started).TotalSeconds, 3)
-
-        $diagPath = Save-DiagnosticRecord $record $sourceItem.BaseName
-        Write-Ok ("Created: {0} ({1:N2} MB)" -f $pdf.FullName, ($pdf.Length / 1MB))
-        Write-Info ("Diagnostic: {0}" -f $diagPath)
-        return $record
+        $legacyOut = Get-UniquePdfPath $resolved '_NATIVE_ONLY'
+        Move-Item -LiteralPath $nativeTemp -Destination $legacyOut -Force
+        $seconds = ((Get-Date) - $started).TotalSeconds
+        Write-Log 'WARN' ("NATIVE_ONLY: legacy binary format currently uses Office-native export: {0}." -f [IO.Path]::GetFileName($legacyOut))
+        Save-SessionDiagnostic $resolved $legacyOut 'NATIVE_ONLY' $seconds 'Legacy DOC/XLS/PPT does not expose an OOXML media package for the current restoration stage.'
+        return $true
     }
     catch {
-        $finished = Get-Date
-        $record.status = 'failure'
-        $record.conversion.success = $false
-        $record.conversion.error = $_.Exception.Message
-        $record.conversion.finished_local = $finished.ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-        $record.conversion.duration_seconds = [math]::Round(($finished - $started).TotalSeconds, 3)
-        $diagPath = Save-DiagnosticRecord $record $sourceItem.BaseName
-        Write-Fail ("{0}: {1}" -f $sourceItem.Name, $_.Exception.Message)
-        Write-Info ("Failure diagnostic: {0}" -f $diagPath)
-        throw
+        $seconds = ((Get-Date) - $started).TotalSeconds
+        Write-Log 'ERROR' ("FAILED: {0}" -f $item.Name) $_.Exception
+        try { Save-SessionDiagnostic $resolved $nativeTemp 'FAILED' $seconds (Get-ExceptionText $_.Exception) } catch { }
+        return $false
+    }
+    finally {
+        if (Test-Path -LiteralPath $nativeTemp) {
+            try { Remove-Item -LiteralPath $nativeTemp -Force } catch { }
+        }
     }
 }
 
+Write-Log 'INFO' 'Office HQ PDF Converter production pipeline started.'
+Write-Log 'INFO' 'Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.'
+Write-Log 'INFO' 'Production path intentionally does NOT use Acrobat PDFMaker, ExportAsFixedFormat2, or ImageHash.'
+
 if ($null -eq $InputFiles -or $InputFiles.Count -eq 0) {
-    Write-Host ''
-    Write-Host 'High Quality Office -> PDF Converter' -ForegroundColor White
-    Write-Host ''
-    Write-Host 'Drag one or more Office files onto DragDrop_Office_to_PDF.cmd.'
-    Write-Host 'Supported: DOCX, DOC, XLSX, XLS, PPTX, PPT'
-    Write-Host ''
+    Write-Log 'ERROR' 'No input files. Drag Office documents onto DragDrop_Office_to_PDF.cmd.'
     exit 1
 }
 
-$successCount = 0
-$failureCount = 0
-$batchRecords = @()
-$batchStarted = Get-Date
-
+$ok = 0; $failed = 0
 foreach ($file in $InputFiles) {
     try {
-        $result = Convert-OneFile $file
-        $batchRecords += $result
-        $successCount++
-    }
-    catch {
-        $failureCount++
+        if (Convert-One $file) { $ok++ } else { $failed++ }
+    } catch {
+        Write-Log 'ERROR' ("Unhandled conversion error: {0}" -f $file) $_.Exception
+        $failed++
     }
 }
 
-$batchFinished = Get-Date
-$batchSummary = [ordered]@{
-    schema_version = 1
-    type = 'batch_summary'
-    started_local = $batchStarted.ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-    finished_local = $batchFinished.ToString('yyyy-MM-ddTHH:mm:ss.fffK')
-    duration_seconds = [math]::Round(($batchFinished - $batchStarted).TotalSeconds, 3)
-    success_count = $successCount
-    failure_count = $failureCount
-    total_count = $InputFiles.Count
-    successful_records = $batchRecords
-}
-$batchPath = Save-DiagnosticRecord $batchSummary 'batch_summary'
-
-Write-Host ''
-Write-Host ('=' * 78) -ForegroundColor DarkGray
-Write-Host ("Finished. Success: {0}   Failed: {1}" -f $successCount, $failureCount) -ForegroundColor White
-Write-Info ("Batch diagnostic: {0}" -f $batchPath)
-
-if ($failureCount -gt 0) { exit 2 }
+Write-Log 'INFO' ('=' * 72)
+Write-Log 'INFO' ("Finished. Success={0}; FailedOrDegraded={1}" -f $ok, $failed)
+Write-Log 'INFO' ("Log: {0}" -f [IO.Path]::GetFileName($Script:LogPath))
+if ($failed -gt 0) { exit 2 }
 exit 0
