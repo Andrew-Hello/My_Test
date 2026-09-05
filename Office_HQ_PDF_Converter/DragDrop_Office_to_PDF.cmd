@@ -4,32 +4,33 @@ setlocal
 
 if "%~1"=="" (
     echo.
-    echo Office HQ PDF Converter v3
+    echo Office HQ PDF Converter
     echo.
     echo Drag one or more Office files onto this CMD file.
     echo Supported: DOCX DOC XLSX XLS PPTX PPT
     echo.
-    echo Stable HQ path for DOCX/XLSX/PPTX:
-    echo   Office layout engine ^> structural PDF ^> lossless original-image rebuild
+    echo Production pipeline:
+    echo Office layout engine -^> temporary structural PDF -^> HQ image restoration
     echo.
-    echo PDFMaker and Word ExportAsFixedFormat2 are NOT used.
-    echo Logs: Office_HQ_PDF_Converter\logs
-    echo Diagnostics: Office_HQ_PDF_Converter\diagnostics
+    echo HQ restoration dependencies: Python 3 + PyMuPDF + Pillow
+    echo ImageHash / Acrobat PDFMaker / ExportAsFixedFormat2 are NOT required.
     echo.
     pause
     exit /b 1
 )
 
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0Convert-OfficeToPDF-v3.ps1" %*
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0Convert-OfficeToPDF.ps1" %*
 set "ERR=%ERRORLEVEL%"
 
 echo.
 if not "%ERR%"=="0" (
-    echo One or more files failed or could only produce NATIVE_ONLY output.
-    echo Please check the logs folder.
+    echo One or more files failed or were degraded to NATIVE_ONLY.
+    echo Check logs\ and diagnostics\ for details.
+    echo If the cause is environment-related, run ..\Local_Environment_Collector\Collect_Local_Environment.cmd
 ) else (
-    echo Conversion finished.
-    echo HQ_REBUILT means the original OOXML image pixels were restored losslessly.
+    echo Conversion finished successfully.
+    echo HQ outputs are named *_HQ.pdf.
 )
+echo.
 pause
 exit /b %ERR%
