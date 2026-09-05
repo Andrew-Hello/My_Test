@@ -1,0 +1,32 @@
+﻿{
+    "schema_version":  2,
+    "timestamp_local":  "2026-09-05T11:57:39.5455915+08:00",
+    "status":  "success",
+    "source":  {
+                   "file_name":  "demo_Report.docx",
+                   "extension":  ".docx",
+                   "size_bytes":  5514860,
+                   "full_local_path_recorded":  false
+               },
+    "output":  {
+                   "file_name":  "demo_Report.pdf",
+                   "size_bytes":  1775135
+               },
+    "engine":  {
+                   "engine":  "Word ExportAsFixedFormat classic",
+                   "optimize_for_image_quality":  false,
+                   "errors":  [
+                                  "Type=System.Management.Automation.RuntimeException; HRESULT=0x80131501; Message=Method invocation failed because [Microsoft.Office.Interop.Word.DocumentClass] does not contain a method named \u0027ExportAsFixedFormat3\u0027.",
+                                  "Type=System.ArgumentException; HRESULT=0x80070057; Message=Value does not fall within the expected range."
+                              ],
+                   "office_version":  "16.0",
+                   "office_build":  "16.0.17932"
+               },
+    "conversion":  {
+                       "duration_seconds":  7.235,
+                       "preferred_engine":  "Adobe Acrobat PDFMaker",
+                       "success":  true,
+                       "error":  "",
+                       "log_file":  "20260905_115732_268_Office_HQ_PDF.log"
+                   }
+}
