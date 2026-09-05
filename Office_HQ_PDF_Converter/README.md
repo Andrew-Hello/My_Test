@@ -34,8 +34,6 @@ Report_NATIVE_ONLY.pdf
 
 ## 当前正式质量路线
 
-样例测试已经证明，Word 2024 经典 PDF 导出会把大量嵌入图片降到约 200 PPI；而我们的高清恢复方案可以把同一样例恢复到与 Acrobat 高质量 PDF 相同的有效 PPI 分布。
-
 正式流程固定为：
 
 ```text
@@ -54,37 +52,58 @@ src/HQImageRebuilder.py
 *_HQ.pdf
 ```
 
-Office 负责最擅长的分页、字体、表格、图表和对象布局；我们自己的重建器负责夺回图片质量。
+Office 负责分页、字体、表格、图表和对象布局；我们自己的重建器负责恢复原始栅格图像质量。
 
-正式流程**不再使用**：
+正式流程不再使用：
 
 - Adobe Acrobat PDFMaker
 - Word `ExportAsFixedFormat2`
 - ImageHash
 
-这些路线已经通过实机测试证明不够稳定或没有必要。
+## Excel 输出规则
+
+Excel 现在有固定的 PDF 页面策略，避免不同工作簿自身的打印缩放设置造成列被裁切或横向分页：
+
+```text
+PaperSize = A4
+Zoom = False
+FitToPagesWide = 1
+FitToPagesTall = False
+```
+
+也就是：
+
+- 每个工作表强制使用 A4 纸张；
+- 保留工作表原来的横向/纵向方向；
+- 所有列在水平方向强制压缩到 **1 个 A4 页面宽**；
+- 纵向不强制压缩为一页，内容较长时允许自然分页；
+- PDF 导出后再执行 OOXML 原图高清恢复。
+
+## PowerPoint 输出规则
+
+PowerPoint 使用自身的 `SaveAs PDF` 作为稳定结构导出路径，不再先调用当前环境中会报 COM warning 的 `ExportAsFixedFormat`。
+
+PDF 页面保持源 PPT/PPTX 的幻灯片画布尺寸，因此：
+
+- 不强制改成 A4；
+- 不拉伸；
+- 不改变宽高比；
+- 之后再执行 OOXML 原图高清恢复。
+
+日志会记录幻灯片宽度、高度和宽高比。
 
 ## Python 依赖
 
-高清恢复器现在只依赖：
+高清恢复器只依赖：
 
 ```text
 PyMuPDF
 Pillow
 ```
 
-脚本首先检查当前 Python 是否能：
+脚本使用同一个 Python 解释器的 pip metadata 检查依赖。如果已经安装，不会再次安装；如果缺失，会先尝试当前 pip 镜像，再尝试一次官方 PyPI。
 
-```python
-import pymupdf
-import PIL
-```
-
-如果已经安装，不会运行 pip。
-
-如果缺失，会先尝试当前 pip 镜像；若镜像缺包，再尝试一次官方 PyPI。
-
-`ImageHash` 已完全移除，所以即使当前镜像没有 ImageHash，也不会影响正式转换。
+`ImageHash` 已完全移除。
 
 ## 目录结构
 
@@ -112,15 +131,23 @@ diagnostics/*_conversion.json
 diagnostics/*_image_rebuild.json
 ```
 
-日志会记录：
+日志会记录 Office 版本、格式专用布局策略、Python 环境、HQ 重建统计、最终结果、文件大小与耗时。
 
-- Office 版本与 Build
-- 结构 PDF 是否成功
-- Python runner
-- PyMuPDF/Pillow 检查状态
-- HQ 重建是否成功
-- 最终结果是 `HQ_REBUILT` / `NATIVE_ONLY` / `FAILED`
-- 文件大小与耗时
+## 当前样例基线
+
+DOCX 样例：
+
+- Word 原生 PDF：有效 PPI 中位数约 **199.7**，`>=600 PPI` 为 **0/40**
+- 高清重建 PDF：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
+- Acrobat HD 基准：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
+
+2026-09-05 的三格式实机测试：
+
+- `demo_docx.docx` → `demo_docx_HQ.pdf`：约 **5.228 MB**，HQ_REBUILT
+- `demo_pptx.pptx` → `demo_pptx_HQ.pdf`：约 **2.016 MB**，HQ_REBUILT
+- `demo_xlsx.xlsx` → `demo_xlsx_HQ.pdf`：约 **0.112 MB**，HQ_REBUILT
+
+三者同批运行结果：`Success=3; FailedOrDegraded=0`。
 
 ## 通用本机环境快照
 
@@ -130,24 +157,14 @@ diagnostics/*_image_rebuild.json
 Local_Environment_Collector/
 ```
 
-当转换器或其他项目出现本机环境相关问题时，双击：
+出现本机环境相关问题时，双击：
 
 ```text
 Local_Environment_Collector/Collect_Local_Environment.cmd
 ```
 
-然后把 `Local_Environment_Collector/reports/` 生成的 JSON/TXT Commit + Push，ChatGPT 就可以基于真实环境继续适配，而不需要反复手工询问版本、路径和依赖。
-
-## 当前样例基线
-
-历史样例 `demo_Report.docx` 的测试结果：
-
-- Word 原生 PDF：有效 PPI 中位数约 **199.7**，`>=600 PPI` 为 **0/40**
-- 高清重建 PDF：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
-- Acrobat HD 基准：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
-
-因此当前生产路线的图片分辨率已经达到样例 Acrobat HD 的水平。
+然后把 `reports/` 生成的 JSON/TXT Commit + Push 即可继续诊断。
 
 ## 旧二进制格式
 
-`.doc/.xls/.ppt` 目前仍然可以转换，但因为它们不是 OOXML ZIP 包，当前版本无法直接从 `media/` 恢复原始图片，所以结果会标记为 `NATIVE_ONLY`。后续可单独开发“旧格式 → 临时 OOXML → HQ 恢复”的兼容阶段。
+`.doc/.xls/.ppt` 可以转换，但因为它们不是 OOXML ZIP 包，当前版本无法直接从 `media/` 恢复原始图片，因此结果会标记为 `NATIVE_ONLY`。后续可以单独开发“旧格式 → 临时 OOXML → HQ 恢复”的兼容阶段。
