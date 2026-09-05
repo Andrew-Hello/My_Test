@@ -5,9 +5,8 @@ Production dependencies are intentionally limited to:
 - PyMuPDF (import name: pymupdf)
 - Pillow
 
-No ImageHash / NumPy / SciPy dependency is required.  A small perceptual hash
-implementation is included here so the converter remains easy to deploy on a
-normal Windows Python installation.
+No ImageHash / NumPy / SciPy dependency is required. A compact perceptual hash
+implementation is included so the converter stays easy to deploy.
 """
 
 import argparse
@@ -27,7 +26,6 @@ PHASH_SIZE = 16
 PHASH_HIGHFREQ_FACTOR = 4
 PHASH_IMAGE_SIZE = PHASH_SIZE * PHASH_HIGHFREQ_FACTOR
 
-# Precompute only the low-frequency DCT rows needed by a 16x16 pHash.
 _DCT_COS = [
     [math.cos(math.pi * (2 * x + 1) * u / (2.0 * PHASH_IMAGE_SIZE))
      for x in range(PHASH_IMAGE_SIZE)]
@@ -52,7 +50,6 @@ def pil_from_bytes(data: bytes):
 
 
 def flatten_for_matching(im: Image.Image):
-    """Normalize transparency against white before perceptual comparison."""
     if im.mode == 'RGBA':
         bg = Image.new('RGB', im.size, 'white')
         bg.paste(im, mask=im.getchannel('A'))
@@ -62,19 +59,19 @@ def flatten_for_matching(im: Image.Image):
     return im
 
 
-def perceptual_hash(im: Image.Image):
-    """Return a 256-bit pHash compatible in spirit with ImageHash.phash.
+def image_pixels(gray: Image.Image):
+    """Return pixels without triggering Pillow 12+ getdata deprecation warnings."""
+    if hasattr(gray, 'get_flattened_data'):
+        return list(gray.get_flattened_data())
+    return list(gray.getdata())
 
-    The implementation uses Pillow + a compact low-frequency DCT, avoiding the
-    ImageHash/SciPy dependency chain.  Only relative coefficients matter for
-    matching, so this is deterministic and platform-independent.
-    """
+
+def perceptual_hash(im: Image.Image):
     gray = flatten_for_matching(im).convert('L').resize(
         (PHASH_IMAGE_SIZE, PHASH_IMAGE_SIZE), Image.Resampling.LANCZOS
     )
-    pixels = list(gray.getdata())
+    pixels = image_pixels(gray)
 
-    # First DCT pass across each row, retaining u=0..15 only.
     row_low = [[0.0] * PHASH_SIZE for _ in range(PHASH_IMAGE_SIZE)]
     for y in range(PHASH_IMAGE_SIZE):
         offset = y * PHASH_IMAGE_SIZE
@@ -186,8 +183,6 @@ def collect_pdf_images(doc):
 
 def encode_png(im: Image.Image):
     buf = io.BytesIO()
-    # Lossless re-encoding is deliberate even for a source JPEG: it prevents
-    # Office from introducing an additional lossy JPEG generation in the PDF.
     im.save(buf, format='PNG', optimize=False)
     return buf.getvalue()
 
@@ -217,7 +212,7 @@ def main():
         save_passthrough(doc, args.output_pdf)
         doc.close()
         report = {
-            'schema_version': 2,
+            'schema_version': 3,
             'matching_engine': 'builtin_phash_dct16',
             'source_office': args.source_office.name,
             'input_pdf': args.input_pdf.name,
@@ -315,7 +310,7 @@ def main():
     doc.close()
 
     report = {
-        'schema_version': 2,
+        'schema_version': 3,
         'matching_engine': 'builtin_phash_dct16',
         'source_office': args.source_office.name,
         'input_pdf': args.input_pdf.name,
