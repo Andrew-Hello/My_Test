@@ -10,6 +10,7 @@ $ErrorActionPreference = 'Stop'
 
 $SupportedExtensions = @('.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt')
 $ModernExtensions = @('.docx', '.xlsx', '.pptx')
+$LegacyExtensions = @('.doc', '.xls', '.ppt')
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LogsDirectory = Join-Path $ScriptRoot 'logs'
 $DiagnosticsDirectory = Join-Path $ScriptRoot 'diagnostics'
@@ -79,6 +80,11 @@ function Get-UniquePdfPath([string]$SourcePath, [string]$Suffix) {
 function Get-TempPdfPath([string]$SourcePath) {
     $base = [IO.Path]::GetFileNameWithoutExtension($SourcePath)
     return (Join-Path $TempDirectory ("{0}_{1}_native.pdf" -f $base, [guid]::NewGuid().ToString('N')))
+}
+
+function Get-TempOoxmlPath([string]$SourcePath, [string]$Extension) {
+    $base = [IO.Path]::GetFileNameWithoutExtension($SourcePath)
+    return (Join-Path $TempDirectory ("{0}_{1}{2}" -f $base, [guid]::NewGuid().ToString('N'), $Extension))
 }
 
 function Find-PythonRunner {
@@ -192,19 +198,20 @@ function Export-ExcelNative([string]$SourcePath, [string]$PdfPath) {
 
         Write-Log 'INFO' 'Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.'
         foreach ($sheet in @($book.Worksheets)) {
+            $pageSetup = $null
             try {
                 $pageSetup = $sheet.PageSetup
                 $orientation = $null
                 try { $orientation = $pageSetup.Orientation } catch { }
-                $pageSetup.PaperSize = 9          # xlPaperA4
+                $pageSetup.PaperSize = 9
                 $pageSetup.Zoom = $false
                 $pageSetup.FitToPagesWide = 1
                 $pageSetup.FitToPagesTall = $false
                 Write-Log 'DEBUG' ("Excel sheet '{0}': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation={1}" -f $sheet.Name, $orientation)
-                Release-ComObject $pageSetup
             } catch {
                 Write-Log 'WARN' ("Could not apply A4/fit-to-width settings to Excel sheet '{0}'. Existing page setup will be used." -f $sheet.Name) $_.Exception
             } finally {
+                Release-ComObject $pageSetup
                 Release-ComObject $sheet
             }
         }
@@ -240,7 +247,7 @@ function Export-PowerPointNative([string]$SourcePath, [string]$PdfPath) {
         }
 
         Write-Log 'INFO' 'Exporting structural PDF with PowerPoint SaveAs PDF (stable path; slide canvas ratio preserved).'
-        [void]$pres.SaveAs($PdfPath, 32)   # ppSaveAsPDF
+        [void]$pres.SaveAs($PdfPath, 32)
     } finally {
         Release-ComObject $pageSetup
         if ($null -ne $pres) { try { $pres.Close() } catch { } }
@@ -260,6 +267,77 @@ function Export-StructuralPdf([string]$SourcePath, [string]$PdfPath, [string]$Ex
         '.pptx' { Export-PowerPointNative $SourcePath $PdfPath }
         '.ppt'  { Export-PowerPointNative $SourcePath $PdfPath }
         default { throw "Unsupported extension: $Extension" }
+    }
+}
+
+function Convert-LegacyWordToOoxml([string]$SourcePath, [string]$OoxmlPath) {
+    $word = $null; $doc = $null
+    try {
+        Write-Log 'INFO' 'Upgrading legacy DOC to temporary DOCX for HQ media recovery.'
+        $word = New-Object -ComObject Word.Application
+        $word.Visible = $false; $word.DisplayAlerts = 0
+        Disable-OfficeMacros $word
+        $doc = $word.Documents.Open($SourcePath, $false, $true, $false)
+        [void]$doc.SaveAs2($OoxmlPath, 12)
+    } finally {
+        if ($null -ne $doc) { try { $doc.Close(0) } catch { } }
+        Release-ComObject $doc
+        if ($null -ne $word) { try { $word.Quit() } catch { } }
+        Release-ComObject $word
+        Force-ComCleanup
+    }
+}
+
+function Convert-LegacyExcelToOoxml([string]$SourcePath, [string]$OoxmlPath) {
+    $excel = $null; $book = $null
+    try {
+        Write-Log 'INFO' 'Upgrading legacy XLS to temporary XLSX for HQ media recovery.'
+        $excel = New-Object -ComObject Excel.Application
+        $excel.Visible = $false; $excel.DisplayAlerts = $false
+        Disable-OfficeMacros $excel
+        $book = $excel.Workbooks.Open($SourcePath, 0, $true)
+        [void]$book.SaveAs($OoxmlPath, 51)
+    } finally {
+        if ($null -ne $book) { try { $book.Close($false) } catch { } }
+        Release-ComObject $book
+        if ($null -ne $excel) { try { $excel.Quit() } catch { } }
+        Release-ComObject $excel
+        Force-ComCleanup
+    }
+}
+
+function Convert-LegacyPowerPointToOoxml([string]$SourcePath, [string]$OoxmlPath) {
+    $ppt = $null; $pres = $null
+    try {
+        Write-Log 'INFO' 'Upgrading legacy PPT to temporary PPTX for HQ media recovery.'
+        $ppt = New-Object -ComObject PowerPoint.Application
+        Disable-OfficeMacros $ppt
+        $pres = $ppt.Presentations.Open($SourcePath, -1, 0, 0)
+        [void]$pres.SaveAs($OoxmlPath, 24)
+    } finally {
+        if ($null -ne $pres) { try { $pres.Close() } catch { } }
+        Release-ComObject $pres
+        if ($null -ne $ppt) { try { $ppt.Quit() } catch { } }
+        Release-ComObject $ppt
+        Force-ComCleanup
+    }
+}
+
+function Get-LegacyUpgradeExtension([string]$Extension) {
+    switch ($Extension) {
+        '.doc' { return '.docx' }
+        '.xls' { return '.xlsx' }
+        '.ppt' { return '.pptx' }
+        default { return $null }
+    }
+}
+
+function Convert-LegacyToOoxml([string]$SourcePath, [string]$OoxmlPath, [string]$Extension) {
+    switch ($Extension) {
+        '.doc' { Convert-LegacyWordToOoxml $SourcePath $OoxmlPath }
+        '.xls' { Convert-LegacyExcelToOoxml $SourcePath $OoxmlPath }
+        '.ppt' { Convert-LegacyPowerPointToOoxml $SourcePath $OoxmlPath }
+        default { throw "Not a supported legacy Office format: $Extension" }
     }
 }
 
@@ -301,12 +379,20 @@ function Invoke-HqRebuild([string]$SourcePath, [string]$NativePdf, [string]$Fina
     return $true
 }
 
-function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [string]$Mode, [double]$Seconds, [string]$Message) {
+function Save-SessionDiagnostic(
+    [string]$SourcePath,
+    [string]$OutputPath,
+    [string]$Mode,
+    [double]$Seconds,
+    [string]$Message,
+    [bool]$LegacyUpgradeAttempted = $false,
+    [bool]$LegacyUpgradeSucceeded = $false
+) {
     $source = Get-Item -LiteralPath $SourcePath
     $size = $null
     if (Test-Path -LiteralPath $OutputPath) { $size = (Get-Item -LiteralPath $OutputPath).Length }
     $record = [ordered]@{
-        schema_version = 7
+        schema_version = 8
         timestamp_local = (Get-Date).ToString('o')
         source_file = $source.Name
         source_extension = $source.Extension.ToLowerInvariant()
@@ -319,6 +405,10 @@ function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [strin
         production_pipeline = 'Office layout -> OOXML source raster restoration'
         excel_layout_policy = 'A4; FitToPagesWide=1; FitToPagesTall=False; preserve orientation'
         powerpoint_layout_policy = 'preserve source slide canvas aspect ratio'
+        pptx_image_policy = 'crop-aware DrawingML srcRect semantic matching'
+        legacy_upgrade_attempted = $LegacyUpgradeAttempted
+        legacy_upgrade_succeeded = $LegacyUpgradeSucceeded
+        legacy_upgrade_policy = 'DOC->DOCX(12); XLS->XLSX(51); PPT->PPTX(24); temp only'
         python_process_handling = 'stdout captured separately; integer exit code only'
         log_file = [IO.Path]::GetFileName($Script:LogPath)
     }
@@ -337,19 +427,52 @@ function Convert-One([string]$InputPath) {
 
     Write-Log 'INFO' ('=' * 72)
     Write-Log 'INFO' ("Source: {0} ({1:N3} MB)" -f $item.Name, ($item.Length / 1MB))
+
     $nativeTemp = Get-TempPdfPath $resolved
+    $legacyTemp = $null
+    $workingSource = $resolved
+    $workingExt = $ext
+    $legacyAttempted = $false
+    $legacySucceeded = $false
 
     try {
-        Export-StructuralPdf $resolved $nativeTemp $ext
+        if ($LegacyExtensions -contains $ext) {
+            $legacyAttempted = $true
+            $upgradeExt = Get-LegacyUpgradeExtension $ext
+            $legacyTemp = Get-TempOoxmlPath $resolved $upgradeExt
+            try {
+                Convert-LegacyToOoxml $resolved $legacyTemp $ext
+                if (-not (Test-Path -LiteralPath $legacyTemp)) {
+                    throw 'Legacy-to-OOXML conversion returned without creating the temporary file.'
+                }
+                $workingSource = $legacyTemp
+                $workingExt = $upgradeExt
+                $legacySucceeded = $true
+                Write-Log 'OK' ("Legacy format upgraded in temp/: {0} -> {1} ({2:N3} MB)" -f $ext, $upgradeExt, ((Get-Item $legacyTemp).Length / 1MB))
+            } catch {
+                Write-Log 'WARN' 'Legacy-to-OOXML upgrade failed. Falling back to Office-native PDF export without HQ media recovery.' $_.Exception
+                $workingSource = $resolved
+                $workingExt = $ext
+            }
+        }
+
+        Export-StructuralPdf $workingSource $nativeTemp $workingExt
         if (-not (Test-Path -LiteralPath $nativeTemp)) { throw 'Office structural PDF was not created.' }
         Write-Log 'INFO' ("Structural PDF created in temp/: {0:N3} MB" -f ((Get-Item $nativeTemp).Length / 1MB))
 
-        if ($ModernExtensions -contains $ext) {
+        $canRebuild = ($ModernExtensions -contains $workingExt)
+        if ($canRebuild) {
             $final = Get-UniquePdfPath $resolved '_HQ'
-            if (Invoke-HqRebuild $resolved $nativeTemp $final) {
+            if (Invoke-HqRebuild $workingSource $nativeTemp $final) {
                 $seconds = ((Get-Date) - $started).TotalSeconds
-                Write-Log 'OK' ("HQ_REBUILT: {0} ({1:N3} MB) in {2:N2} s" -f [IO.Path]::GetFileName($final), ((Get-Item $final).Length / 1MB), $seconds)
-                Save-SessionDiagnostic $resolved $final 'HQ_REBUILT' $seconds 'Office layout preserved; OOXML raster media restored.'
+                $mode = if ($legacySucceeded) { 'HQ_REBUILT_FROM_LEGACY' } else { 'HQ_REBUILT' }
+                $message = if ($legacySucceeded) {
+                    'Legacy Office file upgraded to temporary OOXML; layout preserved and OOXML raster media restored.'
+                } else {
+                    'Office layout preserved; OOXML raster media restored.'
+                }
+                Write-Log 'OK' ("{0}: {1} ({2:N3} MB) in {3:N2} s" -f $mode, [IO.Path]::GetFileName($final), ((Get-Item $final).Length / 1MB), $seconds)
+                Save-SessionDiagnostic $resolved $final $mode $seconds $message $legacyAttempted $legacySucceeded
                 return $true
             }
 
@@ -358,24 +481,27 @@ function Convert-One([string]$InputPath) {
             Move-Item -LiteralPath $nativeTemp -Destination $fallback -Force
             $seconds = ((Get-Date) - $started).TotalSeconds
             Write-Log 'WARN' ("NATIVE_ONLY: HQ rebuild failed. Preserved {0}." -f [IO.Path]::GetFileName($fallback))
-            Save-SessionDiagnostic $resolved $fallback 'NATIVE_ONLY' $seconds 'HQ restoration failed; Office raster quality retained.'
+            Save-SessionDiagnostic $resolved $fallback 'NATIVE_ONLY' $seconds 'HQ restoration failed; Office raster quality retained.' $legacyAttempted $legacySucceeded
             return $false
         }
 
         $legacyOut = Get-UniquePdfPath $resolved '_NATIVE_ONLY'
         Move-Item -LiteralPath $nativeTemp -Destination $legacyOut -Force
         $seconds = ((Get-Date) - $started).TotalSeconds
-        Write-Log 'WARN' ("NATIVE_ONLY: legacy binary format uses Office-native export: {0}." -f [IO.Path]::GetFileName($legacyOut))
-        Save-SessionDiagnostic $resolved $legacyOut 'NATIVE_ONLY' $seconds 'Legacy DOC/XLS/PPT has no OOXML media package.'
-        return $true
+        Write-Log 'WARN' ("NATIVE_ONLY: legacy binary format could not be upgraded to OOXML; Office-native PDF preserved as {0}." -f [IO.Path]::GetFileName($legacyOut))
+        Save-SessionDiagnostic $resolved $legacyOut 'NATIVE_ONLY' $seconds 'Legacy-to-OOXML upgrade failed; no recoverable OOXML media package.' $legacyAttempted $legacySucceeded
+        return $false
     } catch {
         $seconds = ((Get-Date) - $started).TotalSeconds
         Write-Log 'ERROR' ("FAILED: {0}" -f $item.Name) $_.Exception
-        try { Save-SessionDiagnostic $resolved $nativeTemp 'FAILED' $seconds (Get-ExceptionText $_.Exception) } catch { }
+        try { Save-SessionDiagnostic $resolved $nativeTemp 'FAILED' $seconds (Get-ExceptionText $_.Exception) $legacyAttempted $legacySucceeded } catch { }
         return $false
     } finally {
         if (Test-Path -LiteralPath $nativeTemp) {
             try { Remove-Item -LiteralPath $nativeTemp -Force } catch { }
+        }
+        if ($null -ne $legacyTemp -and (Test-Path -LiteralPath $legacyTemp)) {
+            try { Remove-Item -LiteralPath $legacyTemp -Force } catch { }
         }
     }
 }
@@ -384,6 +510,8 @@ Write-Log 'INFO' 'Office HQ PDF Converter production pipeline started.'
 Write-Log 'INFO' 'Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.'
 Write-Log 'INFO' 'Excel policy: A4, 1 page wide, unlimited pages tall, preserve sheet orientation.'
 Write-Log 'INFO' 'PowerPoint policy: preserve source slide canvas aspect ratio.'
+Write-Log 'INFO' 'PPTX image policy: parse slide relationships + DrawingML srcRect crop before HQ matching.'
+Write-Log 'INFO' 'Legacy policy: DOC/XLS/PPT are upgraded to temporary OOXML first; originals are never modified.'
 Write-Log 'INFO' 'Python stdout is isolated from process exit codes for Windows PowerShell 5.1 compatibility.'
 
 if ($null -eq $InputFiles -or $InputFiles.Count -eq 0) {
