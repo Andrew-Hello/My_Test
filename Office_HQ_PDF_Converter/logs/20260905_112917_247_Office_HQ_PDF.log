@@ -1,0 +1,23 @@
+﻿[2026-09-05 11:29:17.249 +08:00] [INFO] Office HQ PDF Converter v2 started.
+[2026-09-05 11:29:17.269 +08:00] [INFO] PowerShell=5.1.19041.7663; OS=Microsoft Windows NT 10.0.19045.0; Process64Bit=True
+[2026-09-05 11:29:17.270 +08:00] [INFO] Quality strategy: Acrobat PDFMaker first; Word high-image-quality API second; classic Office export last.
+[2026-09-05 11:29:17.288 +08:00] [INFO] ======================================================================
+[2026-09-05 11:29:17.291 +08:00] [INFO] Source file: demo_Report.docx (5.259 MB)
+[2026-09-05 11:29:17.293 +08:00] [INFO] Output file: demo_Report_HQ.pdf
+[2026-09-05 11:29:17.294 +08:00] [INFO] Preferred path: Adobe Acrobat PDFMaker -> Office native fallback.
+[2026-09-05 11:29:17.298 +08:00] [INFO] Starting Microsoft Word.
+[2026-09-05 11:29:19.127 +08:00] [DEBUG] Office AutomationSecurity set to ForceDisable.
+[2026-09-05 11:29:19.131 +08:00] [INFO] Word version=16.0, build=16.0.17932
+[2026-09-05 11:29:19.603 +08:00] [INFO] Found PDFMaker add-in. ProgId='PDFMaker.OfficeAddin', Description='Acrobat PDFMaker Office COM Addin'
+[2026-09-05 11:29:19.640 +08:00] [WARN] GetCurrentConversionSettings failed; trying default settings. | Type=System.Runtime.InteropServices.COMException; HRESULT=0x80004005; Message=Error HRESULT E_FAIL has been returned from a call to a COM component.
+[2026-09-05 11:29:19.653 +08:00] [ERROR] Unable to obtain PDFMaker conversion settings. | Type=System.Runtime.InteropServices.COMException; HRESULT=0x80004005; Message=Error HRESULT E_FAIL has been returned from a call to a COM component.
+[2026-09-05 11:29:19.668 +08:00] [INFO] Trying Word ExportAsFixedFormat3 with OptimizeForImageQuality=True.
+[2026-09-05 11:29:19.891 +08:00] [WARN] ExportAsFixedFormat3 failed. | Type=System.Management.Automation.RuntimeException; HRESULT=0x80131501; Message=Method invocation failed because [Microsoft.Office.Interop.Word.DocumentClass] does not contain a method named 'ExportAsFixedFormat3'.
+[2026-09-05 11:29:19.893 +08:00] [INFO] Trying Word ExportAsFixedFormat2 with OptimizeForImageQuality=True.
+[2026-09-05 11:29:19.908 +08:00] [WARN] ExportAsFixedFormat2 failed. | Type=System.ArgumentException; HRESULT=0x80070057; Message=Value does not fall within the expected range.
+[2026-09-05 11:29:19.911 +08:00] [WARN] Falling back to classic Word ExportAsFixedFormat. This engine commonly downsamples images.
+[2026-09-05 11:29:24.421 +08:00] [OK] Created demo_Report_HQ.pdf: 1.693 MB in 7.14 s using Word ExportAsFixedFormat classic
+[2026-09-05 11:29:24.468 +08:00] [INFO] Diagnostics written: 20260905_112924_441_demo_Report_v2.json
+[2026-09-05 11:29:24.470 +08:00] [INFO] ======================================================================
+[2026-09-05 11:29:24.471 +08:00] [INFO] Finished. Success=1; Failed=0
+[2026-09-05 11:29:24.471 +08:00] [INFO] Session log: 20260905_112917_247_Office_HQ_PDF.log
