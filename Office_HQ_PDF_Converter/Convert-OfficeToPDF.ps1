@@ -100,15 +100,11 @@ function Invoke-Python($Runner, [string[]]$Arguments, [switch]$Quiet) {
     $allArgs += $Runner.Prefix
     $allArgs += $Arguments
     $exitCode = 1
-
     try {
         if ($Quiet) {
             & $Runner.Exe @allArgs *> $null
             $exitCode = $LASTEXITCODE
         } else {
-            # Critical PowerShell 5.1 behavior: native stdout is part of a
-            # function's success output. Capture it, print it via Write-Host,
-            # and return ONLY the integer exit code to callers.
             $nativeOutput = @(& $Runner.Exe @allArgs 2>&1)
             $exitCode = $LASTEXITCODE
             foreach ($entry in $nativeOutput) {
@@ -120,7 +116,6 @@ function Invoke-Python($Runner, [string[]]$Arguments, [switch]$Quiet) {
         Write-Log 'ERROR' 'Python process invocation failed.' $_.Exception
         $exitCode = 1
     }
-
     if ($null -eq $exitCode) { $exitCode = 1 }
     return [int]$exitCode
 }
@@ -129,16 +124,12 @@ function Get-PythonText($Runner, [string[]]$Arguments) {
     $allArgs = @()
     $allArgs += $Runner.Prefix
     $allArgs += $Arguments
-    try {
-        return ((& $Runner.Exe @allArgs 2>&1 | Out-String).Trim())
-    } catch {
-        return $_.Exception.Message
-    }
+    try { return ((& $Runner.Exe @allArgs 2>&1 | Out-String).Trim()) }
+    catch { return $_.Exception.Message }
 }
 
 function Test-PythonPackage($Runner, [string]$PackageName) {
-    $code = Invoke-Python $Runner @('-m', 'pip', 'show', $PackageName) -Quiet
-    return ($code -eq 0)
+    return ((Invoke-Python $Runner @('-m', 'pip', 'show', $PackageName) -Quiet) -eq 0)
 }
 
 function Ensure-HqPythonDependencies($Runner) {
@@ -156,20 +147,15 @@ function Ensure-HqPythonDependencies($Runner) {
     if (-not $hasPillow) { $missing += 'pillow' }
 
     Write-Log 'WARN' ("Missing package(s): {0}. Trying configured pip index." -f ($missing -join ', '))
-    $install = Invoke-Python $Runner (@('-m', 'pip', 'install', '--user') + $missing)
-    if ($install -eq 0) {
-        $hasMuPdf = Test-PythonPackage $Runner 'pymupdf'
-        $hasPillow = Test-PythonPackage $Runner 'pillow'
-        if ($hasMuPdf -and $hasPillow) { return $true }
+    if ((Invoke-Python $Runner (@('-m', 'pip', 'install', '--user') + $missing)) -eq 0) {
+        if ((Test-PythonPackage $Runner 'pymupdf') -and (Test-PythonPackage $Runner 'pillow')) { return $true }
     }
 
     Write-Log 'WARN' 'Configured index did not provide all dependencies. Trying official PyPI once.'
-    $install2 = Invoke-Python $Runner (@('-m', 'pip', 'install', '--user', '--index-url', 'https://pypi.org/simple') + $missing)
-    if ($install2 -ne 0) {
+    if ((Invoke-Python $Runner (@('-m', 'pip', 'install', '--user', '--index-url', 'https://pypi.org/simple') + $missing)) -ne 0) {
         Write-Log 'ERROR' 'Automatic Python dependency installation failed.'
         return $false
     }
-
     return ((Test-PythonPackage $Runner 'pymupdf') -and (Test-PythonPackage $Runner 'pillow'))
 }
 
@@ -203,7 +189,27 @@ function Export-ExcelNative([string]$SourcePath, [string]$PdfPath) {
         Disable-OfficeMacros $excel
         Write-Log 'INFO' ("Excel Version={0}, Build={1}" -f $excel.Version, $excel.Build)
         $book = $excel.Workbooks.Open($SourcePath, 0, $true)
-        Write-Log 'INFO' 'Exporting structural PDF with Excel xlQualityStandard.'
+
+        Write-Log 'INFO' 'Applying Excel PDF layout policy: A4 paper, preserve current orientation, fit every sheet to 1 page wide, unlimited pages tall.'
+        foreach ($sheet in @($book.Worksheets)) {
+            try {
+                $pageSetup = $sheet.PageSetup
+                $orientation = $null
+                try { $orientation = $pageSetup.Orientation } catch { }
+                $pageSetup.PaperSize = 9          # xlPaperA4
+                $pageSetup.Zoom = $false
+                $pageSetup.FitToPagesWide = 1
+                $pageSetup.FitToPagesTall = $false
+                Write-Log 'DEBUG' ("Excel sheet '{0}': PaperSize=A4; FitToPagesWide=1; FitToPagesTall=False; Orientation={1}" -f $sheet.Name, $orientation)
+                Release-ComObject $pageSetup
+            } catch {
+                Write-Log 'WARN' ("Could not apply A4/fit-to-width settings to Excel sheet '{0}'. Existing page setup will be used." -f $sheet.Name) $_.Exception
+            } finally {
+                Release-ComObject $sheet
+            }
+        }
+
+        Write-Log 'INFO' 'Exporting structural PDF with Excel xlQualityStandard after page-setup normalization.'
         [void]$book.ExportAsFixedFormat(0, $PdfPath, 0, $true, $true)
     } finally {
         if ($null -ne $book) { try { $book.Close($false) } catch { } }
@@ -215,21 +221,28 @@ function Export-ExcelNative([string]$SourcePath, [string]$PdfPath) {
 }
 
 function Export-PowerPointNative([string]$SourcePath, [string]$PdfPath) {
-    $ppt = $null; $pres = $null
+    $ppt = $null; $pres = $null; $pageSetup = $null
     try {
         Write-Log 'INFO' 'Starting PowerPoint layout engine.'
         $ppt = New-Object -ComObject PowerPoint.Application
         Disable-OfficeMacros $ppt
         Write-Log 'INFO' ("PowerPoint Version={0}, Build={1}" -f $ppt.Version, $ppt.Build)
         $pres = $ppt.Presentations.Open($SourcePath, -1, 0, 0)
-        Write-Log 'INFO' 'Exporting structural PDF with PowerPoint Print intent.'
+
         try {
-            [void]$pres.ExportAsFixedFormat($PdfPath, 2, 2, 0, 1, 1, 0, $null, 1, '', $true, $true, $true, $true, $false)
+            $pageSetup = $pres.PageSetup
+            $w = [double]$pageSetup.SlideWidth
+            $h = [double]$pageSetup.SlideHeight
+            $ratio = if ($h -ne 0) { [math]::Round($w / $h, 6) } else { $null }
+            Write-Log 'INFO' ("PowerPoint slide canvas: {0:N2} x {1:N2} pt; aspect ratio={2}. PDF will preserve this slide ratio." -f $w, $h, $ratio)
         } catch {
-            Write-Log 'WARN' 'PowerPoint ExportAsFixedFormat failed; using SaveAs PDF.' $_.Exception
-            [void]$pres.SaveAs($PdfPath, 32)
+            Write-Log 'WARN' 'Could not read PowerPoint slide dimensions; SaveAs PDF will still preserve the presentation canvas.' $_.Exception
         }
+
+        Write-Log 'INFO' 'Exporting structural PDF with PowerPoint SaveAs PDF (stable path; slide canvas ratio preserved).'
+        [void]$pres.SaveAs($PdfPath, 32)   # ppSaveAsPDF
     } finally {
+        Release-ComObject $pageSetup
         if ($null -ne $pres) { try { $pres.Close() } catch { } }
         Release-ComObject $pres
         if ($null -ne $ppt) { try { $ppt.Quit() } catch { } }
@@ -255,7 +268,6 @@ function Invoke-HqRebuild([string]$SourcePath, [string]$NativePdf, [string]$Fina
         Write-Log 'ERROR' ("HQ rebuilder is missing: {0}" -f $RebuilderScript)
         return $false
     }
-
     $runner = Find-PythonRunner
     if ($null -eq $runner) {
         Write-Log 'ERROR' 'Python 3 was not found.'
@@ -285,7 +297,6 @@ function Invoke-HqRebuild([string]$SourcePath, [string]$NativePdf, [string]$Fina
         Write-Log 'ERROR' 'HQ rebuilder returned success but no final PDF exists.'
         return $false
     }
-
     Write-Log 'OK' ("HQ image restoration completed. Diagnostic: {0}" -f [IO.Path]::GetFileName($report))
     return $true
 }
@@ -295,7 +306,7 @@ function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [strin
     $size = $null
     if (Test-Path -LiteralPath $OutputPath) { $size = (Get-Item -LiteralPath $OutputPath).Length }
     $record = [ordered]@{
-        schema_version = 6
+        schema_version = 7
         timestamp_local = (Get-Date).ToString('o')
         source_file = $source.Name
         source_extension = $source.Extension.ToLowerInvariant()
@@ -306,6 +317,8 @@ function Save-SessionDiagnostic([string]$SourcePath, [string]$OutputPath, [strin
         duration_seconds = [math]::Round($Seconds, 3)
         message = $Message
         production_pipeline = 'Office layout -> OOXML source raster restoration'
+        excel_layout_policy = 'A4; FitToPagesWide=1; FitToPagesTall=False; preserve orientation'
+        powerpoint_layout_policy = 'preserve source slide canvas aspect ratio'
         python_process_handling = 'stdout captured separately; integer exit code only'
         log_file = [IO.Path]::GetFileName($Script:LogPath)
     }
@@ -369,6 +382,8 @@ function Convert-One([string]$InputPath) {
 
 Write-Log 'INFO' 'Office HQ PDF Converter production pipeline started.'
 Write-Log 'INFO' 'Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.'
+Write-Log 'INFO' 'Excel policy: A4, 1 page wide, unlimited pages tall, preserve sheet orientation.'
+Write-Log 'INFO' 'PowerPoint policy: preserve source slide canvas aspect ratio.'
 Write-Log 'INFO' 'Python stdout is isolated from process exit codes for Windows PowerShell 5.1 compatibility.'
 
 if ($null -eq $InputFiles -or $InputFiles.Count -eq 0) {
