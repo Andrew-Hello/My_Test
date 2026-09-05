@@ -1,6 +1,6 @@
 # Office HQ PDF Converter
 
-面向 Windows + Microsoft Office 桌面版的高保真 Office -> PDF 转换工具。
+Windows + Microsoft Office 桌面版的高保真 Office → PDF 转换工具。
 
 支持：
 
@@ -8,192 +8,146 @@
 - Excel：`.xlsx`、`.xls`
 - PowerPoint：`.pptx`、`.ppt`
 
-## 当前正式方案：v3
+## 使用方法
 
-默认拖拽入口：
+把一个或多个 Office 文档直接拖到：
 
 ```text
 DragDrop_Office_to_PDF.cmd
 ```
 
-它现在调用：
+对于现代 OOXML 格式（DOCX/XLSX/PPTX），成功结果会生成在原文档同目录，并命名为：
 
 ```text
-Convert-OfficeToPDF-v3.ps1
+Report_HQ.pdf
+Report_HQ_2.pdf
+...
 ```
 
-v3 不再使用 Acrobat PDFMaker，也不再使用会在部分 Word 版本中阻塞的 `ExportAsFixedFormat2`。
-
-稳定路径是：
+如果高清恢复阶段失败，不会冒充 HQ 结果，而会明确生成：
 
 ```text
-Office 原生排版/分页
+Report_NATIVE_ONLY.pdf
+```
+
+并在日志中标记 `NATIVE_ONLY`。
+
+## 当前正式质量路线
+
+样例测试已经证明，Word 2024 经典 PDF 导出会把大量嵌入图片降到约 200 PPI；而我们的高清恢复方案可以把同一样例恢复到与 Acrobat 高质量 PDF 相同的有效 PPI 分布。
+
+正式流程固定为：
+
+```text
+Office 原生排版引擎
         ↓
-生成临时结构 PDF
+生成临时结构 PDF（temp/）
         ↓
-读取 DOCX/XLSX/PPTX 内部原始 media
+src/HQImageRebuilder.py
         ↓
-与 PDF 中被压缩的图片对象自动匹配
+从 DOCX/XLSX/PPTX 的 OOXML media 中读取原始图片
         ↓
-用原始高分辨率像素无损回填 PDF image stream
+匹配 PDF 中被压缩的图片对象
         ↓
-最终 HQ PDF
+使用原始像素无损回填
+        ↓
+*_HQ.pdf
 ```
 
-Office 在这里主要负责它最擅长的版式、分页、字体、表格和矢量内容；最终图片质量由我们自己的重建器接管。
+Office 负责最擅长的分页、字体、表格、图表和对象布局；我们自己的重建器负责夺回图片质量。
 
-## 样例验证结果
+正式流程**不再使用**：
 
-`demo_Report.docx` 的实测对比：
+- Adobe Acrobat PDFMaker
+- Word `ExportAsFixedFormat2`
+- ImageHash
 
-| 指标 | Word 原生 PDF | v3 重建原型 | Acrobat HD |
-|---|---:|---:|---:|
-| PDF 大小 | 1.693 MB | 5.228 MB | 7.356 MB |
-| 页面数 | 19 | 19 | 19 |
-| 图片放置对象 | 40 | 40 | 40 |
-| PPI 中位数 | 199.7 | 760.3 | 760.3 |
-| P90 PPI | 199.8 | 882.6 | 882.6 |
-| >=300 PPI | 0/40 | 38/40 | 38/40 |
-| >=600 PPI | 0/40 | 38/40 | 38/40 |
-| PDF 图片编码 | Flate + JPEG | 全部 Flate | 全部 Flate |
+这些路线已经通过实机测试证明不够稳定或没有必要。
 
-因此 `demo_Report_Rebuilt.pdf` 已经在有效图片分辨率分布上达到 Acrobat HD 样例水平。
+## Python 依赖
 
-## 输出状态
-
-v3 日志会明确标记结果，避免“文件名叫 HQ、实际却走低清 fallback”的情况。
-
-### HQ_REBUILT
-
-表示现代 OOXML 文件（DOCX/XLSX/PPTX）已经完成原始图片回填：
+高清恢复器现在只依赖：
 
 ```text
-HQ_REBUILT
+PyMuPDF
+Pillow
 ```
 
-这是当前认可的高质量结果。
+脚本首先检查当前 Python 是否能：
 
-### NATIVE_ONLY
+```python
+import pymupdf
+import PIL
+```
 
-表示只能得到 Office 原生 PDF：
+如果已经安装，不会运行 pip。
+
+如果缺失，会先尝试当前 pip 镜像；若镜像缺包，再尝试一次官方 PyPI。
+
+`ImageHash` 已完全移除，所以即使当前镜像没有 ImageHash，也不会影响正式转换。
+
+## 目录结构
 
 ```text
-NATIVE_ONLY
+Office_HQ_PDF_Converter/
+├─ DragDrop_Office_to_PDF.cmd      # 用户入口
+├─ Convert-OfficeToPDF.ps1         # 唯一正式主脚本
+├─ src/
+│  └─ HQImageRebuilder.py          # 正式高清图片恢复核心
+├─ test/
+│  ├─ Analyze-PDF-Quality.py       # PDF 质量分析测试工具
+│  └─ samples/                     # 测试文档/基准 PDF
+├─ temp/                           # 转换中间文件；Git 忽略
+├─ logs/                           # 可读运行日志
+└─ diagnostics/                    # JSON 诊断结果
 ```
-
-这类 PDF 可能仍只有约 200 PPI，因此文件名会明确带：
-
-```text
-_NATIVE_ONLY.pdf
-```
-
-目前 `.doc/.xls/.ppt` 旧二进制格式先按这一模式处理。
-
-### FAILED
-
-表示转换失败，查看 `logs/`。
-
-## Python 高清重建器
-
-核心脚本：
-
-```text
-Rebuild-HighRes-PDF-Images.py
-```
-
-支持直接读取 OOXML 包中的：
-
-```text
-DOCX -> word/media/
-XLSX -> xl/media/
-PPTX -> ppt/media/
-```
-
-需要 Python 3 以及：
-
-```text
-pymupdf
-pillow
-ImageHash
-```
-
-v3 会自动检测。如果 Python 已存在但模块缺失，会尝试一次：
-
-```text
-python -m pip install --user --upgrade pymupdf pillow ImageHash
-```
-
-如果电脑没有 Python，Office 原生结构 PDF 仍可生成，但 v3 会明确标记为 `NATIVE_ONLY`，不会伪装成 HQ 结果。
-
-后续计划是把这个 Python 重建器打包成独立 EXE，使最终用户不需要单独安装 Python。
-
-## FixedFormat2 为什么停用
-
-在当前实测机器：
-
-```text
-Word Version = 16.0
-Build = 16.0.17932
-```
-
-`Document.ExportAsFixedFormat2(... OptimizeForImageQuality=True)` 通过 PowerShell COM 调用后会出现无限阻塞，因此不再用于正式转换流程。
-
-`Test_Word_FixedFormat2_HQ.cmd` 已标记为 retired test，不应再用于日常转换。
 
 ## 日志与诊断
 
-每次运行生成：
+每次运行会生成：
 
 ```text
-Office_HQ_PDF_Converter/logs/
-Office_HQ_PDF_Converter/diagnostics/
+logs/*_Office_HQ_PDF.log
+diagnostics/*_conversion.json
+diagnostics/*_image_rebuild.json
 ```
 
 日志会记录：
 
-- Office 版本和 Build
-- 原生结构 PDF 大小
-- Python 路径
-- HQ 依赖是否可用
-- 图片重建是否成功
-- `HQ_REBUILT / NATIVE_ONLY / FAILED`
-- 最终 PDF 大小
-- 转换耗时
+- Office 版本与 Build
+- 结构 PDF 是否成功
+- Python runner
+- PyMuPDF/Pillow 检查状态
+- HQ 重建是否成功
+- 最终结果是 `HQ_REBUILT` / `NATIVE_ONLY` / `FAILED`
+- 文件大小与耗时
 
-图片匹配诊断 JSON 还会记录：
+## 通用本机环境快照
 
-- OOXML 原始媒体数量
-- PDF 唯一图片对象数量
-- 每个 source image 与 PDF xref 的对应关系
-- 原始/低清像素尺寸
-- 像素面积倍率
-- 匹配模式
-- 实际替换数量
-- 替换错误
-
-## 使用
-
-1. GitHub Desktop 切换到 `dev`。
-2. Fetch / Pull。
-3. 将 `.docx/.xlsx/.pptx/.doc/.xls/.ppt` 拖到：
+仓库根目录另有：
 
 ```text
-DragDrop_Office_to_PDF.cmd
+Local_Environment_Collector/
 ```
 
-4. 查看终端最后是否出现：
+当转换器或其他项目出现本机环境相关问题时，双击：
 
 ```text
-HQ_REBUILT
+Local_Environment_Collector/Collect_Local_Environment.cmd
 ```
 
-5. 检查生成 PDF。
-6. 如需诊断，把 `logs/` 与 `diagnostics/` 的新文件 Commit + Push 到 `dev`。
+然后把 `Local_Environment_Collector/reports/` 生成的 JSON/TXT Commit + Push，ChatGPT 就可以基于真实环境继续适配，而不需要反复手工询问版本、路径和依赖。
 
-## 关于“不依赖 Office / Acrobat”
+## 当前样例基线
 
-当前 v3 已经不依赖 Acrobat。
+历史样例 `demo_Report.docx` 的测试结果：
 
-仍使用 Office 作为版式引擎，因为准确复刻 Word/Excel/PowerPoint 的分页、字体度量、表格、浮动对象和图表布局是整个问题中最复杂的部分。
+- Word 原生 PDF：有效 PPI 中位数约 **199.7**，`>=600 PPI` 为 **0/40**
+- 高清重建 PDF：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
+- Acrobat HD 基准：有效 PPI 中位数约 **760.3**，`>=600 PPI` 为 **38/40**
 
-现代 `.docx/.xlsx/.pptx` 本身是 OOXML，可以完全独立解析。长期可以进一步开发“不需要安装 Office”的独立渲染器，但这属于第二阶段；当前优先目标是先获得稳定、可批量使用、图片质量达到 Acrobat HD 水平的实际工具。
+因此当前生产路线的图片分辨率已经达到样例 Acrobat HD 的水平。
+
+## 旧二进制格式
+
+`.doc/.xls/.ppt` 目前仍然可以转换，但因为它们不是 OOXML ZIP 包，当前版本无法直接从 `media/` 恢复原始图片，所以结果会标记为 `NATIVE_ONLY`。后续可单独开发“旧格式 → 临时 OOXML → HQ 恢复”的兼容阶段。
