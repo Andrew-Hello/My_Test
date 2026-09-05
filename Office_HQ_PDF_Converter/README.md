@@ -8,193 +8,192 @@
 - Excel：`.xlsx`、`.xls`
 - PowerPoint：`.pptx`、`.ppt`
 
-## 最简单的用法
+## 当前正式方案：v3
 
-把一个或多个 Office 文档直接拖到：
+默认拖拽入口：
 
 ```text
 DragDrop_Office_to_PDF.cmd
 ```
 
-PDF 会生成在原文档同目录。
-
-如果同名 PDF 已存在，不覆盖原文件，而是自动使用：
+它现在调用：
 
 ```text
-Report_HQ.pdf
-Report_HQ_2.pdf
-...
+Convert-OfficeToPDF-v3.ps1
 ```
 
-## v2 的质量策略
+v3 不再使用 Acrobat PDFMaker，也不再使用会在部分 Word 版本中阻塞的 `ExportAsFixedFormat2`。
 
-从样例 `demo_Report.docx` 得到的实测结果表明，Microsoft Word 2024 经典 PDF 导出会把绝大多数图片压到约 200 PPI，而同一文档通过 Acrobat PDFMaker 高质量设置导出时，大部分图片可保留约 600-880 PPI。
-
-因此 v2 已改为：
+稳定路径是：
 
 ```text
-Adobe Acrobat PDFMaker
-        ↓ 失败/不存在
-Word / Excel / PowerPoint 原生高质量接口
-        ↓ 再失败
-经典 Office PDF fallback
+Office 原生排版/分页
+        ↓
+生成临时结构 PDF
+        ↓
+读取 DOCX/XLSX/PPTX 内部原始 media
+        ↓
+与 PDF 中被压缩的图片对象自动匹配
+        ↓
+用原始高分辨率像素无损回填 PDF image stream
+        ↓
+最终 HQ PDF
 ```
 
-拖拽启动器现在默认调用：
+Office 在这里主要负责它最擅长的版式、分页、字体、表格和矢量内容；最终图片质量由我们自己的重建器接管。
+
+## 样例验证结果
+
+`demo_Report.docx` 的实测对比：
+
+| 指标 | Word 原生 PDF | v3 重建原型 | Acrobat HD |
+|---|---:|---:|---:|
+| PDF 大小 | 1.693 MB | 5.228 MB | 7.356 MB |
+| 页面数 | 19 | 19 | 19 |
+| 图片放置对象 | 40 | 40 | 40 |
+| PPI 中位数 | 199.7 | 760.3 | 760.3 |
+| P90 PPI | 199.8 | 882.6 | 882.6 |
+| >=300 PPI | 0/40 | 38/40 | 38/40 |
+| >=600 PPI | 0/40 | 38/40 | 38/40 |
+| PDF 图片编码 | Flate + JPEG | 全部 Flate | 全部 Flate |
+
+因此 `demo_Report_Rebuilt.pdf` 已经在有效图片分辨率分布上达到 Acrobat HD 样例水平。
+
+## 输出状态
+
+v3 日志会明确标记结果，避免“文件名叫 HQ、实际却走低清 fallback”的情况。
+
+### HQ_REBUILT
+
+表示现代 OOXML 文件（DOCX/XLSX/PPTX）已经完成原始图片回填：
 
 ```text
-Convert-OfficeToPDF-v2.ps1
+HQ_REBUILT
 ```
 
-旧版 `Convert-OfficeToPDF.ps1` 暂时保留，方便回退和对照。
+这是当前认可的高质量结果。
 
-## Adobe PDFMaker 路径
+### NATIVE_ONLY
 
-脚本会在 Word / Excel / PowerPoint 中寻找：
+表示只能得到 Office 原生 PDF：
 
 ```text
-PDFMaker.OfficeAddin
+NATIVE_ONLY
 ```
 
-找到后会读取 PDFMaker 当前的转换设置，并保留当前 `JobOptions`，然后只修改自动化所需参数，例如：
-
-- 输出 PDF 文件名
-- 不弹出保存路径窗口
-- 不自动打开 PDF
-- 静默/自动化模式
-- 转换全部页面
-
-因此，如果你已经在 Acrobat PDFMaker 中把 Adobe PDF 设置调成最高质量，脚本会优先复用这套高质量设置。
-
-这条路径的目的，是尽量复现手工点击 Acrobat 功能区“创建 PDF”得到的效果。
-
-## Office 原生 fallback
-
-### Word
-
-依次尝试：
+这类 PDF 可能仍只有约 200 PPI，因此文件名会明确带：
 
 ```text
-ExportAsFixedFormat3 + OptimizeForImageQuality=True
-ExportAsFixedFormat2 + OptimizeForImageQuality=True
-ExportAsFixedFormat classic
+_NATIVE_ONLY.pdf
 ```
 
-Microsoft 文档明确说明 `OptimizeForImageQuality=True` 会阻止图片下采样、保留更好的原始质量。但并不是所有 Word 安装版本都会暴露这些较新的 COM 方法，因此日志会记录每次失败的 HRESULT 和异常。
+目前 `.doc/.xls/.ppt` 旧二进制格式先按这一模式处理。
 
-### Excel
+### FAILED
 
-使用 `Workbook.ExportAsFixedFormat` + `xlQualityStandard`。
+表示转换失败，查看 `logs/`。
 
-### PowerPoint
+## Python 高清重建器
 
-使用 `ExportAsFixedFormat` + Print intent；失败时再退回 SaveAs PDF。
+核心脚本：
 
-## 日志
+```text
+Rebuild-HighRes-PDF-Images.py
+```
 
-每次运行都会生成文本日志：
+支持直接读取 OOXML 包中的：
+
+```text
+DOCX -> word/media/
+XLSX -> xl/media/
+PPTX -> ppt/media/
+```
+
+需要 Python 3 以及：
+
+```text
+pymupdf
+pillow
+ImageHash
+```
+
+v3 会自动检测。如果 Python 已存在但模块缺失，会尝试一次：
+
+```text
+python -m pip install --user --upgrade pymupdf pillow ImageHash
+```
+
+如果电脑没有 Python，Office 原生结构 PDF 仍可生成，但 v3 会明确标记为 `NATIVE_ONLY`，不会伪装成 HQ 结果。
+
+后续计划是把这个 Python 重建器打包成独立 EXE，使最终用户不需要单独安装 Python。
+
+## FixedFormat2 为什么停用
+
+在当前实测机器：
+
+```text
+Word Version = 16.0
+Build = 16.0.17932
+```
+
+`Document.ExportAsFixedFormat2(... OptimizeForImageQuality=True)` 通过 PowerShell COM 调用后会出现无限阻塞，因此不再用于正式转换流程。
+
+`Test_Word_FixedFormat2_HQ.cmd` 已标记为 retired test，不应再用于日常转换。
+
+## 日志与诊断
+
+每次运行生成：
 
 ```text
 Office_HQ_PDF_Converter/logs/
-```
-
-日志包括：
-
-- Office 版本与 Build
-- 是否找到 PDFMaker
-- PDFMaker ProgID / Description
-- 当前 `JobOptions`
-- PDFMaker 自动化参数
-- `CreatePDFEx` 调用结果
-- Word 新/旧导出接口的异常和 HRESULT
-- 最终使用的 PDF 引擎
-- 输出 PDF 大小
-- 成功/失败统计
-
-日志默认不记录完整本地路径，便于 Push 到 GitHub 后让 GPT 诊断。
-
-## JSON diagnostics
-
-转换完成后还会在：
-
-```text
 Office_HQ_PDF_Converter/diagnostics/
 ```
 
-生成结构化 JSON，记录转换引擎、文件大小、Office 版本、PDFMaker 信息和对应日志文件名。
+日志会记录：
 
-## PDF 质量分析器
+- Office 版本和 Build
+- 原生结构 PDF 大小
+- Python 路径
+- HQ 依赖是否可用
+- 图片重建是否成功
+- `HQ_REBUILT / NATIVE_ONLY / FAILED`
+- 最终 PDF 大小
+- 转换耗时
 
-仓库中另有：
+图片匹配诊断 JSON 还会记录：
+
+- OOXML 原始媒体数量
+- PDF 唯一图片对象数量
+- 每个 source image 与 PDF xref 的对应关系
+- 原始/低清像素尺寸
+- 像素面积倍率
+- 匹配模式
+- 实际替换数量
+- 替换错误
+
+## 使用
+
+1. GitHub Desktop 切换到 `dev`。
+2. Fetch / Pull。
+3. 将 `.docx/.xlsx/.pptx/.doc/.xls/.ppt` 拖到：
 
 ```text
-Analyze-PDF-Quality.py
+DragDrop_Office_to_PDF.cmd
 ```
 
-用于比较不同 PDF 内部图片的：
-
-- 像素尺寸
-- 有效 PPI
-- PDF 图片压缩 Filter
-- 压缩后 image stream 大小
-- 图片对象数量
-- PDF Producer / Creator
-
-样例自动比较报告：
+4. 查看终端最后是否出现：
 
 ```text
-diagnostics/quality_comparison_latest.md
-diagnostics/quality_comparison_latest.json
+HQ_REBUILT
 ```
 
-## 当前样例结论
+5. 检查生成 PDF。
+6. 如需诊断，把 `logs/` 与 `diagnostics/` 的新文件 Commit + Push 到 `dev`。
 
-`demo_Report.docx`：
+## 关于“不依赖 Office / Acrobat”
 
-- DOCX 约 5.26 MB
-- 23 个媒体文件
-- 约 5.20 MB 嵌入媒体
+当前 v3 已经不依赖 Acrobat。
 
-Word 原生 `demo_Report.pdf`：
+仍使用 Office 作为版式引擎，因为准确复刻 Word/Excel/PowerPoint 的分页、字体度量、表格、浮动对象和图表布局是整个问题中最复杂的部分。
 
-- PDF 约 1.69 MB
-- 图片有效 PPI 中位数约 199.7
-- >=300 PPI 图片放置数量：0
-
-Acrobat PDFMaker `demo_Report_HD.pdf`：
-
-- PDF 约 7.36 MB
-- 图片有效 PPI 中位数约 760.3
-- 40 个图片放置对象中 38 个 >=600 PPI
-
-因此当前项目的默认技术目标已经从“尽量调高 Office ExportAsFixedFormat”调整为：
-
-> **优先自动调用 Acrobat PDFMaker，尽量复现 Acrobat 手工最高质量导出的结果；Office 原生接口仅作为兼容 fallback。**
-
-## 运行要求
-
-基础模式：
-
-1. Windows
-2. Microsoft Office 桌面版
-3. Windows PowerShell 5.1+
-
-最高质量推荐模式：
-
-1. 上述条件
-2. 安装 Adobe Acrobat（非仅 Reader）
-3. Office 中可看到 Acrobat / PDFMaker COM Add-in
-4. 在 Acrobat PDFMaker 首选项里选择你的高质量 Adobe PDF 设置
-
-## 测试流程
-
-Pull `dev` 后：
-
-1. 把 `demo_Report.docx` 拖到 `DragDrop_Office_to_PDF.cmd`。
-2. 检查新 PDF 文件大小和视觉质量。
-3. 检查 `logs/*.log`。
-4. 检查 `diagnostics/*_v2.json`。
-5. Commit + Push 这些日志/诊断文件。
-6. 告诉 GPT 查看 Office PDF logs。
-
-下一轮开发会根据真实 PDFMaker 自动化日志继续修正，目标是让拖拽脚本生成的 PDF 尽可能接近 `demo_Report_HD.pdf`。
+现代 `.docx/.xlsx/.pptx` 本身是 OOXML，可以完全独立解析。长期可以进一步开发“不需要安装 Office”的独立渲染器，但这属于第二阶段；当前优先目标是先获得稳定、可批量使用、图片质量达到 Acrobat HD 水平的实际工具。
