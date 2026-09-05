@@ -1,6 +1,6 @@
 # Office HQ PDF Converter
 
-这是一个面向 Windows + Microsoft Office 桌面版的高保真 PDF 转换脚本。
+面向 Windows + Microsoft Office 桌面版的高保真 Office -> PDF 转换工具。
 
 支持：
 
@@ -16,260 +16,185 @@
 DragDrop_Office_to_PDF.cmd
 ```
 
-脚本会在 **原文档同一目录** 生成 PDF。
+PDF 会生成在原文档同目录。
 
-例如：
-
-```text
-D:\Data\Report.docx
-```
-
-生成：
-
-```text
-D:\Data\Report.pdf
-```
-
-如果同名 PDF 已经存在，为避免覆盖，会依次生成：
+如果同名 PDF 已存在，不覆盖原文件，而是自动使用：
 
 ```text
 Report_HQ.pdf
 Report_HQ_2.pdf
-Report_HQ_3.pdf
 ...
 ```
 
-## 设计目标
+## v2 的质量策略
 
-这个脚本不是通过“虚拟 PDF 打印机”转换，也不使用 LibreOffice 或第三方 Office 解析器，而是直接调用本机安装的 Microsoft Word / Excel / PowerPoint 原生固定格式 PDF 导出接口。
+从样例 `demo_Report.docx` 得到的实测结果表明，Microsoft Word 2024 经典 PDF 导出会把绝大多数图片压到约 200 PPI，而同一文档通过 Acrobat PDFMaker 高质量设置导出时，大部分图片可保留约 600-880 PPI。
 
-这样做的目的，是尽量保留：
+因此 v2 已改为：
 
-- 原始 Office 排版
-- 矢量文字和矢量图形
-- Office 图表
-- 高分辨率图片
-- 字体显示
-- 页面尺寸与幻灯片尺寸
-- 原有对象位置
+```text
+Adobe Acrobat PDFMaker
+        ↓ 失败/不存在
+Word / Excel / PowerPoint 原生高质量接口
+        ↓ 再失败
+经典 Office PDF fallback
+```
 
-脚本始终以只读方式打开源文档，不会保存或修改原文件。
+拖拽启动器现在默认调用：
 
-## 高质量策略
+```text
+Convert-OfficeToPDF-v2.ps1
+```
+
+旧版 `Convert-OfficeToPDF.ps1` 暂时保留，方便回退和对照。
+
+## Adobe PDFMaker 路径
+
+脚本会在 Word / Excel / PowerPoint 中寻找：
+
+```text
+PDFMaker.OfficeAddin
+```
+
+找到后会读取 PDFMaker 当前的转换设置，并保留当前 `JobOptions`，然后只修改自动化所需参数，例如：
+
+- 输出 PDF 文件名
+- 不弹出保存路径窗口
+- 不自动打开 PDF
+- 静默/自动化模式
+- 转换全部页面
+
+因此，如果你已经在 Acrobat PDFMaker 中把 Adobe PDF 设置调成最高质量，脚本会优先复用这套高质量设置。
+
+这条路径的目的，是尽量复现手工点击 Acrobat 功能区“创建 PDF”得到的效果。
+
+## Office 原生 fallback
 
 ### Word
 
-优先尝试新版 Word 的 `ExportAsFixedFormat3`，并显式启用：
+依次尝试：
 
 ```text
-OptimizeFor = Print
-OptimizeForImageQuality = True
-BitmapMissingFonts = True
-UseISO19005_1 = False
+ExportAsFixedFormat3 + OptimizeForImageQuality=True
+ExportAsFixedFormat2 + OptimizeForImageQuality=True
+ExportAsFixedFormat classic
 ```
 
-如果当前 Word 版本不支持，再自动降级到 `ExportAsFixedFormat2`，最后才使用经典 `ExportAsFixedFormat`。
-
-其中 `OptimizeForImageQuality=True` 的目的就是避免在 PDF 导出阶段继续降低图片质量。
+Microsoft 文档明确说明 `OptimizeForImageQuality=True` 会阻止图片下采样、保留更好的原始质量。但并不是所有 Word 安装版本都会暴露这些较新的 COM 方法，因此日志会记录每次失败的 HRESULT 和异常。
 
 ### Excel
 
-使用 Excel 原生：
-
-```text
-ExportAsFixedFormat
-Quality = xlQualityStandard
-```
-
-`xlQualityStandard` 是 Excel 固定格式导出接口中的最高质量档。
-
-同时脚本设置：
-
-```text
-IgnorePrintAreas = True
-```
-
-这样可以避免因为工作簿中历史遗留的“打印区域”而把区域外的图片、图表或单元格内容完全排除在 PDF 外。
-
-注意：这意味着某些原本故意设置了打印区域的 Excel 文件，生成的 PDF 页数可能会增加。
+使用 `Workbook.ExportAsFixedFormat` + `xlQualityStandard`。
 
 ### PowerPoint
 
-使用 PowerPoint 原生 `ExportAsFixedFormat`，设置：
+使用 `ExportAsFixedFormat` + Print intent；失败时再退回 SaveAs PDF。
+
+## 日志
+
+每次运行都会生成文本日志：
 
 ```text
-FixedFormatType = PDF
-Intent = Print
-OutputType = Slides
-BitmapMissingFonts = True
-UseISO19005_1 = False
+Office_HQ_PDF_Converter/logs/
 ```
 
-`Print` 意图比 `Screen` 更适合高质量输出。
+日志包括：
 
-## 自动诊断模式
+- Office 版本与 Build
+- 是否找到 PDFMaker
+- PDFMaker ProgID / Description
+- 当前 `JobOptions`
+- PDFMaker 自动化参数
+- `CreatePDFEx` 调用结果
+- Word 新/旧导出接口的异常和 HRESULT
+- 最终使用的 PDF 引擎
+- 输出 PDF 大小
+- 成功/失败统计
 
-现在每次转换都会自动在：
+日志默认不记录完整本地路径，便于 Push 到 GitHub 后让 GPT 诊断。
+
+## JSON diagnostics
+
+转换完成后还会在：
 
 ```text
 Office_HQ_PDF_Converter/diagnostics/
 ```
 
-生成 JSON 诊断文件，不需要额外操作。
+生成结构化 JSON，记录转换引擎、文件大小、Office 版本、PDFMaker 信息和对应日志文件名。
 
-单个文件诊断示例：
+## PDF 质量分析器
 
-```text
-20260904_112233_456_Report.json
-```
-
-批量转换还会生成：
+仓库中另有：
 
 ```text
-20260904_112240_123_batch_summary.json
+Analyze-PDF-Quality.py
 ```
 
-诊断内容包括：
+用于比较不同 PDF 内部图片的：
 
-- Windows / PowerShell / .NET 环境
-- Office 应用与版本
-- 实际调用的 PDF 导出接口
-- 源文件与 PDF 的大小和 SHA256
-- 转换耗时
-- Word：页数、InlineShape、浮动 Shape、表格数量
-- Excel：工作表、Shape、图片、图表、已保存打印区域统计
-- PowerPoint：幻灯片、Shape、图片、图表、幻灯片尺寸
-- PDF 页数启发式检测
-- 转换失败时的错误信息
+- 像素尺寸
+- 有效 PPI
+- PDF 图片压缩 Filter
+- 压缩后 image stream 大小
+- 图片对象数量
+- PDF Producer / Creator
 
-对 `.docx/.xlsx/.pptx` 还会直接读取 Office Open XML 压缩包内部的 `media` 目录，统计：
-
-- 嵌入媒体数量
-- 媒体未压缩总容量
-- PNG/JPG/EMF/SVG 等扩展名分布
-
-这对于判断“源文档明明包含大量高清图片，但生成 PDF 异常偏小”非常有帮助。
-
-### 隐私设计
-
-诊断 JSON 默认**不记录**：
-
-- Windows 用户名
-- 电脑名
-- 源文档完整本地路径
-- PDF 完整本地路径
-
-只记录文件名和技术环境，更适合提交到 GitHub 后供 GPT / Codex 分析。
-
-注意：文件名本身仍会记录，如果文件名敏感，请不要 Push 对应 JSON。
-
-## GPT 诊断闭环
-
-推荐工作流：
+样例自动比较报告：
 
 ```text
-Office 文件
-    ↓
-拖到 DragDrop_Office_to_PDF.cmd
-    ↓
-生成高质量 PDF
-    ↓
-自动生成 diagnostics/*.json
-    ↓
-GitHub Desktop
-Commit to dev
-    ↓
-Push origin
-    ↓
-ChatGPT 读取真实运行结果
-    ↓
-继续分析 / 修改脚本
+diagnostics/quality_comparison_latest.md
+diagnostics/quality_comparison_latest.json
 ```
 
-转换完成后可以直接在 ChatGPT 中说：
+## 当前样例结论
 
-```text
-看看 Office PDF diagnostics
-```
+`demo_Report.docx`：
 
-## 为什么不用 PDF 打印机
+- DOCX 约 5.26 MB
+- 23 个媒体文件
+- 约 5.20 MB 嵌入媒体
 
-虚拟打印机通常会把 Office 页面经过打印管线重新生成，有时会带来：
+Word 原生 `demo_Report.pdf`：
 
-- 图片重采样
-- 透明效果变化
-- 字体替换
-- 矢量对象退化
-- 页面尺寸偏差
-- Excel / PowerPoint 对象裁切
+- PDF 约 1.69 MB
+- 图片有效 PPI 中位数约 199.7
+- >=300 PPI 图片放置数量：0
 
-本工具优先使用 Office 自身的 PDF 引擎，通常能获得更高的版式一致性。
+Acrobat PDFMaker `demo_Report_HD.pdf`：
+
+- PDF 约 7.36 MB
+- 图片有效 PPI 中位数约 760.3
+- 40 个图片放置对象中 38 个 >=600 PPI
+
+因此当前项目的默认技术目标已经从“尽量调高 Office ExportAsFixedFormat”调整为：
+
+> **优先自动调用 Acrobat PDFMaker，尽量复现 Acrobat 手工最高质量导出的结果；Office 原生接口仅作为兼容 fallback。**
 
 ## 运行要求
 
-必须满足：
+基础模式：
 
 1. Windows
-2. 已安装 Microsoft Office 桌面版
-3. Word / Excel / PowerPoint 能正常打开对应文件
-4. Windows PowerShell 可用（Windows 10/11 默认具备）
+2. Microsoft Office 桌面版
+3. Windows PowerShell 5.1+
 
-不需要安装 Python、Node.js、Ghostscript 或其他 PDF 工具。
+最高质量推荐模式：
 
-## 安全设计
+1. 上述条件
+2. 安装 Adobe Acrobat（非仅 Reader）
+3. Office 中可看到 Acrobat / PDFMaker COM Add-in
+4. 在 Acrobat PDFMaker 首选项里选择你的高质量 Adobe PDF 设置
 
-Office 文档通过 COM 自动化打开时，脚本会尽量设置：
+## 测试流程
 
-```text
-AutomationSecurity = ForceDisable
-```
+Pull `dev` 后：
 
-以阻止文档中的 VBA 宏在自动转换过程中运行。
+1. 把 `demo_Report.docx` 拖到 `DragDrop_Office_to_PDF.cmd`。
+2. 检查新 PDF 文件大小和视觉质量。
+3. 检查 `logs/*.log`。
+4. 检查 `diagnostics/*_v2.json`。
+5. Commit + Push 这些日志/诊断文件。
+6. 告诉 GPT 查看 Office PDF logs。
 
-源文件以 ReadOnly 模式打开，转换后直接关闭，不执行保存。
-
-## 一个必须说明的质量边界
-
-“最高质量导出”只能保留 **源文件中目前仍然存在的质量**。
-
-例如：
-
-- 一张原本 6000×4000 的图片如果早已被 Word 压缩成 1200×800，PDF 无法恢复丢失的像素。
-- 如果 Office 文件内部已经把图片压缩或裁剪并删除了编辑数据，转换脚本无法把被删除的原图重新找回来。
-- 某些字体的许可证禁止嵌入 PDF 时，Office 可能使用位图方式保存文字外观；脚本启用了 `BitmapMissingFonts=True`，优先保证视觉一致性。
-
-因此，这个脚本的目标是：
-
-> **转换阶段不主动牺牲质量，并尽可能让 Office 使用其最高质量的原生 PDF 输出路径。**
-
-## 文件说明
-
-```text
-Office_HQ_PDF_Converter/
-├─ DragDrop_Office_to_PDF.cmd
-├─ Convert-OfficeToPDF.ps1
-├─ diagnostics/
-│  └─ README.md
-└─ README.md
-```
-
-## 批量转换
-
-可以同时选择多个 Office 文件，一起拖到：
-
-```text
-DragDrop_Office_to_PDF.cmd
-```
-
-脚本会逐个转换，并在窗口最后显示：
-
-```text
-Success: N
-Failed: N
-```
-
-## GitHub / 本地测试建议
-
-这个工具必须在安装了 Microsoft Office 的真实 Windows 电脑上测试，普通 GitHub Actions runner 并没有完整 Microsoft Office，因此不适合用云端 CI 验证最终 PDF 视觉效果。
-
-但现在本地测试后会自动生成 `diagnostics/*.json`，这些文件非常适合 Push 到 GitHub，让 GPT 基于真实 Office 环境继续诊断。
+下一轮开发会根据真实 PDFMaker 自动化日志继续修正，目标是让拖拽脚本生成的 PDF 尽可能接近 `demo_Report_HD.pdf`。
