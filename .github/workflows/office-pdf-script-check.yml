@@ -176,7 +176,7 @@ jobs:
               raise SystemExit('DOCX semantic replacement errors detected')
           PY
 
-      - name: Probe XLSX soft-mask matching
+      - name: Validate XLSX soft-mask matching
         run: |
           python Office_HQ_PDF_Converter/src/HQImageRebuilder.py \
             --source-office 'Office_HQ_PDF_Converter/test/samples/validation_20260905/xlsx/Test_xlsx (1).xlsx' \
@@ -195,6 +195,10 @@ jobs:
               'replacement_errors': len(r.get('replacement_errors') or []),
           }
           print(json.dumps(summary, indent=2))
+          if r.get('pdf_soft_mask_reconstructed_count', 0) != 1:
+              raise SystemExit('Regression: XLSX validation must reconstruct its single PDF soft mask')
+          if r.get('replaced_count', 0) != 1:
+              raise SystemExit('Regression: XLSX validation must safely restore its raster image')
           if r.get('replacement_errors'):
-              raise SystemExit('XLSX soft-mask probe detected replacement errors')
+              raise SystemExit('XLSX soft-mask matching detected replacement errors')
           PY
