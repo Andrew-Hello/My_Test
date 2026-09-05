@@ -110,8 +110,8 @@ jobs:
       - name: Exercise crop-aware PPTX semantic matching
         run: |
           python Office_HQ_PDF_Converter/src/HQImageRebuilder.py \
-            --source-office Office_HQ_PDF_Converter/demo_pptx.pptx \
-            --input-pdf Office_HQ_PDF_Converter/demo_pptx_HQ.pdf \
+            --source-office Office_HQ_PDF_Converter/test/samples/current/demo_pptx.pptx \
+            --input-pdf Office_HQ_PDF_Converter/test/samples/current/demo_pptx_HQ.pdf \
             --output-pdf /tmp/demo_pptx_cropaware.pdf \
             --report /tmp/pptx_cropaware.json
 
@@ -131,6 +131,8 @@ jobs:
           print(json.dumps(summary, indent=2))
           if r.get('pptx_crop_candidate_count', 0) < 1:
               raise SystemExit('PPTX sample did not expose any srcRect crop candidates')
+          if r.get('pptx_semantic_crop_replaced_count', 0) < 1:
+              raise SystemExit('PPTX sample did not exercise semantic crop restoration')
           if r.get('replaced_count', 0) < 9:
               raise SystemExit('Regression: PPTX source preservation fell below previous baseline')
           if r.get('replacement_errors'):
