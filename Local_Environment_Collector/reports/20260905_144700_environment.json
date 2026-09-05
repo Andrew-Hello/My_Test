@@ -1,0 +1,204 @@
+﻿{
+    "schema_version":  2,
+    "generated_at":  "2026-09-05T14:47:10.0486840+08:00",
+    "privacy":  {
+                    "username_recorded":  false,
+                    "computer_name_recorded":  false,
+                    "user_profile_replaced_with_placeholder":  true,
+                    "arbitrary_environment_variables_recorded":  false,
+                    "url_credentials_masked":  true
+                },
+    "windows":  {
+                    "caption":  "Microsoft Windows 10 专业版",
+                    "version":  "10.0.19045",
+                    "build":  "19045",
+                    "architecture":  "64-bit",
+                    "culture":  "zh-CN",
+                    "ui_culture":  "en-US",
+                    "timezone":  "China Standard Time",
+                    "total_memory_gb":  30.81
+                },
+    "hardware":  {
+                     "cpu":  {
+                                 "name":  "AMD Ryzen 7 8845H w/ Radeon 780M Graphics",
+                                 "cores":  8,
+                                 "logical_processors":  16
+                             },
+                     "gpu":  [
+                                 {
+                                     "name":  "AMD Radeon 780M Graphics",
+                                     "driver_version":  "32.0.13032.11",
+                                     "current_resolution":  "2880x1800"
+                                 }
+                             ],
+                     "displays":  [
+                                      {
+                                          "device_name":  "\\\\.\\DISPLAY2",
+                                          "primary":  true,
+                                          "bounds":  "0,0 2194x1234",
+                                          "working_area":  "0,0 2194x1157"
+                                      }
+                                  ],
+                     "dpi":  {
+                                 "log_pixels":  151,
+                                 "win8_dpi_scaling":  0
+                             }
+                 },
+    "powershell":  {
+                       "version":  "5.1.19041.7663",
+                       "edition":  "Desktop",
+                       "process_64bit":  true,
+                       "execution_policy":  "Scope ExecutionPolicy\r\n        ----- ---------------\r\nMachinePolicy       Undefined\r\n   UserPolicy       Undefined\r\n      Process          Bypass\r\n  CurrentUser    RemoteSigned\r\n LocalMachine    Unrestricted"
+                   },
+    "python":  {
+                   "launcher_versions":  {
+                                             "found":  true,
+                                             "executable":  "C:\\WINDOWS\\py.exe",
+                                             "exit_code":  0,
+                                             "output":  "-V:3.14 *        %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\r\n -V:3.13          %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python313\\python.exe\r\n -V:3.12          %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\r\n -V:3.11          %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\r\n -V:Astral/CPython3.11.15 %USERPROFILE%\\AppData\\Roaming\\uv\\python\\cpython-3.11.15-windows-x86_64-none\\python.exe"
+                                         },
+                   "py3_version":  {
+                                       "found":  true,
+                                       "executable":  "C:\\WINDOWS\\py.exe",
+                                       "exit_code":  0,
+                                       "output":  "Python 3.14.6"
+                                   },
+                   "runtime_probe":  {
+                                         "found":  true,
+                                         "executable":  "C:\\WINDOWS\\py.exe",
+                                         "exit_code":  0,
+                                         "output":  "{\"version\": \"3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]\", \"executable\": \"C:\\\\Users\\\\%USERNAME%\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python314\\\\python.exe\", \"architecture\": \"64bit\", \"implementation\": \"CPython\", \"modules\": {\"pymupdf\": true, \"fitz\": true, \"PIL\": true, \"numpy\": true, \"scipy\": true}}"
+                                     },
+                   "pip_version":  {
+                                       "found":  true,
+                                       "executable":  "C:\\WINDOWS\\py.exe",
+                                       "exit_code":  0,
+                                       "output":  "pip 26.1.2 from %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\pip (python 3.14)"
+                                   },
+                   "pip_config":  {
+                                      "found":  true,
+                                      "executable":  "C:\\WINDOWS\\py.exe",
+                                      "exit_code":  0,
+                                      "output":  "global.index-url=\u0027https://pypi.tuna.tsinghua.edu.cn/simple/\u0027\r\nglobal.trusted-host=\u0027pypi.tuna.tsinghua.edu.cn\u0027"
+                                  },
+                   "pymupdf":  {
+                                   "found":  true,
+                                   "executable":  "C:\\WINDOWS\\py.exe",
+                                   "exit_code":  0,
+                                   "output":  "Name: PyMuPDF\r\nVersion: 1.27.2.2\r\nSummary: A high performance Python library for data extraction, analysis, conversion \u0026 manipulation of PDF (and other) documents.\r\nHome-page: \r\nAuthor: Artifex\r\nAuthor-email: support@artifex.com\r\nLicense: Dual Licensed - GNU AFFERO GPL 3.0 or Artifex Commercial License\r\nLocation: %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\r\nRequires: \r\nRequired-by:"
+                               },
+                   "pillow":  {
+                                  "found":  true,
+                                  "executable":  "C:\\WINDOWS\\py.exe",
+                                  "exit_code":  0,
+                                  "output":  "Name: pillow\r\nVersion: 12.1.1\r\nSummary: Python Imaging Library (fork)\r\nHome-page: https://python-pillow.github.io\r\nAuthor: \r\nAuthor-email: \"Jeffrey A. Clark\" \u003caclark@aclark.net\u003e\r\nLicense-Expression: MIT-CMU\r\nLocation: %USERPROFILE%\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\r\nRequires: \r\nRequired-by: matplotlib, pdfplumber, pystray, python-pptx, rapidocr-onnxruntime, reportlab"
+                              },
+                   "environment_index_url":  null,
+                   "environment_extra_index_url":  null
+               },
+    "office":  {
+                   "word":  {
+                                "name":  "Microsoft Word",
+                                "available":  true,
+                                "version":  "16.0",
+                                "build":  "16.0.17932",
+                                "error":  null
+                            },
+                   "excel":  {
+                                 "name":  "Microsoft Excel",
+                                 "available":  true,
+                                 "version":  "16.0",
+                                 "build":  "17932",
+                                 "error":  null
+                             },
+                   "powerpoint":  {
+                                      "name":  "Microsoft PowerPoint",
+                                      "available":  true,
+                                      "version":  "16.0",
+                                      "build":  "17932",
+                                      "error":  null
+                                  }
+               },
+    "adobe":  {
+                  "pdfmaker_office_addin_registered":  true,
+                  "installed_products":  {
+
+                                         }
+              },
+    "developer_tools":  {
+                            "git":  {
+                                        "found":  true,
+                                        "executable":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                        "exit_code":  0,
+                                        "output":  "git version 2.47.1.windows.1"
+                                    },
+                            "node":  {
+                                         "found":  true,
+                                         "executable":  "C:\\Program Files\\nodejs\\node.exe",
+                                         "exit_code":  0,
+                                         "output":  "v24.14.0"
+                                     },
+                            "npm":  {
+                                        "found":  true,
+                                        "executable":  "C:\\Program Files\\nodejs\\npm.cmd",
+                                        "exit_code":  0,
+                                        "output":  "11.18.0"
+                                    },
+                            "npm_registry":  {
+                                                 "found":  true,
+                                                 "executable":  "C:\\Program Files\\nodejs\\npm.cmd",
+                                                 "exit_code":  0,
+                                                 "output":  "https://registry.npmjs.org/"
+                                             },
+                            "dotnet_info":  {
+                                                "found":  true,
+                                                "executable":  "C:\\Program Files\\dotnet\\dotnet.exe",
+                                                "exit_code":  0,
+                                                "output":  "Host:\r\n  Version:      9.0.19\r\n  Architecture: x64\r\n  Commit:       8381bdb01f\r\n  RID:          win-x64\r\n\r\n.NET SDKs installed:\r\n  No SDKs were found.\r\n\r\n.NET runtimes installed:\r\n  Microsoft.NETCore.App 3.1.32 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 6.0.36 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.NETCore.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\n  Microsoft.WindowsDesktop.App 6.0.36 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n  Microsoft.WindowsDesktop.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\n\r\nOther architectures found:\r\n  None\r\n\r\nEnvironment variables:\r\n  Not set\r\n\r\nglobal.json file:\r\n  Not found\r\n\r\nLearn more:\r\n  https://aka.ms/dotnet/info\r\n\r\nDownload .NET:\r\n  https://aka.ms/dotnet/download"
+                                            },
+                            "dotnet_sdks":  {
+                                                "found":  true,
+                                                "executable":  "C:\\Program Files\\dotnet\\dotnet.exe",
+                                                "exit_code":  0,
+                                                "output":  ""
+                                            },
+                            "dotnet_runtimes":  {
+                                                    "found":  true,
+                                                    "executable":  "C:\\Program Files\\dotnet\\dotnet.exe",
+                                                    "exit_code":  0,
+                                                    "output":  "Microsoft.NETCore.App 3.1.32 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\nMicrosoft.NETCore.App 6.0.36 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\nMicrosoft.NETCore.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\nMicrosoft.NETCore.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\r\nMicrosoft.WindowsDesktop.App 6.0.36 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\nMicrosoft.WindowsDesktop.App 8.0.29 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\r\nMicrosoft.WindowsDesktop.App 9.0.19 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]"
+                                                },
+                            "java":  {
+                                         "found":  false,
+                                         "executable":  null,
+                                         "exit_code":  null,
+                                         "output":  null
+                                     }
+                        },
+    "repository":  {
+                       "branch":  {
+                                      "found":  true,
+                                      "executable":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                      "exit_code":  0,
+                                      "output":  "dev"
+                                  },
+                       "commit":  {
+                                      "found":  true,
+                                      "executable":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                      "exit_code":  0,
+                                      "output":  "7593993"
+                                  },
+                       "origin":  {
+                                      "found":  true,
+                                      "executable":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                      "exit_code":  0,
+                                      "output":  "https://github.com/Andrew-Hello/My_Test.git"
+                                  },
+                       "local_changes_without_untracked_files":  {
+                                                                     "found":  true,
+                                                                     "executable":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                                                     "exit_code":  0,
+                                                                     "output":  ""
+                                                                 }
+                   }
+}

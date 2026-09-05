@@ -1,0 +1,21 @@
+﻿[2026-09-05 14:46:51.712 +08:00] [INFO] Office HQ PDF Converter production pipeline started.
+[2026-09-05 14:46:51.729 +08:00] [INFO] Strategy: Office layout engine -> temporary structural PDF -> lossless OOXML raster restoration.
+[2026-09-05 14:46:51.730 +08:00] [INFO] Production path intentionally does NOT use Acrobat PDFMaker, ExportAsFixedFormat2, or ImageHash.
+[2026-09-05 14:46:51.731 +08:00] [INFO] Python dependency detection uses pip metadata to avoid PowerShell 5.1 / py.exe -c quoting problems.
+[2026-09-05 14:46:51.745 +08:00] [INFO] ========================================================================
+[2026-09-05 14:46:51.750 +08:00] [INFO] Source: demo_Report.docx (5.259 MB)
+[2026-09-05 14:46:51.762 +08:00] [INFO] Starting Word layout engine.
+[2026-09-05 14:46:53.585 +08:00] [INFO] Word Version=16.0, Build=16.0.17932
+[2026-09-05 14:46:54.056 +08:00] [INFO] Exporting structural PDF with classic Word ExportAsFixedFormat. Raster image quality will be restored afterwards.
+[2026-09-05 14:47:00.763 +08:00] [INFO] Structural PDF created in temp/: 1.693 MB
+[2026-09-05 14:47:00.775 +08:00] [INFO] Python runner: C:\WINDOWS\py.exe (py -3)
+[2026-09-05 14:47:01.067 +08:00] [INFO] Python runtime: Python 3.14.6
+[2026-09-05 14:47:01.068 +08:00] [INFO] Python package manager: pip 26.1.2 from C:\Users\mengq\AppData\Local\Programs\Python\Python314\Lib\site-packages\pip (python 3.14)
+[2026-09-05 14:47:01.069 +08:00] [INFO] Checking production packages using pip metadata (no python -c probe): PyMuPDF + Pillow.
+[2026-09-05 14:47:01.748 +08:00] [INFO] Package status: pymupdf=True; pillow=True
+[2026-09-05 14:47:01.750 +08:00] [INFO] Starting lossless OOXML raster-image restoration.
+[2026-09-05 14:47:09.619 +08:00] [ERROR] HQ image restoration failed with exit code {.
+[2026-09-05 14:47:09.629 +08:00] [WARN] NATIVE_ONLY: HQ rebuild failed. Low-resolution Office PDF preserved as demo_Report_NATIVE_ONLY_2.pdf.
+[2026-09-05 14:47:09.669 +08:00] [INFO] ========================================================================
+[2026-09-05 14:47:09.670 +08:00] [INFO] Finished. Success=0; FailedOrDegraded=1
+[2026-09-05 14:47:09.671 +08:00] [INFO] Log: 20260905_144651_710_Office_HQ_PDF.log

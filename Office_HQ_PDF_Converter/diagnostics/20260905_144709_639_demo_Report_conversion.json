@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  5,
+    "timestamp_local":  "2026-09-05T14:47:09.6361232+08:00",
+    "source_file":  "demo_Report.docx",
+    "source_extension":  ".docx",
+    "source_size_bytes":  5514860,
+    "output_file":  "demo_Report_NATIVE_ONLY_2.pdf",
+    "output_size_bytes":  1775135,
+    "result_mode":  "NATIVE_ONLY",
+    "duration_seconds":  17.886,
+    "message":  "HQ rebuild unavailable or failed; raster images may be approximately 200 PPI.",
+    "production_pipeline":  "Office layout -\u003e OOXML source raster restoration",
+    "python_dependency_detection":  "pip metadata; no python -c quoting dependency",
+    "log_file":  "20260905_144651_710_Office_HQ_PDF.log"
+}
