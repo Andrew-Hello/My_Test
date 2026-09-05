@@ -1,0 +1,47 @@
+{
+  "schema_version": 4,
+  "matching_engine": "builtin_phash_dct16+pptx_srcRect",
+  "source_office": "Test_ (2).xlsx",
+  "input_pdf": "Test_ (2)_6973f738a892471b92957b0bdcd1e817_native.pdf",
+  "output_pdf": "Test_ (2)_HQ_2.pdf",
+  "source_raster_media_count": 1,
+  "source_candidate_count": 1,
+  "pptx_crop_candidate_count": 0,
+  "pptx_semantic_crop_replaced_count": 0,
+  "pdf_unique_raster_image_count": 1,
+  "matched_count": 1,
+  "replaced_count": 0,
+  "normal_max_score": 45.0,
+  "fallback_enabled": false,
+  "fallback_candidate_count": 0,
+  "matches": [
+    {
+      "score": 206.0,
+      "pdf_index": 0,
+      "src_index": 0,
+      "pdf_xref": 22,
+      "pdf_px": [
+        582,
+        132
+      ],
+      "source_name": "xl/media/image1.png",
+      "source_px": [
+        582,
+        132
+      ],
+      "pixel_area_ratio": 1.0,
+      "aspect_delta_log": 0.0,
+      "replace": false,
+      "match_mode": "initially_rejected",
+      "media_name": "xl/media/image1.png",
+      "candidate_kind": "ooxml_media",
+      "full_source_px": [
+        582,
+        132
+      ]
+    }
+  ],
+  "replacement_errors": [],
+  "media_errors": [],
+  "output_size_bytes": 99230
+}

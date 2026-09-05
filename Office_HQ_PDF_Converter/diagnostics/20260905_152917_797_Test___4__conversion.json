@@ -1,0 +1,21 @@
+﻿{
+    "schema_version":  8,
+    "timestamp_local":  "2026-09-05T15:29:17.7976857+08:00",
+    "source_file":  "Test_ (4).xlsx",
+    "source_extension":  ".xlsx",
+    "source_size_bytes":  29269,
+    "output_file":  "Test_ (4)_HQ.pdf",
+    "output_size_bytes":  119962,
+    "result_mode":  "HQ_REBUILT",
+    "duration_seconds":  2.782,
+    "message":  "Office layout preserved; OOXML raster media restored.",
+    "production_pipeline":  "Office layout -\u003e OOXML source raster restoration",
+    "excel_layout_policy":  "A4; FitToPagesWide=1; FitToPagesTall=False; preserve orientation",
+    "powerpoint_layout_policy":  "preserve source slide canvas aspect ratio",
+    "pptx_image_policy":  "crop-aware DrawingML srcRect semantic matching",
+    "legacy_upgrade_attempted":  false,
+    "legacy_upgrade_succeeded":  false,
+    "legacy_upgrade_policy":  "DOC-\u003eDOCX(12); XLS-\u003eXLSX(51); PPT-\u003ePPTX(24); temp only",
+    "python_process_handling":  "stdout captured separately; integer exit code only",
+    "log_file":  "20260905_152827_047_Office_HQ_PDF.log"
+}
